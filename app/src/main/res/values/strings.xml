@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">Cineman</string>
+    <string name="spider_man_title">Spider-Man</string>
+    <string name="hulk_title">Hulk</string>
+    <string name="batman_title">Batman</string>
+    <string name="more_button_title">More</string>
+    <string name="spider_man_description">Spider-Man is a cool superhero who will save the world from supervillains.
+        Watch how the hero became who he is now.
+    </string>
+    <string name="hulk_description">The Hulk is just a radiation healthy man who wants to save the world from evil uncles.
+        He seeks to destroy everything in the way, sometimes not realizing how much evil he is doing.
+        Do not drink low-quality alcohol - the main message of the film, as you can become like the Hulk.
+    </string>
+    <string name="batman_description">SA bat is not just an animal. Batman is a hero who does not sleep at night.
+        Fearless dark knight strolling through the streets of New York in order to find someone and beat.
+    </string>
+</resources>
