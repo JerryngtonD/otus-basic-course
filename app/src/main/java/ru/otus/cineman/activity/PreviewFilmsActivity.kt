@@ -24,6 +24,9 @@ class PreviewFilmsActivity : AppCompatActivity() {
         const val USER_COMMENT = "USER_COMMENT"
         const val FILM_ID = "FILM_ID"
 
+        // Коды восстановления при пересоздании активности
+        const val FILMS_STORED = "FILMS_STORED"
+
 
 
     }
@@ -35,10 +38,8 @@ class PreviewFilmsActivity : AppCompatActivity() {
         val parentWrapper = view.parent as ViewGroup
         val textView = parentWrapper.findViewWithTag<TextView>(FILMS_TITLE_TAG)
         val currentFilm = films[textView.id]
-        currentFilm?.isSelected = true
-        films.values.forEach{ findViewById<TextView>(it.id).setTextColor(Color.BLACK) }
+        setSelectedFilm(textView, currentFilm)
 
-        textView.setTextColor(Color.GREEN)
         logger.info { textView.text }
 
         val intentFilmDetails = Intent(this, FilmDetailsActivity::class.java)
@@ -88,6 +89,20 @@ class PreviewFilmsActivity : AppCompatActivity() {
         }
     }
 
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        val restoredFilms = savedInstanceState.getParcelableArrayList<Film>(FILMS_STORED)
+        films = restoredFilms?.map {
+            it.id to it
+        }?.toMap() ?: emptyMap()
+
+
+        val selectedFilm = films.values.filter { it.isSelected }.takeIf { it.isNotEmpty() }?.first()
+            ?: return
+
+        val chosenTextViewFilm = findViewById<TextView>(selectedFilm.id)
+        setSelectedFilm(chosenTextViewFilm, selectedFilm)
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == FILM_DETAILS_REQUEST_CODE) {
@@ -103,5 +118,20 @@ class PreviewFilmsActivity : AppCompatActivity() {
             films[filmId]?.isLiked = isLiked ?: false
             films[filmId]?.comment = comment ?: ""
         }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        val filmsToSave: ArrayList<Film> = ArrayList(films.values)
+        outState.putParcelableArrayList(FILMS_STORED, filmsToSave)
+    }
+
+    private fun setSelectedFilm(textView: TextView, currentFilm: Film?) {
+        films.values.forEach{
+            it.isSelected = false
+            findViewById<TextView>(it.id).setTextColor(Color.BLACK)
+        }
+        currentFilm?.isSelected = true
+        textView.setTextColor(Color.GREEN)
     }
 }
