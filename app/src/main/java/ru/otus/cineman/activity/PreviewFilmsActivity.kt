@@ -14,7 +14,7 @@ import ru.otus.cineman.R
 import ru.otus.cineman.model.Film
 
 class PreviewFilmsActivity : AppCompatActivity() {
-    companion object: KLogging() {
+    companion object : KLogging() {
         const val FILMS_TITLE_TAG = "film_title"
 
         const val FILM_DETAILS_REQUEST_CODE = 12345
@@ -28,9 +28,9 @@ class PreviewFilmsActivity : AppCompatActivity() {
         const val FILMS_STORED = "FILMS_STORED"
 
 
-
     }
 
+    lateinit var shareButton: Button
     lateinit var moreButtons: List<Button>
     lateinit var films: Map<Int, Film>
 
@@ -49,6 +49,10 @@ class PreviewFilmsActivity : AppCompatActivity() {
         intentFilmDetails.putExtra("is_liked", currentFilm?.isLiked)
         intentFilmDetails.putExtra("user_comment", currentFilm?.comment)
         startActivityForResult(intentFilmDetails, FILM_DETAILS_REQUEST_CODE)
+    }
+
+    private val shareListener = View.OnClickListener { _ ->
+        logger.info { "Share app with your friends" }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -84,9 +88,12 @@ class PreviewFilmsActivity : AppCompatActivity() {
             findViewById(R.id.show_more3)
         )
 
-        moreButtons.forEach{
+        moreButtons.forEach {
             it.setOnClickListener(clickListener)
         }
+
+        shareButton = findViewById(R.id.share)
+        shareButton.setOnClickListener(shareListener)
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
@@ -110,7 +117,9 @@ class PreviewFilmsActivity : AppCompatActivity() {
                 return;
             }
             val filmId = data?.getIntExtra(FILM_ID, Int.MAX_VALUE)
-            if (filmId == Int.MAX_VALUE) { throw InstantiationException() }
+            if (filmId == Int.MAX_VALUE) {
+                throw InstantiationException()
+            }
 
             val comment = data?.extras?.getString(USER_COMMENT)
             val isLiked = data?.getBooleanExtra(IS_LIKED, false)
@@ -127,7 +136,7 @@ class PreviewFilmsActivity : AppCompatActivity() {
     }
 
     private fun setSelectedFilm(textView: TextView, currentFilm: Film?) {
-        films.values.forEach{
+        films.values.forEach {
             it.isSelected = false
             findViewById<TextView>(it.id).setTextColor(Color.BLACK)
         }

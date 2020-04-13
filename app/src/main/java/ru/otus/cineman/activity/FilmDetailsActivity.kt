@@ -50,9 +50,11 @@ class FilmDetailsActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             android.R.id.home -> {
+                logger.info { "Comment: ${userComment.text}" }
+                logger.info { "Is Liked: ${isLikedFilm.isChecked}" }
                 val intentPreviewFilms = Intent()
                 intentPreviewFilms.putExtra(IS_LIKED, isLikedFilm.isChecked)
-                intentPreviewFilms.putExtra(USER_COMMENT, userComment.text.toString() )
+                intentPreviewFilms.putExtra(USER_COMMENT, userComment.text.toString())
                 intentPreviewFilms.putExtra(FILM_ID, filmId)
                 setResult(Activity.RESULT_OK, intentPreviewFilms)
                 finish()

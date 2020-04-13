@@ -137,6 +137,11 @@
                         android:text="@string/more_button_title" />
                 </LinearLayout>
             </LinearLayout>
+            <Button
+                android:id="@+id/share"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/share"/>
         </LinearLayout>
     </ScrollView>
 </LinearLayout>
