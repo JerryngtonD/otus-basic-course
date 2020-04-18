@@ -38,7 +38,7 @@ class PreviewFilmsActivity : AppCompatActivity() {
         val parentWrapper = view.parent as ViewGroup
         val textView = parentWrapper.findViewWithTag<TextView>(FILMS_TITLE_TAG)
         val currentFilm = films[textView.id]
-        setSelectedFilm(textView, currentFilm)
+        setSelectedFilm(currentFilm)
 
         logger.info { textView.text }
 
@@ -102,12 +102,8 @@ class PreviewFilmsActivity : AppCompatActivity() {
             it.id to it
         }?.toMap() ?: emptyMap()
 
-
         val selectedFilm = films.values.filter { it.isSelected }.takeIf { it.isNotEmpty() }?.first()
-            ?: return
-
-        val chosenTextViewFilm = findViewById<TextView>(selectedFilm.id)
-        setSelectedFilm(chosenTextViewFilm, selectedFilm)
+        setSelectedFilm(selectedFilm)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -135,12 +131,18 @@ class PreviewFilmsActivity : AppCompatActivity() {
         outState.putParcelableArrayList(FILMS_STORED, filmsToSave)
     }
 
-    private fun setSelectedFilm(textView: TextView, currentFilm: Film?) {
+    private fun setSelectedFilm(currentFilm: Film?) {
+        createdDefaultAppearance()
+        if (currentFilm != null) {
+            currentFilm.isSelected = true
+            findViewById<TextView>(currentFilm.id).setTextColor(Color.GREEN)
+        }
+    }
+
+    private fun createdDefaultAppearance() {
         films.values.forEach {
             it.isSelected = false
-            findViewById<TextView>(it.id).setTextColor(Color.BLACK)
+            findViewById<TextView>(it.id).setTextColor(Color.RED)
         }
-        currentFilm?.isSelected = true
-        textView.setTextColor(Color.GREEN)
     }
 }

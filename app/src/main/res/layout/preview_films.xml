@@ -17,10 +17,7 @@
             android:layout_gravity="center_horizontal"
             >
             <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:gravity="center_horizontal"
+                style="@style/PreviewFilm"
                 >
                 <ImageView
                     android:layout_width="150dp"
@@ -40,7 +37,8 @@
                         android:layout_height="wrap_content"
                         android:text="@string/spider_man_title"
                         android:layout_marginBottom="10dp"
-                        android:tag="film_title">
+                        android:tag="film_title"
+                        style="@style/PreviewFilmTitle">
                     </TextView>
                     <Button
                         android:id="@+id/show_more1"
@@ -57,10 +55,7 @@
             </LinearLayout>
 
             <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:gravity="center_horizontal"
+                style="@style/PreviewFilm"
                 >
                 <ImageView
                     android:layout_width="150dp"
@@ -80,7 +75,8 @@
                         android:layout_height="wrap_content"
                         android:text="@string/hulk_title"
                         android:layout_marginBottom="10dp"
-                        android:tag="film_title">
+                        android:tag="film_title"
+                        style="@style/PreviewFilmTitle">>
                     </TextView>
                     <Button
                         android:id="@+id/show_more2"
@@ -97,10 +93,7 @@
             </LinearLayout>
 
             <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:gravity="center_horizontal"
+                style="@style/PreviewFilm"
                 >
                 <ImageView
                     android:layout_width="150dp"
@@ -120,7 +113,8 @@
                         android:layout_height="wrap_content"
                         android:text="@string/batman_title"
                         android:layout_marginBottom="10dp"
-                        android:tag="film_title">
+                        android:tag="film_title"
+                        style="@style/PreviewFilmTitle">>
                     </TextView>
                     <Button
                         android:id="@+id/show_more3"
