@@ -1,6 +1,8 @@
 package ru.otus.cineman.activity
 
 import android.app.Activity
+import android.app.AlertDialog
+import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
@@ -129,6 +131,21 @@ class PreviewFilmsActivity : AppCompatActivity() {
         super.onSaveInstanceState(outState)
         val filmsToSave: ArrayList<Film> = ArrayList(films.values)
         outState.putParcelableArrayList(FILMS_STORED, filmsToSave)
+    }
+
+    override fun onBackPressed() {
+        AlertDialog.Builder(this).apply {
+            setMessage(resources.getText(R.string.need_exit))
+                .setCancelable(false)
+                .setPositiveButton(resources.getText(R.string.yes_answer)) { _, _ ->
+                    finish()
+                }
+                .setNegativeButton(resources.getText(R.string.no_answer)) { dialog, _ ->
+                    dialog.dismiss()
+                }
+                .create()
+                .show()
+        }
     }
 
     private fun setSelectedFilm(currentFilm: Film?) {

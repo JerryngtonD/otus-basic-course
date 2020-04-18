@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Cineman</string>
+    <string name="spider_man_title">Человек-Паук</string>
+    <string name="hulk_title">Хулк</string>
+    <string name="batman_title">Ватман</string>
+    <string name="more_button_title">Подробнее</string>
+    <string name="spider_man_description">" Человек-паук - крутой супергерой, который спасет мир от суперзлодеев."</string>
+    <string name="hulk_description">Хулк - просто радиационно здоровый человек, который хочет спасти мир от злых дядей.</string>
+    <string name="batman_description">Летучая мышь не просто животное. Ватман - герой, который не спит ночью. Бесстрашный темный рыцарь прогуливается по улицам Нью-Йорка, чтобы найти кого-нибудь и победить.</string>
+    <string name="like">Поставь лойс</string>
+    <string name="no_answer">Нет</string>
+    <string name="yes_answer">Да</string>
+    <string name="need_exit">Ты действительно хочешь покинуть это божественное приложение ?</string>
+    <string name="share">Поделись с другом</string>
+    <string name="leave_comment">Оставь свой комментарий</string>
+</resources>
