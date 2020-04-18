@@ -2,8 +2,9 @@ package ru.otus.cineman.activity
 
 import android.app.Activity
 import android.app.AlertDialog
-import android.content.DialogInterface
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -11,6 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatDelegate
 import mu.KLogging
 import ru.otus.cineman.R
 import ru.otus.cineman.model.Film
@@ -29,10 +31,15 @@ class PreviewFilmsActivity : AppCompatActivity() {
         // Коды восстановления при пересоздании активности
         const val FILMS_STORED = "FILMS_STORED"
 
-
+        const val NIGHT_MODE_PREFERENCES = "NIGHT_MODE_PREFS"
+        const val KEY_IS_NIGHT_MODE = "IS_NIGHT_MODE"
     }
 
+    var isNightMode = false
+
+    lateinit var sharedPreferences: SharedPreferences
     lateinit var shareButton: Button
+    lateinit var dayNightModeButton: Button
     lateinit var moreButtons: List<Button>
     lateinit var films: Map<Int, Film>
 
@@ -53,6 +60,19 @@ class PreviewFilmsActivity : AppCompatActivity() {
         startActivityForResult(intentFilmDetails, FILM_DETAILS_REQUEST_CODE)
     }
 
+    private val dayNightModeListener = View.OnClickListener {
+        if (isNightMode) {
+            AppCompatDelegate.setDefaultNightMode(
+                AppCompatDelegate.MODE_NIGHT_NO)
+            saveNightModeState(false)
+        } else {
+            AppCompatDelegate.setDefaultNightMode(
+                AppCompatDelegate.MODE_NIGHT_YES)
+            saveNightModeState(true)
+        }
+        recreate()
+    }
+
     private val shareListener = View.OnClickListener { _ ->
         logger.info { "Share app with your friends" }
     }
@@ -60,6 +80,13 @@ class PreviewFilmsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.preview_films)
+
+
+        sharedPreferences = getSharedPreferences(NIGHT_MODE_PREFERENCES, Context.MODE_PRIVATE)
+        dayNightModeButton = findViewById(R.id.day_night_mode)
+        dayNightModeButton.setOnClickListener(dayNightModeListener)
+
+        checkNightModeIsActivated()
 
         films = mapOf(
             R.id.spider_man to Film(
@@ -161,5 +188,23 @@ class PreviewFilmsActivity : AppCompatActivity() {
             it.isSelected = false
             findViewById<TextView>(it.id).setTextColor(Color.RED)
         }
+    }
+
+    private fun checkNightModeIsActivated() {
+        if(sharedPreferences.getBoolean(KEY_IS_NIGHT_MODE, false)) {
+            AppCompatDelegate.setDefaultNightMode(
+                AppCompatDelegate.MODE_NIGHT_YES)
+            isNightMode = true
+        } else {
+            AppCompatDelegate.setDefaultNightMode(
+                AppCompatDelegate.MODE_NIGHT_NO)
+            isNightMode = false
+        }
+    }
+
+    private fun saveNightModeState(isCheckedNightMode: Boolean) {
+        sharedPreferences.edit().apply {
+            putBoolean(KEY_IS_NIGHT_MODE, isCheckedNightMode)
+        }.apply()
     }
 }
