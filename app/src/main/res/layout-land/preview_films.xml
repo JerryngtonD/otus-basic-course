@@ -3,9 +3,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="horizontal"
-    tools:context=".activity.PreviewFilmsActivity"
-    >
+    android:orientation="vertical"
+    tools:context=".activity.PreviewFilmsActivity">
+
+    <Button
+        android:id="@+id/day_night_mode"
+        android:layout_width="42dp"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:drawableStart="@drawable/light_mode" />
 
     <ScrollView
         android:layout_width="match_parent"
@@ -15,101 +21,101 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:orientation="horizontal">
+            android:gravity="center"
+            android:layout_gravity="center_horizontal"
+            android:orientation="vertical">
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
-                android:orientation="vertical">
-
-                <ImageView
-                    android:layout_width="150dp"
-                    android:layout_height="200dp"
-                    android:adjustViewBounds="true"
-                    android:scaleType="fitCenter"
-                    android:src="@drawable/spiderman"></ImageView>
+                android:layout_gravity="center"
+                android:orientation="horizontal">
 
                 <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_horizontal"
-                    android:orientation="vertical">
+                    style="@style/PreviewFilm">
 
-                    <TextView
-                        android:id="@+id/spider_man"
+                    <ImageView
+                        android:layout_width="150dp"
+                        android:layout_height="200dp"
+                        android:adjustViewBounds="true"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/spiderman" />
+
+                    <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="10dp"
-                        android:tag="film_title"
-                        android:text="@string/spider_man_title"></TextView>
+                        android:gravity="center_horizontal"
+                        android:orientation="vertical">
 
-                    <Button
-                        android:id="@+id/show_more1"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/more"
-                        android:drawablePadding="3dp"
-                        android:minWidth="30dp"
-                        android:minHeight="30dp"
-                        android:padding="3dp"
-                        android:text="@string/more_button_title" />
+                        <TextView
+                            android:id="@+id/spider_man"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="10dp"
+                            android:tag="film_title"
+                            android:text="@string/spider_man_title" />
+
+                        <Button
+                            android:id="@+id/show_more1"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/more"
+                            android:drawablePadding="3dp"
+                            android:minWidth="30dp"
+                            android:minHeight="30dp"
+                            android:padding="3dp"
+                            android:text="@string/more_button_title" />
+                    </LinearLayout>
                 </LinearLayout>
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
-                android:orientation="vertical">
-
-                <ImageView
-                    android:layout_width="150dp"
-                    android:layout_height="200dp"
-                    android:adjustViewBounds="true"
-                    android:scaleType="fitCenter"
-                    android:src="@drawable/hulk"></ImageView>
 
                 <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_horizontal"
-                    android:orientation="vertical">
+                    style="@style/PreviewFilm">
+                    <ImageView
+                        android:layout_width="150dp"
+                        android:layout_height="200dp"
+                        android:adjustViewBounds="true"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/hulk" />
 
-                    <TextView
-                        android:id="@+id/hulk"
+                    <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="10dp"
-                        android:tag="film_title"
-                        android:text="@string/hulk_title"></TextView>
+                        android:gravity="center_horizontal"
+                        android:orientation="vertical">
 
-                    <Button
-                        android:id="@+id/show_more2"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/more"
-                        android:drawablePadding="3dp"
-                        android:minWidth="30dp"
-                        android:minHeight="30dp"
-                        android:padding="3dp"
-                        android:text="@string/more_button_title" />
+                        <TextView
+                            android:id="@+id/hulk"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="10dp"
+                            android:tag="film_title"
+                            android:text="@string/hulk_title" />
+
+                        <Button
+                            android:id="@+id/show_more2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/more"
+                            android:drawablePadding="3dp"
+                            android:minWidth="30dp"
+                            android:minHeight="30dp"
+                            android:padding="3dp"
+                            android:text="@string/more_button_title" />
+                    </LinearLayout>
                 </LinearLayout>
+
             </LinearLayout>
 
+
             <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
-                android:orientation="vertical">
+                style="@style/PreviewFilm">
 
                 <ImageView
                     android:layout_width="150dp"
                     android:layout_height="200dp"
                     android:adjustViewBounds="true"
                     android:scaleType="fitCenter"
-                    android:src="@drawable/batman"></ImageView>
+                    android:src="@drawable/batman" />
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -123,7 +129,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="10dp"
                         android:tag="film_title"
-                        android:text="@string/batman_title"></TextView>
+                        android:text="@string/batman_title" />
 
                     <Button
                         android:id="@+id/show_more3"
@@ -137,11 +143,14 @@
                         android:text="@string/more_button_title" />
                 </LinearLayout>
             </LinearLayout>
+
             <Button
                 android:id="@+id/share"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/share"/>
+                android:text="@string/share"
+                android:drawableStart="@drawable/share">
+            </Button>
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

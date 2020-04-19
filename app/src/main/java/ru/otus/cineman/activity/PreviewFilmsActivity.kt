@@ -1,7 +1,10 @@
 package ru.otus.cineman.activity
 
 import android.app.Activity
+import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -9,6 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatDelegate
 import mu.KLogging
 import ru.otus.cineman.R
 import ru.otus.cineman.model.Film
@@ -27,10 +31,15 @@ class PreviewFilmsActivity : AppCompatActivity() {
         // Коды восстановления при пересоздании активности
         const val FILMS_STORED = "FILMS_STORED"
 
-
+        const val NIGHT_MODE_PREFERENCES = "NIGHT_MODE_PREFS"
+        const val KEY_IS_NIGHT_MODE = "IS_NIGHT_MODE"
     }
 
+    var isNightMode = false
+
+    lateinit var sharedPreferences: SharedPreferences
     lateinit var shareButton: Button
+    lateinit var dayNightModeButton: Button
     lateinit var moreButtons: List<Button>
     lateinit var films: Map<Int, Film>
 
@@ -38,7 +47,7 @@ class PreviewFilmsActivity : AppCompatActivity() {
         val parentWrapper = view.parent as ViewGroup
         val textView = parentWrapper.findViewWithTag<TextView>(FILMS_TITLE_TAG)
         val currentFilm = films[textView.id]
-        setSelectedFilm(textView, currentFilm)
+        setSelectedFilm(currentFilm)
 
         logger.info { textView.text }
 
@@ -51,6 +60,19 @@ class PreviewFilmsActivity : AppCompatActivity() {
         startActivityForResult(intentFilmDetails, FILM_DETAILS_REQUEST_CODE)
     }
 
+    private val dayNightModeListener = View.OnClickListener {
+        if (isNightMode) {
+            AppCompatDelegate.setDefaultNightMode(
+                AppCompatDelegate.MODE_NIGHT_NO)
+            saveNightModeState(false)
+        } else {
+            AppCompatDelegate.setDefaultNightMode(
+                AppCompatDelegate.MODE_NIGHT_YES)
+            saveNightModeState(true)
+        }
+        recreate()
+    }
+
     private val shareListener = View.OnClickListener { _ ->
         logger.info { "Share app with your friends" }
     }
@@ -58,6 +80,13 @@ class PreviewFilmsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.preview_films)
+
+
+        sharedPreferences = getSharedPreferences(NIGHT_MODE_PREFERENCES, Context.MODE_PRIVATE)
+        dayNightModeButton = findViewById(R.id.day_night_mode)
+        dayNightModeButton.setOnClickListener(dayNightModeListener)
+
+        checkNightModeIsActivated()
 
         films = mapOf(
             R.id.spider_man to Film(
@@ -102,12 +131,8 @@ class PreviewFilmsActivity : AppCompatActivity() {
             it.id to it
         }?.toMap() ?: emptyMap()
 
-
         val selectedFilm = films.values.filter { it.isSelected }.takeIf { it.isNotEmpty() }?.first()
-            ?: return
-
-        val chosenTextViewFilm = findViewById<TextView>(selectedFilm.id)
-        setSelectedFilm(chosenTextViewFilm, selectedFilm)
+        setSelectedFilm(selectedFilm)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -135,12 +160,51 @@ class PreviewFilmsActivity : AppCompatActivity() {
         outState.putParcelableArrayList(FILMS_STORED, filmsToSave)
     }
 
-    private fun setSelectedFilm(textView: TextView, currentFilm: Film?) {
+    override fun onBackPressed() {
+        AlertDialog.Builder(this).apply {
+            setMessage(resources.getText(R.string.need_exit))
+                .setCancelable(false)
+                .setPositiveButton(resources.getText(R.string.yes_answer)) { _, _ ->
+                    finish()
+                }
+                .setNegativeButton(resources.getText(R.string.no_answer)) { dialog, _ ->
+                    dialog.dismiss()
+                }
+                .create()
+                .show()
+        }
+    }
+
+    private fun setSelectedFilm(currentFilm: Film?) {
+        createdDefaultAppearance()
+        if (currentFilm != null) {
+            currentFilm.isSelected = true
+            findViewById<TextView>(currentFilm.id).setTextColor(Color.GREEN)
+        }
+    }
+
+    private fun createdDefaultAppearance() {
         films.values.forEach {
             it.isSelected = false
-            findViewById<TextView>(it.id).setTextColor(Color.BLACK)
+            findViewById<TextView>(it.id).setTextColor(Color.RED)
         }
-        currentFilm?.isSelected = true
-        textView.setTextColor(Color.GREEN)
+    }
+
+    private fun checkNightModeIsActivated() {
+        if(sharedPreferences.getBoolean(KEY_IS_NIGHT_MODE, false)) {
+            AppCompatDelegate.setDefaultNightMode(
+                AppCompatDelegate.MODE_NIGHT_YES)
+            isNightMode = true
+        } else {
+            AppCompatDelegate.setDefaultNightMode(
+                AppCompatDelegate.MODE_NIGHT_NO)
+            isNightMode = false
+        }
+    }
+
+    private fun saveNightModeState(isCheckedNightMode: Boolean) {
+        sharedPreferences.edit().apply {
+            putBoolean(KEY_IS_NIGHT_MODE, isCheckedNightMode)
+        }.apply()
     }
 }
