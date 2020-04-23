@@ -2,7 +2,7 @@ package ru.otus.cineman.model
 import android.os.Parcel
 import android.os.Parcelable
 
-data class Film(
+data class Movie(
     var id: Int,
     var titleId: Int,
     var imageId: Int,
@@ -33,12 +33,12 @@ data class Film(
 
     override fun describeContents(): Int = 0
 
-    companion object CREATOR : Parcelable.Creator<Film> {
-        override fun createFromParcel(parcel: Parcel): Film {
-            return Film(parcel)
+    companion object CREATOR : Parcelable.Creator<Movie> {
+        override fun createFromParcel(parcel: Parcel): Movie {
+            return Movie(parcel)
         }
 
-        override fun newArray(size: Int): Array<Film?> {
+        override fun newArray(size: Int): Array<Movie?> {
             return arrayOfNulls(size)
         }
     }

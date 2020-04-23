@@ -15,7 +15,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatDelegate
 import mu.KLogging
 import ru.otus.cineman.R
-import ru.otus.cineman.model.Film
+import ru.otus.cineman.model.Movie
 
 class PreviewFilmsActivity : AppCompatActivity() {
     companion object : KLogging() {
@@ -41,7 +41,7 @@ class PreviewFilmsActivity : AppCompatActivity() {
     lateinit var shareButton: Button
     lateinit var dayNightModeButton: Button
     lateinit var moreButtons: List<Button>
-    lateinit var films: Map<Int, Film>
+    lateinit var films: Map<Int, Movie>
 
     private val clickListener = View.OnClickListener { view ->
         val parentWrapper = view.parent as ViewGroup
@@ -89,21 +89,21 @@ class PreviewFilmsActivity : AppCompatActivity() {
         checkNightModeIsActivated()
 
         films = mapOf(
-            R.id.spider_man to Film(
+            R.id.spider_man to Movie(
                 id = R.id.spider_man,
                 titleId = R.string.spider_man_title,
                 imageId = R.drawable.spiderman,
                 descriptionId = R.string.spider_man_description
             ),
 
-            R.id.hulk to Film(
+            R.id.hulk to Movie(
                 id = R.id.hulk,
                 titleId = R.string.hulk_title,
                 imageId = R.drawable.hulk,
                 descriptionId = R.string.hulk_description
             ),
 
-            R.id.batman to Film(
+            R.id.batman to Movie(
                 id = R.id.batman,
                 titleId = R.string.batman_title,
                 imageId = R.drawable.batman,
@@ -126,7 +126,7 @@ class PreviewFilmsActivity : AppCompatActivity() {
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
-        val restoredFilms = savedInstanceState.getParcelableArrayList<Film>(FILMS_STORED)
+        val restoredFilms = savedInstanceState.getParcelableArrayList<Movie>(FILMS_STORED)
         films = restoredFilms?.map {
             it.id to it
         }?.toMap() ?: emptyMap()
@@ -156,7 +156,7 @@ class PreviewFilmsActivity : AppCompatActivity() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        val filmsToSave: ArrayList<Film> = ArrayList(films.values)
+        val filmsToSave: ArrayList<Movie> = ArrayList(films.values)
         outState.putParcelableArrayList(FILMS_STORED, filmsToSave)
     }
 
@@ -175,11 +175,11 @@ class PreviewFilmsActivity : AppCompatActivity() {
         }
     }
 
-    private fun setSelectedFilm(currentFilm: Film?) {
+    private fun setSelectedFilm(currentMovie: Movie?) {
         createdDefaultAppearance()
-        if (currentFilm != null) {
-            currentFilm.isSelected = true
-            findViewById<TextView>(currentFilm.id).setTextColor(Color.GREEN)
+        if (currentMovie != null) {
+            currentMovie.isSelected = true
+            findViewById<TextView>(currentMovie.id).setTextColor(Color.GREEN)
         }
     }
 
