@@ -23,7 +23,7 @@ class PreviewFilmsActivity : AppCompatActivity() {
 
         const val FILM_DETAILS_REQUEST_CODE = 12345
 
-        // Заголовки при отправке дополнительной информации в/из FilmDetailsActivity
+        // Заголовки при отправке дополнительной информации в/из MovieDetailsActivity
         const val IS_LIKED = "IS_LIKED"
         const val USER_COMMENT = "USER_COMMENT"
         const val FILM_ID = "FILM_ID"
@@ -51,7 +51,7 @@ class PreviewFilmsActivity : AppCompatActivity() {
 
         logger.info { textView.text }
 
-        val intentFilmDetails = Intent(this, FilmDetailsActivity::class.java)
+        val intentFilmDetails = Intent(this, MovieDetailsActivity::class.java)
         intentFilmDetails.putExtra("film_id", currentFilm?.id)
         intentFilmDetails.putExtra("image_id", currentFilm?.imageId)
         intentFilmDetails.putExtra("film_description", currentFilm?.descriptionId)
@@ -79,7 +79,7 @@ class PreviewFilmsActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.preview_films)
+        setContentView(R.layout.preview_movies)
 
 
         sharedPreferences = getSharedPreferences(NIGHT_MODE_PREFERENCES, Context.MODE_PRIVATE)

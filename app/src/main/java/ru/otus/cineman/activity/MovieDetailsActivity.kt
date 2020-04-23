@@ -16,7 +16,7 @@ import ru.otus.cineman.activity.PreviewFilmsActivity.Companion.FILM_ID
 import ru.otus.cineman.activity.PreviewFilmsActivity.Companion.IS_LIKED
 import ru.otus.cineman.activity.PreviewFilmsActivity.Companion.USER_COMMENT
 
-class FilmDetailsActivity : AppCompatActivity() {
+class MovieDetailsActivity : AppCompatActivity() {
     companion object : KLogging()
 
     lateinit var isLikedFilm: CheckBox
@@ -25,7 +25,7 @@ class FilmDetailsActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.film_details)
+        setContentView(R.layout.movie_details)
         supportActionBar?.setDisplayHomeAsUpEnabled(true);
 
         filmId = intent.getIntExtra("film_id", Int.MAX_VALUE)
