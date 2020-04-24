@@ -3,6 +3,7 @@ package ru.otus.cineman.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import androidx.recyclerview.widget.RecyclerView
 import ru.otus.cineman.R
 import ru.otus.cineman.model.MovieItem
@@ -23,9 +24,6 @@ class MovieItemAdapter(
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (holder is MovieItemViewHolder) {
-            val movieItem = items[position]
-
-
             holder.itemView.findViewById<View>(R.id.show_more)
                 .setOnClickListener {
                     listener.onMoreClick(position)
@@ -41,8 +39,11 @@ class MovieItemAdapter(
                     listener.onDeleteFromFavorites(position)
                 }
 
+            val movieItem = items[position]
             holder.bind(movieItem)
         }
+
+
     }
 
     interface OnMovieCLickListener {

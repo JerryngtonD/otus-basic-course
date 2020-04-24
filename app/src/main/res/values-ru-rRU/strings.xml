@@ -76,6 +76,11 @@
         с аморфной жидкоподобной формой, который выживает, общаясь с хозяином, обычно человеком.
     </string>
 
+    <string name="incognito_title">Что-то</string>
+    <string name="incognito_description">
+        Что-то в описании.
+    </string>
+
     //Buttons and other elements
     <string name="more_button_title">Подробнее</string>
     <string name="like">Поставь лойс</string>

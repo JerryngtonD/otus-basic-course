@@ -18,12 +18,11 @@ import androidx.recyclerview.widget.RecyclerView
 import mu.KLogging
 import ru.otus.cineman.R
 import ru.otus.cineman.adapter.MovieItemAdapter
+import ru.otus.cineman.animation.CustomItemAnimator
 import ru.otus.cineman.model.MovieItem
 
 class PreviewMoviesActivity : AppCompatActivity() {
     companion object : KLogging() {
-        const val FILMS_TITLE_TAG = "film_title"
-
         const val FILM_DETAILS_REQUEST_CODE = 12345
 
         // Заголовки при отправке дополнительной информации в/из MovieDetailsActivity
@@ -37,6 +36,8 @@ class PreviewMoviesActivity : AppCompatActivity() {
 
         const val NIGHT_MODE_PREFERENCES = "NIGHT_MODE_PREFS"
         const val KEY_IS_NIGHT_MODE = "IS_NIGHT_MODE"
+
+        const val ANIMATE_INDEX_POSITION = 1
     }
 
     var isNightMode = false
@@ -44,8 +45,10 @@ class PreviewMoviesActivity : AppCompatActivity() {
     lateinit var sharedPreferences: SharedPreferences
     lateinit var shareButton: View
     lateinit var favoritesButton: View
+    lateinit var addNewButton: View
     lateinit var dayNightModeButton: View
-    lateinit var movies: List<MovieItem>
+    lateinit var movies: MutableList<MovieItem>
+    lateinit var adapter: MovieItemAdapter
 
     private val dayNightModeListener = View.OnClickListener {
         if (isNightMode) {
@@ -76,8 +79,11 @@ class PreviewMoviesActivity : AppCompatActivity() {
             }
         } else {
             val intentFilmFavorites =
-                Intent(this@PreviewMoviesActivity,  FavoriteMoviesActivity::class.java)
-            intentFilmFavorites.putParcelableArrayListExtra(FAVORITE_MOVIES, ArrayList(favoriteMovies))
+                Intent(this@PreviewMoviesActivity, FavoriteMoviesActivity::class.java)
+            intentFilmFavorites.putParcelableArrayListExtra(
+                FAVORITE_MOVIES,
+                ArrayList(favoriteMovies)
+            )
             startActivity(intentFilmFavorites)
         }
     }
@@ -95,11 +101,12 @@ class PreviewMoviesActivity : AppCompatActivity() {
         processThemeMode()
         setShareClickListener()
         setFavoritesClickListener()
+        setAddNewButtonListener()
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
-        movies = savedInstanceState.getParcelableArrayList<MovieItem>(FILMS_STORED)?.toList()
-            ?: emptyList()
+        movies = savedInstanceState.getParcelableArrayList<MovieItem>(FILMS_STORED)?.toMutableList()
+            ?: mutableListOf()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -163,8 +170,8 @@ class PreviewMoviesActivity : AppCompatActivity() {
         }.apply()
     }
 
-    private fun initializeMovies(): List<MovieItem> {
-        return listOf(
+    private fun initializeMovies(): MutableList<MovieItem> {
+        return mutableListOf(
             MovieItem(
                 titleId = R.string.spider_man_title,
                 imageId = R.drawable.spiderman,
@@ -267,7 +274,40 @@ class PreviewMoviesActivity : AppCompatActivity() {
         itemDecoration.setDrawable(getDrawable(R.drawable.divider)!!)
         recycler.addItemDecoration(itemDecoration)
 
-        recycler.adapter = MovieItemAdapter(LayoutInflater.from(this), movies, object :
+        recycler.itemAnimator = CustomItemAnimator()
+
+        adapter = createAdapter(recycler)
+        recycler.adapter = adapter
+    }
+
+    private fun getLayoutManager(): RecyclerView.LayoutManager {
+        val currentOrientation = resources.configuration.orientation
+        return if (currentOrientation == Configuration.ORIENTATION_PORTRAIT)
+            LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+        else GridLayoutManager(this, 2)
+    }
+
+
+    private fun processThemeMode() {
+        sharedPreferences = getSharedPreferences(NIGHT_MODE_PREFERENCES, Context.MODE_PRIVATE)
+        dayNightModeButton = findViewById(R.id.day_night_mode)
+        dayNightModeButton.setOnClickListener(dayNightModeListener)
+
+        checkNightModeIsActivated()
+    }
+
+    private fun setShareClickListener() {
+        shareButton = findViewById(R.id.share)
+        shareButton.setOnClickListener(shareListener)
+    }
+
+    private fun setFavoritesClickListener() {
+        favoritesButton = findViewById(R.id.favorites)
+        favoritesButton.setOnClickListener(favoritesClickListener)
+    }
+
+    private fun createAdapter(recycler: RecyclerView): MovieItemAdapter {
+        return MovieItemAdapter(LayoutInflater.from(this), movies, object :
             MovieItemAdapter.OnMovieCLickListener {
             override fun onMoreClick(position: Int) {
                 movies.forEach {
@@ -302,29 +342,16 @@ class PreviewMoviesActivity : AppCompatActivity() {
         })
     }
 
-    private  fun getLayoutManager() : RecyclerView.LayoutManager {
-        val currentOrientation = resources.configuration.orientation
-        return if (currentOrientation == Configuration.ORIENTATION_PORTRAIT)
-            LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
-        else GridLayoutManager(this, 2)
-    }
+    private fun setAddNewButtonListener() {
+        addNewButton = findViewById(R.id.add_new)
+        addNewButton.setOnClickListener {
+            movies.add(ANIMATE_INDEX_POSITION,  MovieItem(
+                titleId = R.string.incognito_title,
+                imageId = R.drawable.incognito,
+                descriptionId = R.string.incognito_description
+            ))
+            adapter.notifyItemInserted(ANIMATE_INDEX_POSITION)
+        }
 
-
-    private fun processThemeMode() {
-        sharedPreferences = getSharedPreferences(NIGHT_MODE_PREFERENCES, Context.MODE_PRIVATE)
-        dayNightModeButton = findViewById(R.id.day_night_mode)
-        dayNightModeButton.setOnClickListener(dayNightModeListener)
-
-        checkNightModeIsActivated()
-    }
-
-    private fun setShareClickListener() {
-        shareButton = findViewById(R.id.share)
-        shareButton.setOnClickListener(shareListener)
-    }
-
-    private fun setFavoritesClickListener() {
-        favoritesButton = findViewById(R.id.favorites)
-        favoritesButton.setOnClickListener(favoritesClickListener)
     }
 }

@@ -82,6 +82,11 @@
         sentient alien Symbiote with an amorphous, liquid-like form, who survives by bonding with a host, usually human.
     </string>
 
+    <string name="incognito_title">Some</string>
+    <string name="incognito_description">
+        Some description.
+    </string>
+
     //Buttons and other elements
     <string name="more_button_title">More</string>
     <string name="like">Like if you want</string>
