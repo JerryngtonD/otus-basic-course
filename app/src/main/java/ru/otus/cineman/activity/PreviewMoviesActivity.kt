@@ -11,6 +11,7 @@ import android.view.LayoutInflater
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -261,6 +262,10 @@ class PreviewMoviesActivity : AppCompatActivity() {
         val recycler = findViewById<RecyclerView>(R.id.recyclerView)
         val layoutManager = getLayoutManager()
         recycler.layoutManager = layoutManager
+
+        val itemDecoration = DividerItemDecoration(this, DividerItemDecoration.VERTICAL)
+        itemDecoration.setDrawable(getDrawable(R.drawable.divider)!!)
+        recycler.addItemDecoration(itemDecoration)
 
         recycler.adapter = MovieItemAdapter(LayoutInflater.from(this), movies, object :
             MovieItemAdapter.OnMovieCLickListener {
