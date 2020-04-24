@@ -1,23 +1,95 @@
 <resources>
     <string name="app_name">Cineman</string>
+    //Movies info
     <string name="spider_man_title">Spider-Man</string>
-    <string name="hulk_title">Hulk</string>
-    <string name="batman_title">Batman</string>
-    <string name="more_button_title">More</string>
     <string name="spider_man_description">Spider-Man is a cool superhero who will save the world from supervillains.
         Watch how the hero became who he is now.
     </string>
+
+    <string name="hulk_title">Hulk</string>
     <string name="hulk_description">The Hulk is just a radiation healthy man who wants to save the world from evil uncles.
         He seeks to destroy everything in the way, sometimes not realizing how much evil he is doing.
         Do not drink low-quality alcohol - the main message of the film, as you can become like the Hulk.
     </string>
+
+    <string name="batman_title">Batman</string>
     <string name="batman_description">Bat is not just an animal. Batman is a hero who does not sleep at night.
         Fearless dark knight strolling through the streets of New York in order to find someone and beat.
     </string>
+
+    <string name="antman_title">Antman</string>
+    <string name="antman_description">Antman rescues Marvel heroes straight from the micro-universe, he is smart and picky in weapons,
+        can be reduced to incredibly tiny sizes, although the mass and the ant can produce strong blows that are unusual for humans.
+    </string>
+
+    <string name="artas_title">Artas</string>
+    <string name="artas_description">Arthas Menethil, Crown Prince of Lordaeron and Knight of the Silver Hand,
+        was the son of King Terenas Menethil II and heir to the kingdom\'s throne.
+        He was trained as a paladin by Uther the Lightbringer and became inducted into the Knights of the Silver Hand.
+    </string>
+
+    <string name="asterix_title">Asterix</string>
+    <string name="asterix_description">Asterix is a diminutive but fearless and cunning warrior, ever eager for new adventures.
+        He lives around 50 BC in a fictional village in northwest Armorica (a region of ancient Gaul mostly equivalent to modern Brittany).
+    </string>
+
+    <string name="bart_title">Bart Simpson</string>
+    <string name="bart_description">Bart is the mischievous, rebellious, misunderstood, disruptive and "potentially dangerous" eldest child.
+        He is the only son of Homer and Marge Simpson, and the older brother of Lisa and Maggie.
+    </string>
+
+    <string name="cat_woman_title">Cat Woman</string>
+    <string name="cat_woman_description">
+        Catwoman, cartoon character, a wily and agile professional thief and sometime love interest of superhero Batman.
+        Clad in a skintight bodysuit and stylized mask and carrying a whip, Selina Kyle, also known as Catwoman,
+        has frequently crossed and recrossed the line between villain and antiheroine.
+    </string>
+
+    <string name="cool_man_title">Chuck Norris</string>
+    <string name="cool_man_description">
+        I am the great.
+    </string>
+
+    <string name="doctor_strange_title">Doctor Strange</string>
+    <string name="doctor_strange_description">
+        Doctor Strange is a practicing magician who draws his powers from mystical entities such as Agamotto, Cyttorak,
+        Ikonn, Oshtur, Raggadorr, and Watoomb, who lend their energies for spells.
+    </string>
+
+    <string name="gomer_title">Gomer Simpson</string>
+    <string name="gomer_description">
+       Homer is an alcohol addict who has a wife, Marge and three children - Maggie, Lisa and Bart. Homer is something of a gourmand and loves to eat.
+        His boss Mr. Burns is a thousand-year-old power plant owner with a faithful assistant, Waylon Smithers, who would do anything for Mr.
+    </string>
+
+    <string name="mummy_title">Mummy</string>
+    <string name="mummy_description">
+     The Mummy is a 1999 American action horror film written and directed by Stephen Sommers. …
+        The film follows adventurer Rick O\'Connell as he travels to Hamunaptra, the city of the dead, with a librarian and her brother,
+        where they accidentally awaken Imhotep, a cursed high priest from the reign of the pharaoh Seti I.
+    </string>
+
+    <string name="tanos_title">Tanos</string>
+    <string name="tanos_description">
+    Thanos is a mutant member of the race of superhumans known as the Titanian Eternals. The character possesses abilities common to the Eternals,
+        but amplified to a higher degree through a combination of his mutant–Eternal heritage, bionic amplification, mysticism, and power bestowed by the
+        abstract entity, Death.
+    </string>
+
+    <string name="venom_title">Venom</string>
+    <string name="venom_description">
+   Venom is a fictional character appearing in American comic books published by Marvel Comics, commonly in association with Spider-Man. The character is a
+        sentient alien Symbiote with an amorphous, liquid-like form, who survives by bonding with a host, usually human.
+    </string>
+
+    //Buttons and other elements
+    <string name="more_button_title">More</string>
     <string name="like">Like if you want</string>
     <string name="leave_comment">Leave your comment…</string>
     <string name="share">Share with friend</string>
     <string name="need_exit">Are you really want to exit from app ?</string>
     <string name="yes_answer">Yes</string>
     <string name="no_answer">No</string>
+    <string name="ok">OK</string>
+    <string name="favorites_empty">Favorites are empty!</string>
 </resources>

@@ -10,9 +10,10 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".activity.MovieDetailsActivity">
-
         </activity>
-        <activity android:name=".activity.PreviewFilmsActivity">
+        <activity android:name=".activity.FavoriteMoviesActivity">
+        </activity>
+        <activity android:name=".activity.PreviewMoviesActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
