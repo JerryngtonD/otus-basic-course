@@ -2,43 +2,43 @@ package ru.otus.cineman.model
 import android.os.Parcel
 import android.os.Parcelable
 
-data class Film(
-    var id: Int,
+data class MovieItem(
     var titleId: Int,
     var imageId: Int,
     var descriptionId: Int,
     var isSelected: Boolean = false,
     var isLiked: Boolean = false,
-    var comment: String? = ""
+    var comment: String? = "",
+    var isFavorite: Boolean = false
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readInt(),
         parcel.readInt(),
         parcel.readInt(),
-        parcel.readInt(),
         parcel.readByte() != 0.toByte(),
         parcel.readByte() != 0.toByte(),
-        parcel.readString()
+        parcel.readString(),
+        parcel.readByte() != 0.toByte()
     )
 
     override fun writeToParcel(out: Parcel?, id: Int) {
-        out?.writeInt(this.id)
         out?.writeInt(titleId)
         out?.writeInt(imageId)
         out?.writeInt(descriptionId)
         out?.writeByte((if (isSelected) 0 else 1).toByte())
         out?.writeByte((if (isLiked) 0 else 1).toByte())
         out?.writeString(comment)
+        out?.writeByte((if (isSelected) 0 else 1).toByte())
     }
 
     override fun describeContents(): Int = 0
 
-    companion object CREATOR : Parcelable.Creator<Film> {
-        override fun createFromParcel(parcel: Parcel): Film {
-            return Film(parcel)
+    companion object CREATOR : Parcelable.Creator<MovieItem> {
+        override fun createFromParcel(parcel: Parcel): MovieItem {
+            return MovieItem(parcel)
         }
 
-        override fun newArray(size: Int): Array<Film?> {
+        override fun newArray(size: Int): Array<MovieItem?> {
             return arrayOfNulls(size)
         }
     }
