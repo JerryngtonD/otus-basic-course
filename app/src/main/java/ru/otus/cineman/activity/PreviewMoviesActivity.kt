@@ -95,7 +95,8 @@ class PreviewMoviesActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.preview_movies)
-        movies = initializeMovies()
+        movies = savedInstanceState?.getParcelableArrayList<MovieItem>(FILMS_STORED)?.toMutableList()
+            ?: initializeMovies()
 
         initRecycler()
         processThemeMode()
