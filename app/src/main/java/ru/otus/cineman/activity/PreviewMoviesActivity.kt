@@ -328,15 +328,9 @@ class PreviewMoviesActivity : AppCompatActivity() {
                 startActivityForResult(intentFilmDetails, FILM_DETAILS_REQUEST_CODE)
             }
 
-            override fun onSaveToFavorites(position: Int) {
+            override fun onChangeFvoriteStatus(position: Int) {
                 val selectedFavoriteMovie = movies[position]
                 selectedFavoriteMovie.isFavorite = !selectedFavoriteMovie.isFavorite
-                recycler.adapter?.notifyDataSetChanged()
-            }
-
-            override fun onDeleteFromFavorites(position: Int) {
-                val isFavoriteMovie = movies[position]
-                isFavoriteMovie.isFavorite = false
                 recycler.adapter?.notifyDataSetChanged()
             }
         })
