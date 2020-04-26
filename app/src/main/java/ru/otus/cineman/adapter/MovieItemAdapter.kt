@@ -1,9 +1,10 @@
 package ru.otus.cineman.adapter
 
+import android.graphics.Color
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.AnimationUtils
 import androidx.recyclerview.widget.RecyclerView
 import ru.otus.cineman.R
 import ru.otus.cineman.model.MovieItem
@@ -14,6 +15,10 @@ class MovieItemAdapter(
     val items: List<MovieItem>,
     val listener: OnMovieCLickListener
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+    companion object {
+        const val ELAPSED_DELTA_TIME = 800
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return MovieItemViewHolder(inflater.inflate(R.layout.item_movie, parent, false))
     }
@@ -22,6 +27,7 @@ class MovieItemAdapter(
         return items.size
     }
 
+    var startTime: Long = 0
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (holder is MovieItemViewHolder) {
             holder.itemView.findViewById<View>(R.id.show_more)
@@ -29,10 +35,32 @@ class MovieItemAdapter(
                     listener.onMoreClick(position)
                 }
 
-            holder.itemView.setOnLongClickListener {
-                listener.onSaveToFavorites(position)
+            holder.itemView.setOnTouchListener {view, motionEvent ->
+                val action = motionEvent.action
+
+                if (action == MotionEvent.ACTION_DOWN) {
+                    startTime = motionEvent.eventTime
+                    holder.itemView.setBackgroundColor(Color.LTGRAY)
+                }
+
+                if (action == MotionEvent.ACTION_UP) {
+                    val elapseTime = motionEvent.eventTime - startTime
+                    holder.itemView.setBackgroundColor(Color.WHITE)
+                    if (elapseTime > ELAPSED_DELTA_TIME) {
+                        listener.onSaveToFavorites(position)
+                        startTime = 0
+                    }
+                }
+
                 true
             }
+
+            // Old variant without backlight
+
+//            holder.itemView.setOnLongClickListener {
+//                listener.onSaveToFavorites(position)
+//                true
+//            }
 
             holder.itemView.findViewById<View>(R.id.isFavorite)
                 .setOnClickListener {
