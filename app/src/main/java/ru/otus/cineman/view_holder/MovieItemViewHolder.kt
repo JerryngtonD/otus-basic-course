@@ -5,6 +5,7 @@ import android.view.View
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
 import ru.otus.cineman.R
 import ru.otus.cineman.model.MovieItem
@@ -34,6 +35,7 @@ class MovieItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     }
 
     fun setIsFavorite(movieItem: MovieItem) {
-        movieIsFavoriteIcon.visibility = if (movieItem.isFavorite) View.VISIBLE else View.INVISIBLE
+        val iconByIsFavorite = if (movieItem.isFavorite) R.drawable.favorite_on else R.drawable.favorite_off
+        movieIsFavoriteIcon.background = ResourcesCompat.getDrawable(itemView.resources, iconByIsFavorite, null)
     }
 }

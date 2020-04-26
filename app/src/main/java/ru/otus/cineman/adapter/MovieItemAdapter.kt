@@ -1,8 +1,6 @@
 package ru.otus.cineman.adapter
 
-import android.graphics.Color
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -32,12 +30,12 @@ class MovieItemAdapter(
 
             holder.itemView.findViewById<View>(R.id.movie_icon)
                 .setOnClickListener {
-                    listener.onSaveToFavorites(position)
+                    listener.onChangeFavoriteStatus(position)
             }
 
             holder.itemView.findViewById<View>(R.id.isFavorite)
                 .setOnClickListener {
-                    listener.onDeleteFromFavorites(position)
+                    listener.onChangeFavoriteStatus(position)
                 }
 
             val movieItem = items[position]
@@ -49,7 +47,6 @@ class MovieItemAdapter(
 
     interface OnMovieCLickListener {
         fun onMoreClick(position: Int)
-        fun onSaveToFavorites(position: Int)
-        fun onDeleteFromFavorites(position: Int)
+        fun onChangeFavoriteStatus(position: Int)
     }
 }

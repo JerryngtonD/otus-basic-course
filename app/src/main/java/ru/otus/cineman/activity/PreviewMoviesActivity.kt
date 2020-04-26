@@ -36,6 +36,7 @@ class PreviewMoviesActivity : AppCompatActivity() {
 
         const val NIGHT_MODE_PREFERENCES = "NIGHT_MODE_PREFS"
         const val KEY_IS_NIGHT_MODE = "IS_NIGHT_MODE"
+        const val RECYCLER_LAYOUT = "RECYCLER_LAYOUT"
 
         const val ANIMATE_INDEX_POSITION = 1
     }
@@ -48,7 +49,7 @@ class PreviewMoviesActivity : AppCompatActivity() {
     lateinit var addNewButton: View
     lateinit var dayNightModeButton: View
     lateinit var movies: MutableList<MovieItem>
-    lateinit var adapter: MovieItemAdapter
+    lateinit var recycler: RecyclerView
 
     private val dayNightModeListener = View.OnClickListener {
         if (isNightMode) {
@@ -95,18 +96,19 @@ class PreviewMoviesActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.preview_movies)
-        movies = initializeMovies()
+
+        movies = if (savedInstanceState != null) {
+            savedInstanceState.getParcelableArrayList<MovieItem>(FILMS_STORED)
+                ?.toMutableList() ?: mutableListOf()
+        } else {
+            initializeMovies()
+        }
 
         initRecycler()
         processThemeMode()
         setShareClickListener()
         setFavoritesClickListener()
         setAddNewButtonListener()
-    }
-
-    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
-        movies = savedInstanceState.getParcelableArrayList<MovieItem>(FILMS_STORED)?.toMutableList()
-            ?: mutableListOf()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -133,6 +135,12 @@ class PreviewMoviesActivity : AppCompatActivity() {
         super.onSaveInstanceState(outState)
         val filmsToSave: ArrayList<MovieItem> = ArrayList(movies)
         outState.putParcelableArrayList(FILMS_STORED, filmsToSave)
+        outState.putParcelable(RECYCLER_LAYOUT, recycler.layoutManager?.onSaveInstanceState())
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        recycler.layoutManager?.onRestoreInstanceState(savedInstanceState.getParcelable(RECYCLER_LAYOUT))
+        super.onRestoreInstanceState(savedInstanceState)
     }
 
     override fun onBackPressed() {
@@ -266,18 +274,15 @@ class PreviewMoviesActivity : AppCompatActivity() {
     }
 
     private fun initRecycler() {
-        val recycler = findViewById<RecyclerView>(R.id.recyclerView)
+        recycler = findViewById(R.id.recyclerView)
         val layoutManager = getLayoutManager()
         recycler.layoutManager = layoutManager
 
         val itemDecoration = DividerItemDecoration(this, DividerItemDecoration.VERTICAL)
         itemDecoration.setDrawable(getDrawable(R.drawable.divider)!!)
         recycler.addItemDecoration(itemDecoration)
-
         recycler.itemAnimator = CustomItemAnimator()
-
-        adapter = createAdapter(recycler)
-        recycler.adapter = adapter
+        recycler.adapter = createAdapter(recycler)
     }
 
     private fun getLayoutManager(): RecyclerView.LayoutManager {
@@ -328,15 +333,9 @@ class PreviewMoviesActivity : AppCompatActivity() {
                 startActivityForResult(intentFilmDetails, FILM_DETAILS_REQUEST_CODE)
             }
 
-            override fun onSaveToFavorites(position: Int) {
+            override fun onChangeFavoriteStatus(position: Int) {
                 val selectedFavoriteMovie = movies[position]
                 selectedFavoriteMovie.isFavorite = !selectedFavoriteMovie.isFavorite
-                recycler.adapter?.notifyDataSetChanged()
-            }
-
-            override fun onDeleteFromFavorites(position: Int) {
-                val isFavoriteMovie = movies[position]
-                isFavoriteMovie.isFavorite = false
                 recycler.adapter?.notifyDataSetChanged()
             }
         })
@@ -345,12 +344,14 @@ class PreviewMoviesActivity : AppCompatActivity() {
     private fun setAddNewButtonListener() {
         addNewButton = findViewById(R.id.add_new)
         addNewButton.setOnClickListener {
-            movies.add(ANIMATE_INDEX_POSITION,  MovieItem(
-                titleId = R.string.incognito_title,
-                imageId = R.drawable.incognito,
-                descriptionId = R.string.incognito_description
-            ))
-            adapter.notifyItemInserted(ANIMATE_INDEX_POSITION)
+            movies.add(
+                ANIMATE_INDEX_POSITION, MovieItem(
+                    titleId = R.string.incognito_title,
+                    imageId = R.drawable.incognito,
+                    descriptionId = R.string.incognito_description
+                )
+            )
+            recycler.adapter?.notifyItemInserted(ANIMATE_INDEX_POSITION)
         }
 
     }
