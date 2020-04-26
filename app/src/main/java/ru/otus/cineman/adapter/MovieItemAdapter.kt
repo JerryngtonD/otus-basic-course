@@ -15,6 +15,10 @@ class MovieItemAdapter(
     val items: List<MovieItem>,
     val listener: OnMovieCLickListener
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+    companion object {
+        const val ELAPSED_DELTA_TIME = 800
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return MovieItemViewHolder(inflater.inflate(R.layout.item_movie, parent, false))
     }
@@ -42,7 +46,7 @@ class MovieItemAdapter(
                 if (action == MotionEvent.ACTION_UP) {
                     val elapseTime = motionEvent.eventTime - startTime
                     holder.itemView.setBackgroundColor(Color.WHITE)
-                    if (elapseTime > 800) {
+                    if (elapseTime > ELAPSED_DELTA_TIME) {
                         listener.onSaveToFavorites(position)
                         startTime = 0
                     }
