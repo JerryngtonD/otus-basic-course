@@ -25,17 +25,17 @@ class MovieItemAdapter(
         if (holder is MovieItemViewHolder) {
             holder.itemView.findViewById<View>(R.id.show_more)
                 .setOnClickListener {
-                    listener.onMoreClick(position)
+                    listener.onMoreClick(items[position])
                 }
 
             holder.itemView.findViewById<View>(R.id.movie_icon)
                 .setOnClickListener {
-                    listener.onChangeFavoriteStatus(position)
+                    listener.onChangeFavoriteStatus(items[position])
             }
 
             holder.itemView.findViewById<View>(R.id.isFavorite)
                 .setOnClickListener {
-                    listener.onChangeFavoriteStatus(position)
+                    listener.onChangeFavoriteStatus(items[position])
                 }
 
             val movieItem = items[position]
@@ -51,7 +51,7 @@ class MovieItemAdapter(
     }
 
     interface OnMovieCLickListener {
-        fun onMoreClick(position: Int)
-        fun onChangeFavoriteStatus(position: Int)
+        fun onMoreClick(movieItem: MovieItem)
+        fun onChangeFavoriteStatus(movieItem: MovieItem)
     }
 }

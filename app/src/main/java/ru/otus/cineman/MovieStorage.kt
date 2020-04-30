@@ -82,21 +82,10 @@ class MovieStorage : Application() {
             ),
             //---------------------------------------------------//
             MovieItem(
-                titleId = R.string.hulk_title,
-                imageId = R.drawable.hulk,
-                descriptionId = R.string.hulk_description
-            ),
-            MovieItem(
                 titleId = R.string.mummy_title,
                 imageId = R.drawable.mummy,
                 descriptionId = R.string.mummy_description
             ),
-            MovieItem(
-                titleId = R.string.spider_man_title,
-                imageId = R.drawable.spiderman,
-                descriptionId = R.string.spider_man_description
-            ),
-            //---------------------------------------------------//
             MovieItem(
                 titleId = R.string.tanos_title,
                 imageId = R.drawable.tanos,
