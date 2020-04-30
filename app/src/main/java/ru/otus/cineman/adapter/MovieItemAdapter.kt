@@ -10,7 +10,7 @@ import ru.otus.cineman.view_holder.MovieItemViewHolder
 
 class MovieItemAdapter(
     val inflater: LayoutInflater,
-    val items: List<MovieItem>,
+    val items: MutableList<MovieItem>,
     val listener: OnMovieCLickListener
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -43,6 +43,11 @@ class MovieItemAdapter(
         }
 
 
+    }
+
+    fun add(position: Int, item: MovieItem) {
+        items.add(position, item)
+        notifyItemInserted(position)
     }
 
     interface OnMovieCLickListener {

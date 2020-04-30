@@ -99,7 +99,7 @@ class PreviewMoviesActivity : AppCompatActivity() {
 
         movies = if (savedInstanceState != null) {
             savedInstanceState.getParcelableArrayList<MovieItem>(FILMS_STORED)
-                ?.toMutableList() ?: mutableListOf()
+                ?.toMutableList() ?: throw Exception()
         } else {
             initializeMovies()
         }
@@ -344,14 +344,13 @@ class PreviewMoviesActivity : AppCompatActivity() {
     private fun setAddNewButtonListener() {
         addNewButton = findViewById(R.id.add_new)
         addNewButton.setOnClickListener {
-            movies.add(
+            (recycler.adapter as MovieItemAdapter).add(
                 ANIMATE_INDEX_POSITION, MovieItem(
                     titleId = R.string.incognito_title,
                     imageId = R.drawable.incognito,
                     descriptionId = R.string.incognito_description
                 )
             )
-            recycler.adapter?.notifyItemInserted(ANIMATE_INDEX_POSITION)
         }
 
     }
