@@ -2,22 +2,19 @@ package ru.otus.cineman.activity
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
 import ru.otus.cineman.R
 import ru.otus.cineman.fragment.*
 import ru.otus.cineman.model.MovieItem
 
 
-class PreviewMoviesActivity : AppCompatActivity(), MovieListListener {
+class PreviewMoviesActivity : AppCompatActivity(), MovieListListener, MovieDetailsListener {
     companion object {
         const val TAG = "MovieListFragment"
-    }
 
-    override fun onAttachFragment(fragment: Fragment) {
-        super.onAttachFragment(fragment)
-        if (fragment is MoviesListFragment) {
-            fragment.listener = this
-        }
+        // Just for check values from details fragment to pass into movies list fragment for update
+        const val IS_PREVIEW_MOVIES_UPDATED_BY_DETAILS = "IS_PREVIEW_MOVIES_UPDATED_BY_DETAILS"
+        const val UPDATED_COMMENT = "UPDATED_COMMENT"
+        const val UPDATED_IS_LIKED_STATUS = "UPDATED_IS_LIKED_STATUS"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,9 +31,7 @@ class PreviewMoviesActivity : AppCompatActivity(), MovieListListener {
         supportFragmentManager
             .beginTransaction()
             .replace(
-                R.id.fragmentContainer, MovieDetailsFragment.newInstance(movieItem).apply {
-                    listener = supportFragmentManager.findFragmentByTag(TAG) as MoviesListFragment
-                }, MovieDetailsFragment.TAG
+                R.id.fragmentContainer, MovieDetailsFragment.newInstance(movieItem), MovieDetailsFragment.TAG
             )
             .addToBackStack(null)
             .commit()
@@ -46,18 +41,22 @@ class PreviewMoviesActivity : AppCompatActivity(), MovieListListener {
         openMovieDetailsFragment(movieItem)
     }
 
-    override fun onBackPressed() {
-        checkBackIsPressedInFragments()
-        super.onBackPressed()
+    override fun onCloseMovieDetails(comment: String?, isLikedStatus: Boolean?) {
+        supportFragmentManager.popBackStack()
+
+        val updatedMovieListFragment = MoviesListFragment()
+        updatedMovieListFragment.arguments = Bundle().apply {
+            putBoolean(IS_PREVIEW_MOVIES_UPDATED_BY_DETAILS, true)
+            putBoolean( UPDATED_IS_LIKED_STATUS, isLikedStatus ?: false)
+            putString(UPDATED_COMMENT, comment)
+        }
+
+        supportFragmentManager
+            .beginTransaction()
+            .replace(R.id.fragmentContainer, updatedMovieListFragment, TAG)
+            .commit()
     }
 
-    private fun checkBackIsPressedInFragments() {
-        val fragments =
-            supportFragmentManager.fragments
-        for (f in fragments) {
-            if (f != null && f is BaseFragment) f.onBackPressed()
-        }
-    }
     //    companion object : KLogging() {
 //        const val FILM_DETAILS_REQUEST_CODE = 12345
 //

@@ -8,12 +8,13 @@ import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.recyclerview.widget.RecyclerView
+import androidx.activity.OnBackPressedCallback
+import androidx.fragment.app.Fragment
 import ru.otus.cineman.R
 import ru.otus.cineman.model.MovieItem
 import java.lang.Exception
 
-class MovieDetailsFragment : BaseFragment() {
+class MovieDetailsFragment : Fragment() {
     companion object {
         const val TAG = "MovieDetailsFragment"
 
@@ -36,6 +37,12 @@ class MovieDetailsFragment : BaseFragment() {
         }
     }
 
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        if (activity is MovieDetailsListener) {
+            listener = activity as MovieDetailsListener
+        }
+        super.onActivityCreated(savedInstanceState)
+    }
 
     var listener: MovieDetailsListener? = null
 
@@ -64,11 +71,14 @@ class MovieDetailsFragment : BaseFragment() {
         movieDescription?.setText(arguments?.getInt(MOVIE_DESCRIPTION) ?: throw Exception("Description value should be presented"))
         movieUserComment?.setText(arguments?.getString(MOVIE_COMMENT))
         isLikedStatusMovie?.isChecked = arguments?.getBoolean(IS_LIKED) ?: throw Exception("Like status should be presented")
-    }
 
-    override fun onBackPressed() {
-        listener?.onCloseMovieDetails(movieUserComment?.text.toString(), isLikedStatus = isLikedStatusMovie?.isChecked)
-        super.onBackPressed()
+        val callback = object : OnBackPressedCallback(true /** true means that the callback is enabled */) {
+            override fun handleOnBackPressed() {
+                listener?.onCloseMovieDetails(movieUserComment?.text.toString(), isLikedStatus = isLikedStatusMovie?.isChecked)
+            }
+        }
+
+        requireActivity().onBackPressedDispatcher.addCallback(this, callback)
     }
 }
 
