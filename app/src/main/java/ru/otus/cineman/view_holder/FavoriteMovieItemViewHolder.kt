@@ -18,7 +18,7 @@ class FavoriteMovieItemViewHolder(itemView: View) : RecyclerView.ViewHolder(item
     }
 
     fun setTitle(movieItem: MovieItem) {
-        movieTitle.text = itemView.resources.getString(movieItem.titleId)
+        movieTitle.text = movieItem.title
         movieTitle.setTextColor(Color.RED)
     }
 

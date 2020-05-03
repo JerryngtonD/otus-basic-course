@@ -42,13 +42,13 @@ class MovieItemAdapter(
             holder.bind(movieItem)
         }
 
-
     }
 
-    fun add(position: Int, item: MovieItem) {
-        items.add(position, item)
+    fun add(position: Int, movieItem: MovieItem) {
+        items.add(position, movieItem)
         notifyItemInserted(position)
     }
+
 
     interface OnMovieCLickListener {
         fun onMoreClick(movieItem: MovieItem)

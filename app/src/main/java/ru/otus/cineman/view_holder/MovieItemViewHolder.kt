@@ -22,7 +22,7 @@ class MovieItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     }
 
     fun setTitle(movieItem: MovieItem) {
-        movieTitle.text = itemView.resources.getString(movieItem.titleId)
+        movieTitle.text = movieItem.title
         if (movieItem.isSelected) {
             movieTitle.setTextColor(Color.GREEN)
         } else {

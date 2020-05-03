@@ -46,13 +46,6 @@ class MainActivity : AppCompatActivity(), MovieListListener, MovieDetailsListene
     override fun onCloseMovieDetails(comment: String?, isLikedStatus: Boolean?) {
         supportFragmentManager.popBackStack()
 
-        val updatedMovieListFragment = MoviesListFragment()
-        updatedMovieListFragment.arguments = Bundle().apply {
-            putBoolean(IS_PREVIEW_MOVIES_UPDATED_BY_DETAILS, true)
-            putBoolean( UPDATED_IS_LIKED_STATUS, isLikedStatus ?: false)
-            putString(UPDATED_COMMENT, comment)
-        }
-
         val movieListFragment = supportFragmentManager.findFragmentByTag(TAG)
         if (movieListFragment != null) {
             movieListFragment.arguments = Bundle().apply {
@@ -64,6 +57,16 @@ class MainActivity : AppCompatActivity(), MovieListListener, MovieDetailsListene
                 .show(movieListFragment)
                 .commit()
         }
+    }
+
+    override fun openFavoriteMovies() {
+        supportFragmentManager
+            .beginTransaction()
+            .replace(
+                R.id.fragmentContainer, MoviesListFavoriteFragment(), null
+            )
+            .addToBackStack(null)
+            .commit()
     }
 
     //    companion object : KLogging() {
