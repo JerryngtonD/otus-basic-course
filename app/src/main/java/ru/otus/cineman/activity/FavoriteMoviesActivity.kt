@@ -10,7 +10,7 @@
 //import androidx.recyclerview.widget.RecyclerView
 //import mu.KLogging
 //import ru.otus.cineman.R
-//import ru.otus.cineman.activity.PreviewMoviesActivity.Companion.FAVORITE_MOVIES
+//import ru.otus.cineman.activity.MainActivity.Companion.FAVORITE_MOVIES
 //import ru.otus.cineman.adapter.FavoriteMovieAdapter
 //import ru.otus.cineman.model.MovieItem
 //

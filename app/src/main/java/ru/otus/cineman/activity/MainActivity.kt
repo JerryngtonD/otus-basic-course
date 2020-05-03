@@ -7,7 +7,7 @@ import ru.otus.cineman.fragment.*
 import ru.otus.cineman.model.MovieItem
 
 
-class PreviewMoviesActivity : AppCompatActivity(), MovieListListener, MovieDetailsListener {
+class MainActivity : AppCompatActivity(), MovieListListener, MovieDetailsListener {
     companion object {
         const val TAG = "MovieListFragment"
 
@@ -21,10 +21,12 @@ class PreviewMoviesActivity : AppCompatActivity(), MovieListListener, MovieDetai
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        supportFragmentManager
-            .beginTransaction()
-            .replace(R.id.fragmentContainer, MoviesListFragment(), TAG)
-            .commit()
+        if (savedInstanceState == null) {
+            supportFragmentManager
+                .beginTransaction()
+                .replace(R.id.fragmentContainer, MoviesListFragment(), TAG)
+                .commit()
+        }
     }
 
     private fun openMovieDetailsFragment(movieItem: MovieItem) {
@@ -51,10 +53,17 @@ class PreviewMoviesActivity : AppCompatActivity(), MovieListListener, MovieDetai
             putString(UPDATED_COMMENT, comment)
         }
 
-        supportFragmentManager
-            .beginTransaction()
-            .replace(R.id.fragmentContainer, updatedMovieListFragment, TAG)
-            .commit()
+        val movieListFragment = supportFragmentManager.findFragmentByTag(TAG)
+        if (movieListFragment != null) {
+            movieListFragment.arguments = Bundle().apply {
+                putBoolean(IS_PREVIEW_MOVIES_UPDATED_BY_DETAILS, true)
+                putBoolean( UPDATED_IS_LIKED_STATUS, isLikedStatus ?: false)
+                putString(UPDATED_COMMENT, comment)
+            }
+            supportFragmentManager.beginTransaction()
+                .show(movieListFragment)
+                .commit()
+        }
     }
 
     //    companion object : KLogging() {
@@ -115,7 +124,7 @@ class PreviewMoviesActivity : AppCompatActivity(), MovieListListener, MovieDetai
 //            }
 //        } else {
 //            val intentFilmFavorites =
-//                Intent(this@PreviewMoviesActivity, FavoriteMoviesActivity::class.java)
+//                Intent(this@MainActivity, FavoriteMoviesActivity::class.java)
 //            intentFilmFavorites.putParcelableArrayListExtra(
 //                FAVORITE_MOVIES,
 //                ArrayList(favoriteMovies)
@@ -264,7 +273,7 @@ class PreviewMoviesActivity : AppCompatActivity(), MovieListListener, MovieDetai
 //                recycler.adapter?.notifyDataSetChanged()
 //
 //                val intentFilmDetails =
-//                    Intent(this@PreviewMoviesActivity, MovieDetailsActivity::class.java)
+//                    Intent(this@MainActivity, MovieDetailsActivity::class.java)
 //                intentFilmDetails.putExtra("film_id", position)
 //                intentFilmDetails.putExtra("image_id", selectedMovie.imageId)
 //                intentFilmDetails.putExtra("film_description", selectedMovie.descriptionId)

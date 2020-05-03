@@ -55,11 +55,6 @@ class MovieStorage : Application() {
                 descriptionId = R.string.bart_description
             ),
             MovieItem(
-                titleId = R.string.batman_title,
-                imageId = R.drawable.batman,
-                descriptionId = R.string.batman_description
-            ),
-            MovieItem(
                 titleId = R.string.cat_woman_title,
                 imageId = R.drawable.cat_woman,
                 descriptionId = R.string.cat_woman_description

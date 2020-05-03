@@ -11,9 +11,9 @@
 //import android.widget.TextView
 //import mu.KLogging
 //import ru.otus.cineman.R
-//import ru.otus.cineman.activity.PreviewMoviesActivity.Companion.MOVIE_ID
-//import ru.otus.cineman.activity.PreviewMoviesActivity.Companion.IS_LIKED
-//import ru.otus.cineman.activity.PreviewMoviesActivity.Companion.USER_COMMENT
+//import ru.otus.cineman.activity.MainActivity.Companion.MOVIE_ID
+//import ru.otus.cineman.activity.MainActivity.Companion.IS_LIKED
+//import ru.otus.cineman.activity.MainActivity.Companion.USER_COMMENT
 //
 //class MovieDetailsActivity : AppCompatActivity() {
 //    companion object : KLogging()

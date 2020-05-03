@@ -1,6 +1,7 @@
 package ru.otus.cineman.fragment
 
 import android.os.Bundle
+import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,9 +11,9 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
 import ru.otus.cineman.MovieStorage
 import ru.otus.cineman.R
-import ru.otus.cineman.activity.PreviewMoviesActivity.Companion.IS_PREVIEW_MOVIES_UPDATED_BY_DETAILS
-import ru.otus.cineman.activity.PreviewMoviesActivity.Companion.UPDATED_COMMENT
-import ru.otus.cineman.activity.PreviewMoviesActivity.Companion.UPDATED_IS_LIKED_STATUS
+import ru.otus.cineman.activity.MainActivity.Companion.IS_PREVIEW_MOVIES_UPDATED_BY_DETAILS
+import ru.otus.cineman.activity.MainActivity.Companion.UPDATED_COMMENT
+import ru.otus.cineman.activity.MainActivity.Companion.UPDATED_IS_LIKED_STATUS
 import ru.otus.cineman.adapter.MovieItemAdapter
 import ru.otus.cineman.animation.CustomItemAnimator
 import ru.otus.cineman.model.MovieItem
@@ -20,7 +21,6 @@ import ru.otus.cineman.model.MovieItem
 class MoviesListFragment : Fragment() {
     var listener: MovieListListener? = null
     var recycler: RecyclerView? = null
-
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         listener = activity as MovieListListener
@@ -52,7 +52,6 @@ class MoviesListFragment : Fragment() {
             updateSelectedMovieDetailsInfo(comment, isLikedStatus)
         }
     }
-
 
     private fun createAdapter(view: View): MovieItemAdapter {
         return MovieItemAdapter(
