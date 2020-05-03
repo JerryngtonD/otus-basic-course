@@ -4,7 +4,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.res.ResourcesCompat.getDrawable
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
 import ru.otus.cineman.MovieStorage
 import ru.otus.cineman.R
@@ -12,6 +14,7 @@ import ru.otus.cineman.activity.PreviewMoviesActivity.Companion.IS_PREVIEW_MOVIE
 import ru.otus.cineman.activity.PreviewMoviesActivity.Companion.UPDATED_COMMENT
 import ru.otus.cineman.activity.PreviewMoviesActivity.Companion.UPDATED_IS_LIKED_STATUS
 import ru.otus.cineman.adapter.MovieItemAdapter
+import ru.otus.cineman.animation.CustomItemAnimator
 import ru.otus.cineman.model.MovieItem
 
 class MoviesListFragment : Fragment() {
@@ -32,8 +35,13 @@ class MoviesListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        val itemDecoration = DividerItemDecoration(activity, DividerItemDecoration.VERTICAL)
+        itemDecoration.setDrawable(getDrawable(resources, R.drawable.divider, null)!!)
         recycler = view.findViewById<RecyclerView>(R.id.recyclerView).apply {
             adapter = createAdapter(view)
+            itemAnimator = CustomItemAnimator()
+            addItemDecoration(itemDecoration)
         }
 
         val isSelectedMovieUpdated =
