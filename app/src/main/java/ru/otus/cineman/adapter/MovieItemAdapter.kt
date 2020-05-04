@@ -23,25 +23,25 @@ class MovieItemAdapter(
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (holder is MovieItemViewHolder) {
+            val item = items[position]
+
             holder.itemView.findViewById<View>(R.id.show_more)
                 .setOnClickListener {
-                    listener.onMoreClick(items[position])
+                    listener.onMoreClick(item)
                 }
 
             holder.itemView.findViewById<View>(R.id.movie_icon)
                 .setOnClickListener {
-                    listener.onChangeFavoriteStatus(items[position])
+                    listener.onChangeFavoriteStatus(item)
             }
 
             holder.itemView.findViewById<View>(R.id.isFavorite)
                 .setOnClickListener {
-                    listener.onChangeFavoriteStatus(items[position])
+                    listener.onChangeFavoriteStatus(item)
                 }
 
-            val movieItem = items[position]
-            holder.bind(movieItem)
+            holder.bind(item)
         }
-
     }
 
     fun add(position: Int, movieItem: MovieItem) {
