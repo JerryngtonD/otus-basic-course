@@ -97,4 +97,8 @@
     <string name="no_answer">No</string>
     <string name="ok">OK</string>
     <string name="favorites_empty">Favorites are empty!</string>
+
+    //Navigation drawer
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
 </resources>

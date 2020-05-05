@@ -91,4 +91,8 @@
     <string name="leave_comment">Оставь свой комментарий</string>
     <string name="ok">OK</string>
     <string name="favorites_empty">Список избранного пуст!</string>
+
+    //Navigation drawer
+    <string name="navigation_drawer_open">Открыть панель навигации</string>
+    <string name="navigation_drawer_close">Закрыть панель навигации</string>
 </resources>
