@@ -16,30 +16,10 @@
         android:drawableStart="@drawable/light_mode" />
 
     <ImageButton
-        android:id="@+id/favorites"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/favorites"
-        app:layout_constraintStart_toEndOf="@id/day_night_mode"
-        app:layout_constraintEnd_toStartOf="@+id/add_new"
-        app:layout_constraintTop_toTopOf="parent">
-    </ImageButton>
-
-    <ImageButton
         android:id="@+id/add_new"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/add_new"
-        app:layout_constraintStart_toEndOf="@id/favorites"
-        app:layout_constraintEnd_toStartOf="@+id/share"
-        app:layout_constraintTop_toTopOf="parent">
-    </ImageButton>
-
-    <ImageButton
-        android:id="@+id/share"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/share"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent">
     </ImageButton>

@@ -1,13 +1,17 @@
 package ru.otus.cineman.fragment
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.res.ResourcesCompat.getDrawable
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.snackbar.Snackbar
 import ru.otus.cineman.MovieStorage.Companion.getFavoriteMovieStorage
 import ru.otus.cineman.MovieStorage.Companion.getMovieStorage
 import ru.otus.cineman.R
@@ -22,13 +26,21 @@ import java.util.*
 class MoviesListFragment : Fragment() {
     companion object {
         const val ANIMATE_INDEX_POSITION = 1
+
+        const val NIGHT_MODE_PREFERENCES = "NIGHT_MODE_PREFS"
+        const val KEY_IS_NIGHT_MODE = "IS_NIGHT_MODE"
     }
+
+    private lateinit var sharedPreferences: SharedPreferences
 
     var listener: MovieListListener? = null
     var recycler: RecyclerView? = null
+    var coordinatorLayout: View? = null
+    var isNightMode = false
+
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
-        listener = activity as MovieListListener
+        listener = activity as? MovieListListener
         super.onActivityCreated(savedInstanceState)
     }
 
@@ -41,6 +53,7 @@ class MoviesListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        coordinatorLayout = activity?.findViewById(R.id.coordinatorMovies)
         val itemDecoration = DividerItemDecoration(activity, DividerItemDecoration.VERTICAL)
         itemDecoration.setDrawable(getDrawable(resources, R.drawable.divider, null)!!)
         recycler = view.findViewById<RecyclerView>(R.id.recyclerView)
@@ -59,7 +72,7 @@ class MoviesListFragment : Fragment() {
         }
 
         setAddNewMovieListener(view)
-        setShowFavoriteMoviesListener(view)
+        processThemeMode(view)
     }
 
     private fun createAdapter(view: View): MovieItemAdapter {
@@ -69,23 +82,20 @@ class MoviesListFragment : Fragment() {
             object : MovieItemAdapter.OnMovieCLickListener {
 
                 override fun onMoreClick(movieItem: MovieItem) {
+                    selectNewItem(movieItem)
+                    listener?.onMoreClick(movieItem)
+                }
+
+                override fun onChangeFavoriteStatus(movieItem: MovieItem) {
+                    showSnackBar(movieItem)
+                }
+
+                private fun selectNewItem(movieItem: MovieItem) {
                     val recyclerView = view.findViewById<RecyclerView>(R.id.recyclerView)
                     val adapter = recyclerView.adapter as MovieItemAdapter
                     unselectAllItems()
                     movieItem.isSelected = true
                     adapter.notifyDataSetChanged()
-                    listener?.onMoreClick(movieItem)
-                }
-
-                override fun onChangeFavoriteStatus(movieItem: MovieItem) {
-                    val movieItemAdapter = recycler?.adapter as MovieItemAdapter
-                    val updatedMoviePosition = movieItemAdapter.items.indexOf(movieItem)
-                    val updatedMovie = movieItemAdapter.items[updatedMoviePosition]
-                    updatedMovie.apply {
-                        isFavorite = !isFavorite
-                    }
-                    updateFavoriteMovies(updatedMovie)
-                    movieItemAdapter.notifyItemChanged(updatedMoviePosition)
                 }
 
                 private fun unselectAllItems() {
@@ -95,6 +105,36 @@ class MoviesListFragment : Fragment() {
                     }
                 }
             })
+    }
+
+    private fun showSnackBar(movieItem: MovieItem) {
+        val movieItemAdapter = recycler?.adapter as MovieItemAdapter
+        val updatedMoviePosition = movieItemAdapter.items.indexOf(movieItem)
+        val updatedMovie = movieItemAdapter.items[updatedMoviePosition]
+
+        changeMovieFavoriteStatus(updatedMovie)
+        updateFavoriteMovies(updatedMovie)
+        movieItemAdapter.notifyItemChanged(updatedMoviePosition)
+
+        val text =
+            if (updatedMovie.isFavorite) R.string.success_added_to_favorites else R.string.success_removed_from_favorites
+        val snackbar = Snackbar.make(coordinatorLayout!!, text, Snackbar.LENGTH_LONG)
+            .setAction(resources.getString(R.string.undo_title)) {
+                changeMovieFavoriteStatus(updatedMovie)
+                updateFavoriteMovies(updatedMovie)
+                movieItemAdapter.notifyItemChanged(updatedMoviePosition)
+                val snackbarUndo = Snackbar.make(
+                    coordinatorLayout!!,
+                    resources.getString(R.string.undo_text),
+                    Snackbar.LENGTH_LONG
+                )
+                snackbarUndo.show()
+            }
+        snackbar.show()
+    }
+
+    private fun changeMovieFavoriteStatus(movieItem: MovieItem): MovieItem = movieItem.apply {
+        isFavorite = !isFavorite
     }
 
     private fun updateFavoriteMovies(updatedMovie: MovieItem) {
@@ -121,12 +161,13 @@ class MoviesListFragment : Fragment() {
         }
     }
 
-    private  fun setAddNewMovieListener(view: View) {
+    private fun setAddNewMovieListener(view: View) {
         val addNewButton = view.findViewById<View>(R.id.add_new)
         val adapter = recycler?.adapter as MovieItemAdapter
         addNewButton.setOnClickListener {
-            val newGeneratedMovie =  MovieItem(
-                title = resources.getString(R.string.incognito_title) + UUID.randomUUID().toString().take(5) ,
+            val newGeneratedMovie = MovieItem(
+                title = resources.getString(R.string.incognito_title) + UUID.randomUUID().toString()
+                    .take(5),
                 imageId = R.drawable.incognito,
                 descriptionId = R.string.incognito_description
             )
@@ -134,11 +175,48 @@ class MoviesListFragment : Fragment() {
         }
     }
 
-    private fun setShowFavoriteMoviesListener(view: View) {
-        val showFavoriteMoviesButton = view.findViewById<View>(R.id.favorites)
-        showFavoriteMoviesButton.setOnClickListener{
-            listener?.openFavoriteMovies()
+    private fun saveNightModeState(isCheckedNightMode: Boolean) {
+        sharedPreferences.edit().apply {
+            putBoolean(KEY_IS_NIGHT_MODE, isCheckedNightMode)
+        }.apply()
+    }
+
+    private fun checkNightModeIsActivated() {
+        if (sharedPreferences.getBoolean(KEY_IS_NIGHT_MODE, false)) {
+            AppCompatDelegate.setDefaultNightMode(
+                AppCompatDelegate.MODE_NIGHT_YES
+            )
+            isNightMode = true
+        } else {
+            AppCompatDelegate.setDefaultNightMode(
+                AppCompatDelegate.MODE_NIGHT_NO
+            )
+            isNightMode = false
         }
+    }
+
+    private fun processThemeMode(view: View) {
+        val dayNightModeListener = View.OnClickListener {
+            if (isNightMode) {
+                AppCompatDelegate.setDefaultNightMode(
+                    AppCompatDelegate.MODE_NIGHT_NO
+                )
+                saveNightModeState(false)
+            } else {
+                AppCompatDelegate.setDefaultNightMode(
+                    AppCompatDelegate.MODE_NIGHT_YES
+                )
+                saveNightModeState(true)
+            }
+            activity?.recreate()
+        }
+
+        sharedPreferences =
+            activity?.getSharedPreferences(NIGHT_MODE_PREFERENCES, Context.MODE_PRIVATE) ?: throw Exception("Can't proceed light mode")
+        val dayNightModeButton = view.findViewById<View>(R.id.day_night_mode)
+        dayNightModeButton.setOnClickListener(dayNightModeListener)
+
+        checkNightModeIsActivated()
     }
 }
 

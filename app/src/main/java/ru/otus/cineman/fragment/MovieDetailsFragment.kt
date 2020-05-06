@@ -4,12 +4,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.CheckBox
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.TextView
+import android.widget.*
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
+import com.google.android.material.appbar.MaterialToolbar
 import ru.otus.cineman.R
 import ru.otus.cineman.model.MovieItem
 import java.lang.Exception
@@ -19,6 +17,7 @@ class MovieDetailsFragment : Fragment() {
         const val TAG = "MovieDetailsFragment"
 
 
+        const val MOVIE_TITLE = "MOVIE_TITLE"
         const val MOVIE_IMAGE = "MOVIE_IMAGE"
         const val MOVIE_DESCRIPTION = "MOVIE_DESCRIPTION"
         const val IS_LIKED = "IS_LIKED"
@@ -28,6 +27,7 @@ class MovieDetailsFragment : Fragment() {
         fun newInstance(movieItem: MovieItem): MovieDetailsFragment {
             return MovieDetailsFragment().apply {
                 arguments = Bundle().apply {
+                    putString(MOVIE_TITLE, movieItem.title)
                     putInt(MOVIE_IMAGE, movieItem.imageId)
                     putInt(MOVIE_DESCRIPTION, movieItem.descriptionId)
                     putBoolean(IS_LIKED, movieItem.isLiked)
@@ -47,6 +47,7 @@ class MovieDetailsFragment : Fragment() {
     var listener: MovieDetailsListener? = null
 
     var movieImage: ImageView? = null
+    var movieTitle: MaterialToolbar? = null
     var movieDescription: TextView? = null
     var movieUserComment: EditText? = null
     var isLikedStatusMovie: CheckBox? = null
@@ -63,10 +64,12 @@ class MovieDetailsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         movieImage =  view.findViewById<ImageView>(R.id.film_poster)
+        movieTitle = view.findViewById(R.id.toolbar_movie_title)
         movieDescription = view.findViewById<TextView>(R.id.film_details_description)
         movieUserComment = view.findViewById<EditText>(R.id.user_comment)
         isLikedStatusMovie = view.findViewById<CheckBox>(R.id.checked_like)
 
+        movieTitle?.title = arguments?.getString(MOVIE_TITLE)
         movieImage?.setImageResource(arguments?.getInt(MOVIE_IMAGE) ?: throw Exception("Image id should be presented"))
         movieDescription?.setText(arguments?.getInt(MOVIE_DESCRIPTION) ?: throw Exception("Description value should be presented"))
         movieUserComment?.setText(arguments?.getString(MOVIE_COMMENT))
