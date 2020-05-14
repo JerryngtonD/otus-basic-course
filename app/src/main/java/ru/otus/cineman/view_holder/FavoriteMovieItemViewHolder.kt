@@ -5,6 +5,7 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import ru.otus.cineman.R
 import ru.otus.cineman.model.MovieItem
 
@@ -14,7 +15,7 @@ class FavoriteMovieItemViewHolder(itemView: View) : RecyclerView.ViewHolder(item
 
     fun bind(movieItem: MovieItem) {
         setTitle(movieItem)
-//        setImage(movieItem)
+        setImage(movieItem)
     }
 
     fun setTitle(movieItem: MovieItem) {
@@ -22,7 +23,9 @@ class FavoriteMovieItemViewHolder(itemView: View) : RecyclerView.ViewHolder(item
         movieTitle.setTextColor(Color.RED)
     }
 
-//    fun setImage(movieItem: MovieItem) {
-//        movieImage.setImageResource(movieItem.image)
-//    }
+    fun setImage(movieItem: MovieItem) {
+          Glide.with(movieImage.context)
+            .load(movieItem.image)
+            .into(movieImage)
+    }
 }

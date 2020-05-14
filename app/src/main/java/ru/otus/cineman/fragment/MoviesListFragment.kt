@@ -17,6 +17,8 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import ru.otus.cineman.MovieStorage
+import ru.otus.cineman.MovieStorage.Companion.IMAGE_URL
+import ru.otus.cineman.MovieStorage.Companion.IS_INIT_LOADING
 import ru.otus.cineman.MovieStorage.Companion.getFavoriteMovieStorage
 import ru.otus.cineman.MovieStorage.Companion.getMovieStorage
 import ru.otus.cineman.R
@@ -63,7 +65,6 @@ class MoviesListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setProgressBar(view)
 
         coordinatorLayout = activity?.findViewById(R.id.coordinatorMovies)
         val itemDecoration = DividerItemDecoration(activity, DividerItemDecoration.VERTICAL)
@@ -86,38 +87,43 @@ class MoviesListFragment : Fragment() {
         setAddNewMovieListener(view)
         processThemeMode(view)
 
-        MovieStorage.api.getPopularFilms()
-            .enqueue(object : Callback<MoviesResult?> {
-                override fun onFailure(call: Call<MoviesResult?>, t: Throwable) {
-                    print("some error")
-                }
-
-                override fun onResponse(
-                    call: Call<MoviesResult?>,
-                    response: Response<MoviesResult?>
-                ) {
-                    if (response.isSuccessful) {
-                        getMovieStorage().clear()
-
-                        response.body()?.results?.map {
-                            MovieItem(
-                                title = it.title,
-                                description = it.description,
-                                image = it.image
-                            )
-                        }?.let {
-                            getMovieStorage().addAll(it)
-                            progressBar?.visibility = View.INVISIBLE
-                            addNewButton?.visibility = View.VISIBLE
-                            dayNightModeButton?.visibility = View.VISIBLE
-
-                            recycler?.adapter?.notifyDataSetChanged()
-
-                        }
+        if (IS_INIT_LOADING) {
+            IS_INIT_LOADING = false
+            showProgressBar(view)
+            MovieStorage.api.getPopularFilms()
+                .enqueue(object : Callback<MoviesResult?> {
+                    override fun onFailure(call: Call<MoviesResult?>, t: Throwable) {
+                        print("some error")
+                        dismissProgressBar(view)
                     }
 
-                }
-            })
+                    override fun onResponse(
+                        call: Call<MoviesResult?>,
+                        response: Response<MoviesResult?>
+                    ) {
+                        if (response.isSuccessful) {
+                            dismissProgressBar(view)
+                            getMovieStorage().clear()
+
+                            response.body()?.results?.map {
+                                MovieItem(
+                                    title = it.title,
+                                    description = it.description,
+                                    image = "$IMAGE_URL${it.image}"
+                                )
+                            }?.let {
+                                getMovieStorage().addAll(it)
+                                progressBar?.visibility = View.INVISIBLE
+                                addNewButton?.visibility = View.VISIBLE
+                                dayNightModeButton?.visibility = View.VISIBLE
+
+                                recycler?.adapter?.notifyDataSetChanged()
+
+                            }
+                        }
+                    }
+                })
+        }
     }
 
     private fun createAdapter(view: View): MovieItemAdapter {
@@ -240,9 +246,14 @@ class MoviesListFragment : Fragment() {
         }
     }
 
-    private fun setProgressBar(view: View) {
+    private fun showProgressBar(view: View) {
         progressBar = view.findViewById(R.id.progress_bar)
         progressBar?.visibility = View.VISIBLE
+    }
+
+    private fun dismissProgressBar(view: View) {
+        progressBar = view.findViewById(R.id.progress_bar)
+        progressBar?.visibility = View.INVISIBLE
     }
 
     private fun processThemeMode(view: View) {
@@ -262,7 +273,8 @@ class MoviesListFragment : Fragment() {
         }
 
         sharedPreferences =
-            activity?.getSharedPreferences(NIGHT_MODE_PREFERENCES, Context.MODE_PRIVATE) ?: throw Exception("Can't proceed light mode")
+            activity?.getSharedPreferences(NIGHT_MODE_PREFERENCES, Context.MODE_PRIVATE)
+                ?: throw Exception("Can't proceed light mode")
         dayNightModeButton = view.findViewById<View>(R.id.day_night_mode)
         dayNightModeButton?.setOnClickListener(dayNightModeListener)
 

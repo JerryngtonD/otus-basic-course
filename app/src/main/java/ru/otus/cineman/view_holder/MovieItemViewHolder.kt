@@ -7,6 +7,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import ru.otus.cineman.R
 import ru.otus.cineman.model.MovieItem
 
@@ -31,8 +32,9 @@ class MovieItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     }
 
     fun setImage(movieItem: MovieItem) {
-        //TODO: change
-        movieImage.setImageResource(R.drawable.incognito)
+        Glide.with(movieImage.context)
+            .load(movieItem.image)
+            .into(movieImage)
     }
 
     fun setIsFavorite(movieItem: MovieItem) {

@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
+import com.bumptech.glide.Glide
 import com.google.android.material.appbar.MaterialToolbar
 import ru.otus.cineman.R
 import ru.otus.cineman.model.MovieItem
@@ -70,10 +71,14 @@ class MovieDetailsFragment : Fragment() {
         isLikedStatusMovie = view.findViewById<CheckBox>(R.id.checked_like)
 
         movieTitle?.title = arguments?.getString(MOVIE_TITLE)
-        movieImage?.setImageResource(arguments?.getInt(MOVIE_IMAGE) ?: throw Exception("Image id should be presented"))
-        movieDescription?.setText(arguments?.getInt(MOVIE_DESCRIPTION) ?: throw Exception("Description value should be presented"))
+        movieDescription?.text = arguments?.getString(MOVIE_DESCRIPTION)
         movieUserComment?.setText(arguments?.getString(MOVIE_COMMENT))
         isLikedStatusMovie?.isChecked = arguments?.getBoolean(IS_LIKED) ?: throw Exception("Like status should be presented")
+
+
+        Glide.with(movieImage!!.context)
+            .load(arguments?.getString(MOVIE_IMAGE))
+            .into(movieImage!!)
 
         val callback = object : OnBackPressedCallback(true /** true means that the callback is enabled */) {
             override fun handleOnBackPressed() {
