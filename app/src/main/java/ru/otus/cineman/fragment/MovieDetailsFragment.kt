@@ -28,8 +28,8 @@ class MovieDetailsFragment : Fragment() {
             return MovieDetailsFragment().apply {
                 arguments = Bundle().apply {
                     putString(MOVIE_TITLE, movieItem.title)
-                    putInt(MOVIE_IMAGE, movieItem.imageId)
-                    putInt(MOVIE_DESCRIPTION, movieItem.descriptionId)
+                    putString(MOVIE_IMAGE, movieItem.image)
+                    putString(MOVIE_DESCRIPTION, movieItem.description)
                     putBoolean(IS_LIKED, movieItem.isLiked)
                     putString(MOVIE_COMMENT, movieItem.comment)
                 }

@@ -4,8 +4,8 @@ import android.os.Parcelable
 
 data class MovieItem(
     var title: String? = "",
-    var imageId: Int,
-    var descriptionId: Int,
+    var image: String? = "",
+    var description: String? = "",
     var isSelected: Boolean = false,
     var isLiked: Boolean = false,
     var comment: String? = "",
@@ -13,8 +13,8 @@ data class MovieItem(
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readString(),
-        parcel.readInt(),
-        parcel.readInt(),
+        parcel.readString(),
+        parcel.readString(),
         parcel.readByte() != 0.toByte(),
         parcel.readByte() != 0.toByte(),
         parcel.readString(),
@@ -23,8 +23,8 @@ data class MovieItem(
 
     override fun writeToParcel(out: Parcel?, id: Int) {
         out?.writeString(title)
-        out?.writeInt(imageId)
-        out?.writeInt(descriptionId)
+        out?.writeString(image)
+        out?.writeString(description)
         out?.writeByte((if (isSelected) 0 else 1).toByte())
         out?.writeByte((if (isLiked) 0 else 1).toByte())
         out?.writeString(comment)

@@ -14,7 +14,7 @@ class FavoriteMovieItemViewHolder(itemView: View) : RecyclerView.ViewHolder(item
 
     fun bind(movieItem: MovieItem) {
         setTitle(movieItem)
-        setImage(movieItem)
+//        setImage(movieItem)
     }
 
     fun setTitle(movieItem: MovieItem) {
@@ -22,7 +22,7 @@ class FavoriteMovieItemViewHolder(itemView: View) : RecyclerView.ViewHolder(item
         movieTitle.setTextColor(Color.RED)
     }
 
-    fun setImage(movieItem: MovieItem) {
-        movieImage.setImageResource(movieItem.imageId)
-    }
+//    fun setImage(movieItem: MovieItem) {
+//        movieImage.setImageResource(movieItem.image)
+//    }
 }

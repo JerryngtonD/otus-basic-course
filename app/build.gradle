@@ -35,6 +35,13 @@ dependencies {
     implementation 'io.github.microutils:kotlin-logging:1.7.9'
     implementation 'org.slf4j:slf4j-simple:1.7.29'
 
+
+    // Network
+    api "com.squareup.retrofit2:retrofit:$retrofit_version"
+    api "com.squareup.retrofit2:converter-gson:$retrofit_version"
+    api "com.squareup.okhttp3:logging-interceptor:$okhttp_version"
+    api "com.squareup.okhttp3:okhttp-urlconnection:$okhttp_version"
+
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'

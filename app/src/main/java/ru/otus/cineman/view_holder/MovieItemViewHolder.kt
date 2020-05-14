@@ -31,7 +31,8 @@ class MovieItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     }
 
     fun setImage(movieItem: MovieItem) {
-        movieImage.setImageResource(movieItem.imageId)
+        //TODO: change
+        movieImage.setImageResource(R.drawable.incognito)
     }
 
     fun setIsFavorite(movieItem: MovieItem) {

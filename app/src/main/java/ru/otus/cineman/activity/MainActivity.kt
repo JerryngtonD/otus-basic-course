@@ -9,10 +9,16 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import com.google.android.material.navigation.NavigationView
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import ru.otus.cineman.MovieStorage
 import ru.otus.cineman.MovieStorage.Companion.getFavoriteMovieStorage
 import ru.otus.cineman.R
 import ru.otus.cineman.fragment.*
 import ru.otus.cineman.model.MovieItem
+import ru.otus.cineman.model.json.MovieModel
+import ru.otus.cineman.model.json.MoviesResult
 
 
 class MainActivity : AppCompatActivity(), MovieListListener, MovieDetailsListener,
@@ -32,15 +38,35 @@ class MainActivity : AppCompatActivity(), MovieListListener, MovieDetailsListene
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-        if (savedInstanceState == null) {
-            supportFragmentManager
-                .beginTransaction()
-                .replace(R.id.fragmentContainer, MoviesListFragment(), TAG)
-                .commit()
-        }
-
         setSupportActionBar(findViewById(R.id.toolbar))
+
+        MovieStorage.api.getPopularFilms()
+            .enqueue(object : Callback<MoviesResult?> {
+                override fun onFailure(call: Call<MoviesResult?>, t: Throwable) {
+                    print("some error")
+                }
+
+                override fun onResponse(
+                    call: Call<MoviesResult?>,
+                    response: Response<MoviesResult?>
+                ) {
+                    if (response.isSuccessful) {
+                        MovieStorage.getMovieStorage().clear()
+
+                        response.body()?.results?.map {
+                            MovieItem(
+                                title = it.title,
+                                description = it.description,
+                                image = it.image
+                            )
+                        }?.let {
+                            MovieStorage.getMovieStorage().addAll(it)
+                            openMoviesListFragment()
+                        }
+                    }
+
+                }
+            })
 
         drawer = findViewById(R.id.drawer_layout)
         toolbar = findViewById(R.id.toolbar)
@@ -68,6 +94,13 @@ class MainActivity : AppCompatActivity(), MovieListListener, MovieDetailsListene
                 MovieDetailsFragment.TAG
             )
             .addToBackStack(null)
+            .commit()
+    }
+
+    private fun openMoviesListFragment() {
+        supportFragmentManager
+            .beginTransaction()
+            .replace(R.id.fragmentContainer, MoviesListFragment(), TAG)
             .commit()
     }
 

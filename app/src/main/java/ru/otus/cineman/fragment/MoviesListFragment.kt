@@ -34,9 +34,10 @@ class MoviesListFragment : Fragment() {
     private lateinit var sharedPreferences: SharedPreferences
 
     var listener: MovieListListener? = null
-    var recycler: RecyclerView? = null
     var coordinatorLayout: View? = null
     var isNightMode = false
+
+    var recycler: RecyclerView? = null
 
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -168,8 +169,8 @@ class MoviesListFragment : Fragment() {
             val newGeneratedMovie = MovieItem(
                 title = resources.getString(R.string.incognito_title) + UUID.randomUUID().toString()
                     .take(5),
-                imageId = R.drawable.incognito,
-                descriptionId = R.string.incognito_description
+//                image = R.drawable.incognito,
+                description = resources.getString(R.string.incognito_description)
             )
             adapter.add(ANIMATE_INDEX_POSITION, newGeneratedMovie)
         }
