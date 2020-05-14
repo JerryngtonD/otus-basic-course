@@ -13,7 +13,19 @@
         android:background="@android:color/transparent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:drawableStart="@drawable/light_mode" />
+        android:drawableStart="@drawable/light_mode"
+        android:visibility="invisible"/>
+
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        style="?android:progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/day_night_mode"
+        app:layout_constraintEnd_toStartOf="@id/add_new"
+        />
 
     <ImageButton
         android:id="@+id/add_new"
@@ -21,7 +33,8 @@
         android:layout_height="wrap_content"
         android:src="@drawable/add_new"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        android:visibility="invisible">
     </ImageButton>
 
     <androidx.recyclerview.widget.RecyclerView

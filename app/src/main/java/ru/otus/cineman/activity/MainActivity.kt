@@ -40,33 +40,9 @@ class MainActivity : AppCompatActivity(), MovieListListener, MovieDetailsListene
         setContentView(R.layout.activity_main)
         setSupportActionBar(findViewById(R.id.toolbar))
 
-        MovieStorage.api.getPopularFilms()
-            .enqueue(object : Callback<MoviesResult?> {
-                override fun onFailure(call: Call<MoviesResult?>, t: Throwable) {
-                    print("some error")
-                }
-
-                override fun onResponse(
-                    call: Call<MoviesResult?>,
-                    response: Response<MoviesResult?>
-                ) {
-                    if (response.isSuccessful) {
-                        MovieStorage.getMovieStorage().clear()
-
-                        response.body()?.results?.map {
-                            MovieItem(
-                                title = it.title,
-                                description = it.description,
-                                image = it.image
-                            )
-                        }?.let {
-                            MovieStorage.getMovieStorage().addAll(it)
-                            openMoviesListFragment()
-                        }
-                    }
-
-                }
-            })
+        if (savedInstanceState == null) {
+            openMoviesListFragment()
+        }
 
         drawer = findViewById(R.id.drawer_layout)
         toolbar = findViewById(R.id.toolbar)
