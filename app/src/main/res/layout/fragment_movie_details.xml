@@ -62,7 +62,7 @@
                 <TextView
                     android:id="@+id/film_details_description"
                     android:layout_width="match_parent"
-                    android:layout_height="135dp"
+                    android:layout_height="wrap_content"
                     style="@style/DetailsFilmDescription"
                     />
 

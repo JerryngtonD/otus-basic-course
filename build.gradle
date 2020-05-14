@@ -5,6 +5,7 @@ buildscript {
     ext.retrofit_version = '2.6.0'
     ext.okhttp_version = '3.12.6'
     ext.glide_version = '4.11.0'
+    ext.swipe_refresh_version = '1.0.0'
     repositories {
         google()
         jcenter()
