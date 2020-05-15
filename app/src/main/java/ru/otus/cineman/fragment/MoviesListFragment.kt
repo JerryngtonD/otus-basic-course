@@ -92,7 +92,7 @@ class MoviesListFragment : Fragment() {
                 }
 
                 override fun onChangeFavoriteStatus(movieItem: MovieItem) {
-                    showSnackBar(movieItem)
+                    showSnackBarWithUpdateMovie(movieItem)
                 }
 
                 private fun selectNewItem(movieItem: MovieItem) {
@@ -112,7 +112,7 @@ class MoviesListFragment : Fragment() {
             })
     }
 
-    private fun showSnackBar(movieItem: MovieItem) {
+    private fun showSnackBarWithUpdateMovie(movieItem: MovieItem) {
         val movieItemAdapter = recycler?.adapter as MovieItemAdapter
         val updatedMoviePosition = movieItemAdapter.items.indexOf(movieItem)
         val updatedMovie = movieItemAdapter.items[updatedMoviePosition]
@@ -136,6 +136,16 @@ class MoviesListFragment : Fragment() {
                 snackbarUndo.show()
             }
         snackbar.show()
+    }
+
+    private fun showSnackBarWithSuccessLoading() {
+        Snackbar.make(coordinatorLayout!!, R.string.success_loading_movies, Snackbar.LENGTH_LONG)
+            .show()
+    }
+
+    private fun showSnackBarWithFaultLoading() {
+        Snackbar.make(coordinatorLayout!!, R.string.fault_loading_movies, Snackbar.LENGTH_LONG)
+            .show()
     }
 
     private fun changeMovieFavoriteStatus(movieItem: MovieItem): MovieItem = movieItem.apply {
@@ -202,14 +212,17 @@ class MoviesListFragment : Fragment() {
             .enqueue(object : Callback<MoviesResult?> {
                 override fun onFailure(call: Call<MoviesResult?>, t: Throwable) {
                     dismissProgressBar(view!!)
+                    showSnackBarWithFaultLoading()
                 }
 
                 override fun onResponse(
                     call: Call<MoviesResult?>,
                     response: Response<MoviesResult?>
                 ) {
+
                     if (response.isSuccessful) {
                         dismissProgressBar(view!!)
+                        showSnackBarWithSuccessLoading()
                         response.body()?.results?.map {
                             MovieItem(
                                 title = it.title,

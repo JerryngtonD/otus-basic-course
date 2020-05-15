@@ -34,6 +34,8 @@ class MovieItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     fun setImage(movieItem: MovieItem) {
         Glide.with(movieImage.context)
             .load(movieItem.image)
+            .placeholder(R.drawable.ic_loading)
+            .error(R.drawable.ic_error)
             .into(movieImage)
     }
 

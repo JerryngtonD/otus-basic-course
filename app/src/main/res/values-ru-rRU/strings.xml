@@ -99,4 +99,9 @@
     //Navigation drawer
     <string name="navigation_drawer_open">Открыть панель навигации</string>
     <string name="navigation_drawer_close">Закрыть панель навигации</string>
+
+    //Success loading
+    <string name="success_loading_movies">Загрзука фильмов была успешной</string>
+    //Fault loading
+    <string name="fault_loading_movies">Что-то пошло не так при загрзке фильмов</string>
 </resources>
