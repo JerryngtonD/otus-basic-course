@@ -19,4 +19,13 @@
                 android:title="Share" />
         </menu>
     </item>
+
+    <item android:title="Theme">
+        <menu>
+            <item
+                android:id="@+id/day_night_mode"
+                android:icon="@drawable/light_mode"
+                android:title="Switch light mode" />
+        </menu>
+    </item>
 </menu>

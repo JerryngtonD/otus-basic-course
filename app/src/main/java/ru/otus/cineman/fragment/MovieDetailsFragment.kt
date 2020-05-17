@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
+import com.bumptech.glide.Glide
 import com.google.android.material.appbar.MaterialToolbar
 import ru.otus.cineman.R
 import ru.otus.cineman.model.MovieItem
@@ -28,8 +29,8 @@ class MovieDetailsFragment : Fragment() {
             return MovieDetailsFragment().apply {
                 arguments = Bundle().apply {
                     putString(MOVIE_TITLE, movieItem.title)
-                    putInt(MOVIE_IMAGE, movieItem.imageId)
-                    putInt(MOVIE_DESCRIPTION, movieItem.descriptionId)
+                    putString(MOVIE_IMAGE, movieItem.image)
+                    putString(MOVIE_DESCRIPTION, movieItem.description)
                     putBoolean(IS_LIKED, movieItem.isLiked)
                     putString(MOVIE_COMMENT, movieItem.comment)
                 }
@@ -63,21 +64,34 @@ class MovieDetailsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        movieImage =  view.findViewById<ImageView>(R.id.film_poster)
+        movieImage = view.findViewById<ImageView>(R.id.film_poster)
         movieTitle = view.findViewById(R.id.toolbar_movie_title)
         movieDescription = view.findViewById<TextView>(R.id.film_details_description)
         movieUserComment = view.findViewById<EditText>(R.id.user_comment)
         isLikedStatusMovie = view.findViewById<CheckBox>(R.id.checked_like)
 
         movieTitle?.title = arguments?.getString(MOVIE_TITLE)
-        movieImage?.setImageResource(arguments?.getInt(MOVIE_IMAGE) ?: throw Exception("Image id should be presented"))
-        movieDescription?.setText(arguments?.getInt(MOVIE_DESCRIPTION) ?: throw Exception("Description value should be presented"))
+        movieDescription?.text = arguments?.getString(MOVIE_DESCRIPTION)
         movieUserComment?.setText(arguments?.getString(MOVIE_COMMENT))
-        isLikedStatusMovie?.isChecked = arguments?.getBoolean(IS_LIKED) ?: throw Exception("Like status should be presented")
+        isLikedStatusMovie?.isChecked =
+            arguments?.getBoolean(IS_LIKED) ?: throw Exception("Like status should be presented")
 
-        val callback = object : OnBackPressedCallback(true /** true means that the callback is enabled */) {
+
+        Glide.with(movieImage!!.context)
+            .load(arguments?.getString(MOVIE_IMAGE))
+            .placeholder(R.drawable.ic_loading)
+            .error(R.drawable.ic_error)
+            .into(movieImage!!)
+
+        val callback = object : OnBackPressedCallback(
+            true
+            /** true means that the callback is enabled */
+        ) {
             override fun handleOnBackPressed() {
-                listener?.onCloseMovieDetails(movieUserComment?.text.toString(), isLikedStatus = isLikedStatusMovie?.isChecked)
+                listener?.onCloseMovieDetails(
+                    movieUserComment?.text.toString(),
+                    isLikedStatus = isLikedStatusMovie?.isChecked
+                )
             }
         }
 

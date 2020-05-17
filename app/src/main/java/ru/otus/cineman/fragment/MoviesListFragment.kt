@@ -1,17 +1,25 @@
 package ru.otus.cineman.fragment
 
-import android.content.Context
-import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatDelegate
+import android.widget.ProgressBar
 import androidx.core.content.res.ResourcesCompat.getDrawable
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.snackbar.Snackbar
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import ru.otus.cineman.MovieStorage
+import ru.otus.cineman.MovieStorage.Companion.IMAGE_URL
+import ru.otus.cineman.MovieStorage.Companion.IS_INIT_LOADING
+import ru.otus.cineman.MovieStorage.Companion.MOVIES_PAGE
 import ru.otus.cineman.MovieStorage.Companion.getFavoriteMovieStorage
 import ru.otus.cineman.MovieStorage.Companion.getMovieStorage
 import ru.otus.cineman.R
@@ -21,23 +29,18 @@ import ru.otus.cineman.activity.MainActivity.Companion.UPDATED_IS_LIKED_STATUS
 import ru.otus.cineman.adapter.MovieItemAdapter
 import ru.otus.cineman.animation.CustomItemAnimator
 import ru.otus.cineman.model.MovieItem
-import java.util.*
+import ru.otus.cineman.model.json.MoviesResult
 
 class MoviesListFragment : Fragment() {
     companion object {
-        const val ANIMATE_INDEX_POSITION = 1
+        const val TAG = "MOVIES_LIST_FRAGMENT"
 
-        const val NIGHT_MODE_PREFERENCES = "NIGHT_MODE_PREFS"
-        const val KEY_IS_NIGHT_MODE = "IS_NIGHT_MODE"
     }
 
-    private lateinit var sharedPreferences: SharedPreferences
-
     var listener: MovieListListener? = null
-    var recycler: RecyclerView? = null
     var coordinatorLayout: View? = null
-    var isNightMode = false
-
+    var recycler: RecyclerView? = null
+    var progressBar: ProgressBar? = null
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         listener = activity as? MovieListListener
@@ -62,7 +65,8 @@ class MoviesListFragment : Fragment() {
                 itemAnimator = CustomItemAnimator()
                 addItemDecoration(itemDecoration)
             }
-
+        setOnScrollListener()
+        setSwipeRefreshListener(view)
         val isSelectedMovieUpdated =
             arguments?.getBoolean(IS_PREVIEW_MOVIES_UPDATED_BY_DETAILS) ?: false
         if (isSelectedMovieUpdated) {
@@ -70,9 +74,10 @@ class MoviesListFragment : Fragment() {
             val isLikedStatus = arguments?.getBoolean(UPDATED_IS_LIKED_STATUS)
             updateSelectedMovieDetailsInfo(comment, isLikedStatus)
         }
-
-        setAddNewMovieListener(view)
-        processThemeMode(view)
+        if (IS_INIT_LOADING) {
+            IS_INIT_LOADING = false
+            getDataFromServer()
+        }
     }
 
     private fun createAdapter(view: View): MovieItemAdapter {
@@ -87,7 +92,7 @@ class MoviesListFragment : Fragment() {
                 }
 
                 override fun onChangeFavoriteStatus(movieItem: MovieItem) {
-                    showSnackBar(movieItem)
+                    showSnackBarWithUpdateMovie(movieItem)
                 }
 
                 private fun selectNewItem(movieItem: MovieItem) {
@@ -107,7 +112,7 @@ class MoviesListFragment : Fragment() {
             })
     }
 
-    private fun showSnackBar(movieItem: MovieItem) {
+    private fun showSnackBarWithUpdateMovie(movieItem: MovieItem) {
         val movieItemAdapter = recycler?.adapter as MovieItemAdapter
         val updatedMoviePosition = movieItemAdapter.items.indexOf(movieItem)
         val updatedMovie = movieItemAdapter.items[updatedMoviePosition]
@@ -131,6 +136,16 @@ class MoviesListFragment : Fragment() {
                 snackbarUndo.show()
             }
         snackbar.show()
+    }
+
+    private fun showSnackBarWithSuccessLoading() {
+        Snackbar.make(coordinatorLayout!!, R.string.success_loading_movies, Snackbar.LENGTH_LONG)
+            .show()
+    }
+
+    private fun showSnackBarWithFaultLoading() {
+        Snackbar.make(coordinatorLayout!!, R.string.fault_loading_movies, Snackbar.LENGTH_LONG)
+            .show()
     }
 
     private fun changeMovieFavoriteStatus(movieItem: MovieItem): MovieItem = movieItem.apply {
@@ -161,62 +176,92 @@ class MoviesListFragment : Fragment() {
         }
     }
 
-    private fun setAddNewMovieListener(view: View) {
-        val addNewButton = view.findViewById<View>(R.id.add_new)
-        val adapter = recycler?.adapter as MovieItemAdapter
-        addNewButton.setOnClickListener {
-            val newGeneratedMovie = MovieItem(
-                title = resources.getString(R.string.incognito_title) + UUID.randomUUID().toString()
-                    .take(5),
-                imageId = R.drawable.incognito,
-                descriptionId = R.string.incognito_description
-            )
-            adapter.add(ANIMATE_INDEX_POSITION, newGeneratedMovie)
-        }
-    }
-
-    private fun saveNightModeState(isCheckedNightMode: Boolean) {
-        sharedPreferences.edit().apply {
-            putBoolean(KEY_IS_NIGHT_MODE, isCheckedNightMode)
-        }.apply()
-    }
-
-    private fun checkNightModeIsActivated() {
-        if (sharedPreferences.getBoolean(KEY_IS_NIGHT_MODE, false)) {
-            AppCompatDelegate.setDefaultNightMode(
-                AppCompatDelegate.MODE_NIGHT_YES
-            )
-            isNightMode = true
-        } else {
-            AppCompatDelegate.setDefaultNightMode(
-                AppCompatDelegate.MODE_NIGHT_NO
-            )
-            isNightMode = false
-        }
-    }
-
-    private fun processThemeMode(view: View) {
-        val dayNightModeListener = View.OnClickListener {
-            if (isNightMode) {
-                AppCompatDelegate.setDefaultNightMode(
-                    AppCompatDelegate.MODE_NIGHT_NO
-                )
-                saveNightModeState(false)
-            } else {
-                AppCompatDelegate.setDefaultNightMode(
-                    AppCompatDelegate.MODE_NIGHT_YES
-                )
-                saveNightModeState(true)
+    private fun setOnScrollListener() {
+        recycler?.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                if (isLastItemDisplaying(recyclerView)) {
+                    Log.d(TAG, "LoadMore")
+                    getData()
+                }
             }
-            activity?.recreate()
+        })
+    }
+
+    private fun setSwipeRefreshListener(view: View) {
+        view.findViewById<SwipeRefreshLayout>(R.id.swipeRefresh)
+            ?.let {
+                it.setOnRefreshListener {
+                    getMovieStorage().clear()
+                    MOVIES_PAGE = 1
+                    recycler?.adapter?.notifyDataSetChanged()
+                    getDataFromServer()
+                    it.isRefreshing = false
+                }
+            }
+    }
+
+    private fun getData() {
+        MOVIES_PAGE++
+        getDataFromServer()
+    }
+
+    private fun getDataFromServer() {
+        showProgressBar(view!!)
+        MovieStorage.api.getPopularFilms(MOVIES_PAGE)
+            .enqueue(object : Callback<MoviesResult?> {
+                override fun onFailure(call: Call<MoviesResult?>, t: Throwable) {
+                    dismissProgressBar(view!!)
+                    showSnackBarWithFaultLoading()
+                }
+
+                override fun onResponse(
+                    call: Call<MoviesResult?>,
+                    response: Response<MoviesResult?>
+                ) {
+
+                    if (response.isSuccessful) {
+                        dismissProgressBar(view!!)
+                        showSnackBarWithSuccessLoading()
+                        response.body()?.results?.map {
+                            MovieItem(
+                                title = it.title,
+                                description = it.description,
+                                image = "$IMAGE_URL${it.image}"
+                            )
+                        }?.let {
+                            getMovieStorage().addAll(it)
+                            progressBar?.visibility = View.INVISIBLE
+                            recycler?.adapter?.notifyDataSetChanged()
+
+                        }
+                    }
+                }
+            })
+    }
+
+    private fun isLastItemDisplaying(recyclerView: RecyclerView): Boolean {
+        if (recyclerView.adapter?.itemCount != 0) {
+            val lastVisibleItemPosition = (recyclerView.layoutManager as LinearLayoutManager)
+                .findLastVisibleItemPosition()
+
+            if (lastVisibleItemPosition != RecyclerView.NO_POSITION &&
+                lastVisibleItemPosition == (recyclerView.adapter!!.itemCount - 1)
+            ) {
+                return true
+            }
         }
+        return false
+    }
 
-        sharedPreferences =
-            activity?.getSharedPreferences(NIGHT_MODE_PREFERENCES, Context.MODE_PRIVATE) ?: throw Exception("Can't proceed light mode")
-        val dayNightModeButton = view.findViewById<View>(R.id.day_night_mode)
-        dayNightModeButton.setOnClickListener(dayNightModeListener)
+    private fun showProgressBar(view: View) {
+        progressBar = view.findViewById(R.id.progress_bar)
+        progressBar?.visibility = View.VISIBLE
+    }
 
-        checkNightModeIsActivated()
+    private fun dismissProgressBar(view: View) {
+        progressBar = view.findViewById(R.id.progress_bar)
+        progressBar?.visibility = View.INVISIBLE
     }
 }
 

@@ -1,10 +1,13 @@
 package ru.otus.cineman.activity
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
@@ -13,7 +16,6 @@ import ru.otus.cineman.MovieStorage.Companion.getFavoriteMovieStorage
 import ru.otus.cineman.R
 import ru.otus.cineman.fragment.*
 import ru.otus.cineman.model.MovieItem
-
 
 class MainActivity : AppCompatActivity(), MovieListListener, MovieDetailsListener,
     NavigationView.OnNavigationItemSelectedListener {
@@ -24,23 +26,27 @@ class MainActivity : AppCompatActivity(), MovieListListener, MovieDetailsListene
         const val IS_PREVIEW_MOVIES_UPDATED_BY_DETAILS = "IS_PREVIEW_MOVIES_UPDATED_BY_DETAILS"
         const val UPDATED_COMMENT = "UPDATED_COMMENT"
         const val UPDATED_IS_LIKED_STATUS = "UPDATED_IS_LIKED_STATUS"
+
+
+        const val NIGHT_MODE_PREFERENCES = "NIGHT_MODE_PREFS"
+        const val KEY_IS_NIGHT_MODE = "IS_NIGHT_MODE"
     }
+
+    private lateinit var sharedPreferences: SharedPreferences
 
     private var drawer: DrawerLayout? = null
     private var toolbar: Toolbar? = null
+    var isNightMode = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        setSupportActionBar(findViewById(R.id.toolbar))
+        sharedPreferences = getSharedPreferences(NIGHT_MODE_PREFERENCES, Context.MODE_PRIVATE) ?: throw Exception("Can't proceed light mode")
 
         if (savedInstanceState == null) {
-            supportFragmentManager
-                .beginTransaction()
-                .replace(R.id.fragmentContainer, MoviesListFragment(), TAG)
-                .commit()
+            openMoviesListFragment()
         }
-
-        setSupportActionBar(findViewById(R.id.toolbar))
 
         drawer = findViewById(R.id.drawer_layout)
         toolbar = findViewById(R.id.toolbar)
@@ -68,6 +74,13 @@ class MainActivity : AppCompatActivity(), MovieListListener, MovieDetailsListene
                 MovieDetailsFragment.TAG
             )
             .addToBackStack(null)
+            .commit()
+    }
+
+    private fun openMoviesListFragment() {
+        supportFragmentManager
+            .beginTransaction()
+            .replace(R.id.fragmentContainer, MoviesListFragment(), TAG)
             .commit()
     }
 
@@ -117,10 +130,39 @@ class MainActivity : AppCompatActivity(), MovieListListener, MovieDetailsListene
         when (item.itemId) {
             R.id.nav_favorites -> openFavoriteMovies()
 
+            R.id.day_night_mode -> processThemeMode()
+
             else -> Toast.makeText(this, R.string.share, Toast.LENGTH_SHORT).show()
         }
         drawer?.closeDrawer(GravityCompat.START)
         return true
+    }
+
+    private fun checkNightModeIsActivated() {
+        isNightMode = sharedPreferences.getBoolean(KEY_IS_NIGHT_MODE, false)
+
+        if (isNightMode) {
+            AppCompatDelegate.setDefaultNightMode(
+                AppCompatDelegate.MODE_NIGHT_NO
+            )
+            saveNightModeState(false)
+        } else {
+            AppCompatDelegate.setDefaultNightMode(
+                AppCompatDelegate.MODE_NIGHT_YES
+            )
+            saveNightModeState(true)
+        }
+        recreate()
+    }
+
+    private fun saveNightModeState(isCheckedNightMode: Boolean) {
+        sharedPreferences.edit().apply {
+            putBoolean(KEY_IS_NIGHT_MODE, isCheckedNightMode)
+        }.apply()
+    }
+
+    private fun processThemeMode() {
+        checkNightModeIsActivated()
     }
 }
 

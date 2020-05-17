@@ -14,7 +14,7 @@ import ru.otus.cineman.adapter.FavoriteMovieAdapter
 import ru.otus.cineman.animation.CustomItemAnimator
 
 class MoviesListFavoriteFragment : Fragment() {
-    var recycler: RecyclerView? = null
+    private var recycler: RecyclerView? = null
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
