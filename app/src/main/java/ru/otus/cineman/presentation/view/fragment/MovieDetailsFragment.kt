@@ -21,6 +21,13 @@ class MovieDetailsFragment : Fragment() {
         const val TAG = "MovieDetailsFragment"
     }
 
+    lateinit var listener: MovieDetailsListener
+    lateinit var movieImage: ImageView
+    lateinit var movieTitle: MaterialToolbar
+    lateinit var movieDescription: TextView
+    lateinit var movieUserComment: EditText
+    lateinit var isLikedStatusMovie: CheckBox
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         if (activity is MovieDetailsListener) {
             listener = activity as MovieDetailsListener
@@ -28,13 +35,7 @@ class MovieDetailsFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
     }
 
-    var listener: MovieDetailsListener? = null
 
-    lateinit var movieImage: ImageView
-    lateinit var movieTitle: MaterialToolbar
-    lateinit var movieDescription: TextView
-    lateinit var movieUserComment: EditText
-    lateinit var isLikedStatusMovie: CheckBox
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -77,10 +78,19 @@ class MovieDetailsFragment : Fragment() {
             /** true means that the callback is enabled */
         ) {
             override fun handleOnBackPressed() {
-                listener?.onCloseMovieDetails(
-                    movieUserComment.text.toString(),
-                    isLikedStatus = isLikedStatusMovie.isChecked
-                )
+                val selectedMovie = viewModel.selectedMovie.value!!
+                val isSelectedMovieNeedUpdate = selectedMovie.isLiked != isLikedStatusMovie.isChecked
+                        || selectedMovie.comment != movieUserComment.text.toString()
+
+                if (isSelectedMovieNeedUpdate) {
+                    selectedMovie.apply {
+                        comment = movieUserComment.text.toString()
+                        isLiked = isLikedStatusMovie.isChecked
+                    }.let {
+                        viewModel.onUpdateSelectedMovieInDetails(it)
+                    }
+                }
+                listener.onCloseMovieDetails()
             }
         }
 
@@ -89,5 +99,5 @@ class MovieDetailsFragment : Fragment() {
 }
 
 interface MovieDetailsListener {
-    fun onCloseMovieDetails(comment: String?, isLikedStatus: Boolean?)
+    fun onCloseMovieDetails()
 }

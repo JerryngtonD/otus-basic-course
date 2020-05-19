@@ -24,7 +24,9 @@ class MoviesListFragment : Fragment() {
 
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
-        moviesListListener = activity as MovieListListener
+        if (activity is MovieListListener) {
+            moviesListListener = activity as MovieListListener
+        }
         super.onActivityCreated(savedInstanceState)
     }
 
@@ -38,7 +40,6 @@ class MoviesListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         initRecycler()
-
 
         viewModel = ViewModelProvider(activity!!).get(MovieListViewModel::class.java)
 

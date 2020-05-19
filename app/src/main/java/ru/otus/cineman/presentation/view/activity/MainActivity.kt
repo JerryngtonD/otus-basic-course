@@ -81,7 +81,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
     }
 
-    override fun onCloseMovieDetails(comment: String?, isLikedStatus: Boolean?) {
+    override fun onCloseMovieDetails() {
         supportFragmentManager.popBackStack()
     }
 

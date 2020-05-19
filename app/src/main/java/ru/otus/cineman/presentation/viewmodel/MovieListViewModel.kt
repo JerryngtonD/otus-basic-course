@@ -65,4 +65,16 @@ class MovieListViewModel: ViewModel() {
     fun onInitialViewed() {
         isInitiallyViewedLiveData.postValue(true)
     }
+
+    fun onUpdateSelectedMovieInDetails(movie: MovieModel) {
+        selectedMovieLiveData.postValue(movie)
+        moviesLiveData.value!!.onEach {
+            if (it.id == movie.id) {
+                it.isLiked = movie.isLiked
+                it.comment = movie.comment
+            }
+        }.let {
+            moviesLiveData.postValue(it)
+        }
+    }
 }
