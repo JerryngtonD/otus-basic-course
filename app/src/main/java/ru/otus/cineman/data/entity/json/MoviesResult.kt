@@ -1,6 +1,7 @@
-package ru.otus.cineman.model.json
+package ru.otus.cineman.data.entity.json
 
 import com.google.gson.annotations.SerializedName
+import ru.otus.cineman.data.entity.json.MovieModel
 
 data class MoviesResult(
     @SerializedName("page") var page: Int,

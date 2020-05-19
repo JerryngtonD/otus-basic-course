@@ -1,4 +1,4 @@
-package ru.otus.cineman.fragment
+package ru.otus.cineman.presentation.view.fragment
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -7,35 +7,18 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.google.android.material.appbar.MaterialToolbar
+import ru.otus.cineman.App.Companion.IMAGE_URL
 import ru.otus.cineman.R
-import ru.otus.cineman.model.MovieItem
-import java.lang.Exception
+import ru.otus.cineman.data.entity.json.MovieModel
+import ru.otus.cineman.presentation.viewmodel.MovieListViewModel
 
 class MovieDetailsFragment : Fragment() {
     companion object {
         const val TAG = "MovieDetailsFragment"
-
-
-        const val MOVIE_TITLE = "MOVIE_TITLE"
-        const val MOVIE_IMAGE = "MOVIE_IMAGE"
-        const val MOVIE_DESCRIPTION = "MOVIE_DESCRIPTION"
-        const val IS_LIKED = "IS_LIKED"
-        const val MOVIE_COMMENT = "MOVIE_COMMENT"
-
-
-        fun newInstance(movieItem: MovieItem): MovieDetailsFragment {
-            return MovieDetailsFragment().apply {
-                arguments = Bundle().apply {
-                    putString(MOVIE_TITLE, movieItem.title)
-                    putString(MOVIE_IMAGE, movieItem.image)
-                    putString(MOVIE_DESCRIPTION, movieItem.description)
-                    putBoolean(IS_LIKED, movieItem.isLiked)
-                    putString(MOVIE_COMMENT, movieItem.comment)
-                }
-            }
-        }
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -47,11 +30,11 @@ class MovieDetailsFragment : Fragment() {
 
     var listener: MovieDetailsListener? = null
 
-    var movieImage: ImageView? = null
-    var movieTitle: MaterialToolbar? = null
-    var movieDescription: TextView? = null
-    var movieUserComment: EditText? = null
-    var isLikedStatusMovie: CheckBox? = null
+    lateinit var movieImage: ImageView
+    lateinit var movieTitle: MaterialToolbar
+    lateinit var movieDescription: TextView
+    lateinit var movieUserComment: EditText
+    lateinit var isLikedStatusMovie: CheckBox
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -70,18 +53,24 @@ class MovieDetailsFragment : Fragment() {
         movieUserComment = view.findViewById<EditText>(R.id.user_comment)
         isLikedStatusMovie = view.findViewById<CheckBox>(R.id.checked_like)
 
-        movieTitle?.title = arguments?.getString(MOVIE_TITLE)
-        movieDescription?.text = arguments?.getString(MOVIE_DESCRIPTION)
-        movieUserComment?.setText(arguments?.getString(MOVIE_COMMENT))
-        isLikedStatusMovie?.isChecked =
-            arguments?.getBoolean(IS_LIKED) ?: throw Exception("Like status should be presented")
+        val viewModel = ViewModelProvider(activity!!).get(MovieListViewModel::class.java)
 
+        viewModel.selectedMovie.observe(viewLifecycleOwner, Observer { selectedMovie ->
+            run {
+                movieTitle.title = selectedMovie.title
+                movieDescription.text = selectedMovie.description
+                movieUserComment.setText(selectedMovie.comment)
+                isLikedStatusMovie.isChecked = selectedMovie.isLiked
 
-        Glide.with(movieImage!!.context)
-            .load(arguments?.getString(MOVIE_IMAGE))
-            .placeholder(R.drawable.ic_loading)
-            .error(R.drawable.ic_error)
-            .into(movieImage!!)
+                Glide.with(movieImage.context)
+                    .load("$IMAGE_URL${selectedMovie.image}")
+                    .placeholder(R.drawable.ic_loading)
+                    .centerCrop()
+                    .error(R.drawable.ic_error)
+                    .into(movieImage)
+            }
+        })
+
 
         val callback = object : OnBackPressedCallback(
             true
@@ -89,8 +78,8 @@ class MovieDetailsFragment : Fragment() {
         ) {
             override fun handleOnBackPressed() {
                 listener?.onCloseMovieDetails(
-                    movieUserComment?.text.toString(),
-                    isLikedStatus = isLikedStatusMovie?.isChecked
+                    movieUserComment.text.toString(),
+                    isLikedStatus = isLikedStatusMovie.isChecked
                 )
             }
         }
