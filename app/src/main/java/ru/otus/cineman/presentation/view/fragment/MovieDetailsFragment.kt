@@ -35,8 +35,6 @@ class MovieDetailsFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
     }
 
-
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -57,7 +55,6 @@ class MovieDetailsFragment : Fragment() {
         val viewModel = ViewModelProvider(activity!!).get(MovieListViewModel::class.java)
 
         viewModel.selectedMovie.observe(viewLifecycleOwner, Observer { selectedMovie ->
-            run {
                 movieTitle.title = selectedMovie.title
                 movieDescription.text = selectedMovie.description
                 movieUserComment.setText(selectedMovie.comment)
@@ -69,7 +66,6 @@ class MovieDetailsFragment : Fragment() {
                     .centerCrop()
                     .error(R.drawable.ic_error)
                     .into(movieImage)
-            }
         })
 
 

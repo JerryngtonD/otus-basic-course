@@ -14,6 +14,7 @@ class MovieListViewModel: ViewModel() {
 
     private val isInitiallyViewedLiveData = MutableLiveData(false)
     private val moviesLiveData = MutableLiveData<List<MovieModel>>()
+    private val isLoadingLiveData = MutableLiveData(false)
     private val errorLiveData = MutableLiveData<String>()
     private val selectedMovieLiveData = MutableLiveData<MovieModel>()
     private val moviePageLiveData = MutableLiveData(INIT_PAGE)
@@ -36,14 +37,20 @@ class MovieListViewModel: ViewModel() {
     val isInitiallyViewed: LiveData<Boolean>
         get() = isInitiallyViewedLiveData
 
+    val isLoading: LiveData<Boolean>
+        get() = isLoadingLiveData
+
     fun onGetMovies() {
+        setIsLoading(true)
         movieInteractor.getPopularMovies(moviePageLiveData.value!!, object : GetMoviesCallback {
             override fun onSuccess(movies: List<MovieModel>) {
                 moviesLiveData.postValue(movies)
+                setIsLoading(false)
             }
 
             override fun onError(error: String) {
                 errorLiveData.postValue(error)
+                setIsLoading(false)
             }
         })
     }
@@ -78,7 +85,7 @@ class MovieListViewModel: ViewModel() {
     }
 
     fun onInitialViewed() {
-        isInitiallyViewedLiveData.postValue(true)
+        isInitiallyViewedLiveData.postValue(false)
     }
 
     fun onUpdateSelectedMovieInDetails(movie: MovieModel) {
@@ -93,7 +100,7 @@ class MovieListViewModel: ViewModel() {
         }
     }
 
-    fun findSelectedMovie(movie: MovieModel) {
-
-    }
+   fun setIsLoading(isLoading: Boolean) {
+       isLoadingLiveData.postValue(isLoading)
+   }
 }

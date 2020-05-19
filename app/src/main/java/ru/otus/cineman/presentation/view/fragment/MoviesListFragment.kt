@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -21,6 +22,7 @@ class MoviesListFragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: MovieItemAdapter
     private lateinit var moviesListListener: MovieListListener
+    private lateinit var progressBar: ProgressBar
 
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -40,6 +42,7 @@ class MoviesListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         initRecycler()
+        progressBar = view.findViewById(R.id.progress_bar)
 
         viewModel = ViewModelProvider(activity!!).get(MovieListViewModel::class.java)
 
@@ -54,15 +57,23 @@ class MoviesListFragment : Fragment() {
                 Toast.makeText(context, error, Toast.LENGTH_SHORT).show()
             })
 
+        viewModel.isLoading.observe(
+            viewLifecycleOwner,
+            Observer { isLoading ->
+                if (isLoading) {
+                    showProgressBar()
+                } else {
+                    dismissProgressBar()
+                }
+            })
+
         viewModel.isInitiallyViewed.observe(viewLifecycleOwner,
             Observer { isInitiallyViewed ->
-            run {
                 if (!isInitiallyViewed) {
                     viewModel.onGetMovies()
                     viewModel.onInitialViewed()
                 }
-            }
-        })
+            })
     }
 
     private fun initRecycler() {
@@ -80,6 +91,14 @@ class MoviesListFragment : Fragment() {
         })
         recyclerView = view!!.findViewById(R.id.recyclerView)
         recyclerView.adapter = adapter
+    }
+
+    private fun showProgressBar() {
+        progressBar.visibility = View.VISIBLE
+    }
+
+    private fun dismissProgressBar() {
+        progressBar.visibility = View.INVISIBLE
     }
 }
 //    var listener: MovieListListener? = null
@@ -298,15 +317,7 @@ class MoviesListFragment : Fragment() {
 //        return false
 //    }
 //
-//    private fun showProgressBar(view: View) {
-//        progressBar = view.findViewById(R.id.progress_bar)
-//        progressBar?.visibility = View.VISIBLE
-//    }
-//
-//    private fun dismissProgressBar(view: View) {
-//        progressBar = view.findViewById(R.id.progress_bar)
-//        progressBar?.visibility = View.INVISIBLE
-//    }
+
 //}
 
 interface MovieListListener {
