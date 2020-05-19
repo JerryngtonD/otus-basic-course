@@ -49,6 +49,21 @@ class MovieListViewModel: ViewModel() {
     }
 
     fun onMovieSelect(movie: MovieModel) {
+        if (selectedMovieLiveData.value?.isSelected != null) {
+            val prevSelectedMovieInLiveData = moviesLiveData.value!!.first { it.isSelected }
+            val prevSelectedMoviePosition = moviesLiveData.value!!.indexOf(prevSelectedMovieInLiveData)
+            moviesLiveData.value!!.also {
+                it[prevSelectedMoviePosition].isSelected = false
+            }
+        }
+
+        val selectedMovieInMoviesLiveData = moviesLiveData.value!!.first { it.id == movie.id }
+        val indexSelectedMovie = moviesLiveData.value!!.indexOf(selectedMovieInMoviesLiveData)
+        moviesLiveData.value!!.also {
+            it[indexSelectedMovie].isSelected = true
+        }
+
+        moviesLiveData.postValue(moviesLiveData.value)
         selectedMovieLiveData.postValue(movie)
     }
 
@@ -68,13 +83,17 @@ class MovieListViewModel: ViewModel() {
 
     fun onUpdateSelectedMovieInDetails(movie: MovieModel) {
         selectedMovieLiveData.postValue(movie)
-        moviesLiveData.value!!.onEach {
-            if (it.id == movie.id) {
-                it.isLiked = movie.isLiked
-                it.comment = movie.comment
-            }
+        val selectedMovieInMoviesLiveData = moviesLiveData.value!!.first { it.id == movie.id }
+        val indexSelectedMovie = moviesLiveData.value!!.indexOf(selectedMovieInMoviesLiveData)
+        moviesLiveData.value!!.also {
+            it[indexSelectedMovie].isLiked = movie.isLiked
+            it[indexSelectedMovie].comment = movie.comment
         }.let {
             moviesLiveData.postValue(it)
         }
+    }
+
+    fun findSelectedMovie(movie: MovieModel) {
+
     }
 }
