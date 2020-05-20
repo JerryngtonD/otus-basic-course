@@ -7,32 +7,32 @@ import ru.otus.cineman.App
 import ru.otus.cineman.data.entity.json.MovieModel
 import ru.otus.cineman.domain.GetMoviesCallback
 
-class MovieListViewModel: ViewModel() {
+class MovieListViewModel : ViewModel() {
     companion object {
         const val INIT_PAGE = 1
     }
 
+    private var currentPage = INIT_PAGE
     private val isInitiallyViewedLiveData = MutableLiveData(false)
-    private val moviesLiveData = MutableLiveData<List<MovieModel>>()
+    private val moviesLiveData = MutableLiveData<ArrayList<MovieModel>>()
+    private val favoriteMoviesLiveData = MutableLiveData<ArrayList<MovieModel>>()
     private val isLoadingLiveData = MutableLiveData(false)
     private val errorLiveData = MutableLiveData<String>()
     private val selectedMovieLiveData = MutableLiveData<MovieModel>()
-    private val moviePageLiveData = MutableLiveData(INIT_PAGE)
-
 
     private val movieInteractor = App.instance!!.movieInteractor
 
-    val movies: LiveData<List<MovieModel>>
+    val movies: LiveData<ArrayList<MovieModel>>
         get() = moviesLiveData
+
+    val favoriteMovies: LiveData<ArrayList<MovieModel>>
+        get() = favoriteMoviesLiveData
 
     val error: LiveData<String>
         get() = errorLiveData
 
     val selectedMovie: LiveData<MovieModel>
         get() = selectedMovieLiveData
-
-    val moviePage: LiveData<Int>
-        get() = moviePageLiveData
 
     val isInitiallyViewed: LiveData<Boolean>
         get() = isInitiallyViewedLiveData
@@ -42,9 +42,9 @@ class MovieListViewModel: ViewModel() {
 
     fun onGetMovies() {
         setIsLoading(true)
-        movieInteractor.getPopularMovies(moviePageLiveData.value!!, object : GetMoviesCallback {
+        movieInteractor.getPopularMovies(currentPage, object : GetMoviesCallback {
             override fun onSuccess(movies: List<MovieModel>) {
-                moviesLiveData.postValue(movies)
+                moviesLiveData.postValue(ArrayList(movies))
                 setIsLoading(false)
             }
 
@@ -55,10 +55,34 @@ class MovieListViewModel: ViewModel() {
         })
     }
 
+    fun onLoadMoreMovies() {
+        setIsLoading(true)
+        currentPage.plus(1)
+
+        movieInteractor.getPopularMovies(currentPage, object : GetMoviesCallback {
+            override fun onSuccess(movies: List<MovieModel>) {
+                moviesLiveData.value!!.addAll(movies)
+                moviesLiveData.postValue(moviesLiveData.value!!)
+                setIsLoading(false)
+            }
+
+            override fun onError(error: String) {
+                errorLiveData.postValue(error)
+                setIsLoading(false)
+            }
+        })
+    }
+
+    fun onRefreshMovies() {
+        currentPage = INIT_PAGE
+        onGetMovies()
+    }
+
     fun onMovieSelect(movie: MovieModel) {
         if (selectedMovieLiveData.value?.isSelected != null) {
             val prevSelectedMovieInLiveData = moviesLiveData.value!!.first { it.isSelected }
-            val prevSelectedMoviePosition = moviesLiveData.value!!.indexOf(prevSelectedMovieInLiveData)
+            val prevSelectedMoviePosition =
+                moviesLiveData.value!!.indexOf(prevSelectedMovieInLiveData)
             moviesLiveData.value!!.also {
                 it[prevSelectedMoviePosition].isSelected = false
             }
@@ -75,17 +99,26 @@ class MovieListViewModel: ViewModel() {
     }
 
     fun onChangeFavoriteStatus(id: Int) {
-        moviesLiveData.value!!.onEach {
-            if (it.id == id) {
-                it.isFavorite = !it.isFavorite
-            }
-        }.let {
-            moviesLiveData.postValue(it)
+        val processedMovie = moviesLiveData.value!!.first { it.id == id }
+        val movieIndex = moviesLiveData.value!!.indexOf(processedMovie)
+
+        val favoriteMovies = favoriteMoviesLiveData.value ?: ArrayList()
+        val listMovies = moviesLiveData.value ?: ArrayList()
+
+        if (processedMovie.isFavorite) {
+            listMovies[movieIndex].isFavorite = false
+            favoriteMovies.remove(moviesLiveData.value!![movieIndex])
+        } else {
+            listMovies[movieIndex].isFavorite = true
+            favoriteMovies.add(moviesLiveData.value!![movieIndex])
         }
+
+        moviesLiveData.postValue(listMovies)
+        favoriteMoviesLiveData.postValue(favoriteMovies)
     }
 
     fun onInitialViewed() {
-        isInitiallyViewedLiveData.postValue(false)
+        isInitiallyViewedLiveData.postValue(true)
     }
 
     fun onUpdateSelectedMovieInDetails(movie: MovieModel) {
@@ -100,7 +133,7 @@ class MovieListViewModel: ViewModel() {
         }
     }
 
-   fun setIsLoading(isLoading: Boolean) {
-       isLoadingLiveData.postValue(isLoading)
-   }
+    fun setIsLoading(isLoading: Boolean) {
+        isLoadingLiveData.postValue(isLoading)
+    }
 }

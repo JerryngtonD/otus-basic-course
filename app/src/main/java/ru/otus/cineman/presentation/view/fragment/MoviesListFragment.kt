@@ -1,26 +1,37 @@
 package ru.otus.cineman.presentation.view.fragment
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
 import android.widget.Toast
+import androidx.core.content.res.ResourcesCompat.getDrawable
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import ru.otus.cineman.R
 import ru.otus.cineman.data.entity.json.MovieModel
-import ru.otus.cineman.presentation.view.activity.MainActivity
 import ru.otus.cineman.presentation.view.adapter.MovieItemAdapter
+import ru.otus.cineman.presentation.view.animation.CustomItemAnimator
 import ru.otus.cineman.presentation.viewmodel.MovieListViewModel
+import ru.otus.cineman.presentation.viewmodel.ViewModelFactory
 
 
 class MoviesListFragment : Fragment() {
+    companion object {
+        const val TAG = "MOVIES_LIST_FRAGMENT"
+    }
+
+    private lateinit var viewModelFactory: ViewModelFactory
     private lateinit var viewModel: MovieListViewModel
     private lateinit var recyclerView: RecyclerView
-    private lateinit var adapter: MovieItemAdapter
+    private lateinit var recyclerAdapter: MovieItemAdapter
     private lateinit var moviesListListener: MovieListListener
     private lateinit var progressBar: ProgressBar
 
@@ -44,11 +55,12 @@ class MoviesListFragment : Fragment() {
         initRecycler()
         progressBar = view.findViewById(R.id.progress_bar)
 
-        viewModel = ViewModelProvider(activity!!).get(MovieListViewModel::class.java)
+        viewModelFactory = ViewModelFactory(context = null)
+        viewModel = ViewModelProvider(requireActivity(), viewModelFactory).get(MovieListViewModel::class.java)
 
         viewModel.movies.observe(viewLifecycleOwner,
             Observer { movies ->
-                adapter.setItems(movies)
+                recyclerAdapter.setItems(movies)
             })
 
         viewModel.error.observe(
@@ -74,10 +86,13 @@ class MoviesListFragment : Fragment() {
                     viewModel.onInitialViewed()
                 }
             })
+
+        setOnScrollListener()
+        setSwipeRefreshListener()
     }
 
     private fun initRecycler() {
-        adapter = MovieItemAdapter(LayoutInflater.from(context), object :
+        recyclerAdapter = MovieItemAdapter(LayoutInflater.from(context), object :
             MovieItemAdapter.OnMovieClickListener {
 
             override fun onDetailsClick(movie: MovieModel) {
@@ -89,8 +104,16 @@ class MoviesListFragment : Fragment() {
                 viewModel.onChangeFavoriteStatus(movie.id)
             }
         })
-        recyclerView = view!!.findViewById(R.id.recyclerView)
-        recyclerView.adapter = adapter
+
+        val itemDecoration = DividerItemDecoration(activity, DividerItemDecoration.VERTICAL)
+        itemDecoration.setDrawable(getDrawable(resources, R.drawable.divider, null)!!)
+
+        recyclerView = requireView().findViewById(R.id.recyclerView)
+        recyclerView.apply {
+            adapter = recyclerAdapter
+            itemAnimator =  CustomItemAnimator()
+            addItemDecoration(itemDecoration)
+        }
     }
 
     private fun showProgressBar() {
@@ -98,7 +121,43 @@ class MoviesListFragment : Fragment() {
     }
 
     private fun dismissProgressBar() {
-        progressBar.visibility = View.INVISIBLE
+        progressBar.visibility = View.GONE
+    }
+
+    private fun isLastItemDisplaying(recyclerView: RecyclerView): Boolean {
+        if (recyclerAdapter.itemCount != 0) {
+            val lastVisibleItemPosition = (recyclerView.layoutManager as LinearLayoutManager)
+                .findLastVisibleItemPosition()
+
+            if (lastVisibleItemPosition != RecyclerView.NO_POSITION &&
+                lastVisibleItemPosition == (recyclerView.adapter!!.itemCount - 1)
+            ) {
+                return true
+            }
+        }
+        return false
+    }
+
+    private fun setOnScrollListener() {
+        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                if (isLastItemDisplaying(recyclerView)) {
+                    Log.d(TAG, "LoadMore")
+                    viewModel.onLoadMoreMovies()
+                }
+            }
+        })
+    }
+
+    private fun setSwipeRefreshListener() {
+        requireView().findViewById<SwipeRefreshLayout>(R.id.swipeRefresh)
+            ?.let {
+                it.setOnRefreshListener {
+                    viewModel.onRefreshMovies()
+                    it.isRefreshing = false
+                }
+            }
     }
 }
 //    var listener: MovieListListener? = null
@@ -239,30 +298,8 @@ class MoviesListFragment : Fragment() {
 //        }
 //    }
 //
-//    private fun setOnScrollListener() {
-//        recycler?.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-//            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-//                super.onScrolled(recyclerView, dx, dy)
-//                if (isLastItemDisplaying(recyclerView)) {
-//                    Log.d(TAG, "LoadMore")
-//                    getData()
-//                }
-//            }
-//        })
-//    }
 //
-//    private fun setSwipeRefreshListener(view: View) {
-//        view.findViewById<SwipeRefreshLayout>(R.id.swipeRefresh)
-//            ?.let {
-//                it.setOnRefreshListener {
-//                    getMovieStorage().clear()
-//                    MOVIES_PAGE = 1
-//                    recycler?.adapter?.notifyDataSetChanged()
-//                    getDataFromServer()
-//                    it.isRefreshing = false
-//                }
-//            }
-//    }
+
 //
 //    private fun getData() {
 //        MOVIES_PAGE++
@@ -303,19 +340,6 @@ class MoviesListFragment : Fragment() {
 //            })
 //    }
 //
-//    private fun isLastItemDisplaying(recyclerView: RecyclerView): Boolean {
-//        if (recyclerView.adapter?.itemCount != 0) {
-//            val lastVisibleItemPosition = (recyclerView.layoutManager as LinearLayoutManager)
-//                .findLastVisibleItemPosition()
-//
-//            if (lastVisibleItemPosition != RecyclerView.NO_POSITION &&
-//                lastVisibleItemPosition == (recyclerView.adapter!!.itemCount - 1)
-//            ) {
-//                return true
-//            }
-//        }
-//        return false
-//    }
 //
 
 //}

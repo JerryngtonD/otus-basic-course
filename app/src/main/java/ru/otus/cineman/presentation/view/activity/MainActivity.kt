@@ -3,18 +3,18 @@ package ru.otus.cineman.presentation.view.activity
 
 import android.os.Bundle
 import android.view.MenuItem
+import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.navigation.NavigationView
 import ru.otus.cineman.R
-import ru.otus.cineman.data.entity.json.MovieModel
-import ru.otus.cineman.presentation.view.fragment.MovieDetailsFragment
-import ru.otus.cineman.presentation.view.fragment.MovieDetailsListener
-import ru.otus.cineman.presentation.view.fragment.MovieListListener
-import ru.otus.cineman.presentation.view.fragment.MoviesListFragment
+import ru.otus.cineman.presentation.view.fragment.*
+import ru.otus.cineman.presentation.viewmodel.NavigationDrawerViewModel
+import ru.otus.cineman.presentation.viewmodel.ViewModelFactory
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener,
     MovieDetailsListener, MovieListListener {
@@ -26,6 +26,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private lateinit var toolbar: Toolbar
     private lateinit var navigationView: NavigationView
 
+    private lateinit var viewModelFactory: ViewModelFactory
+    private lateinit var navigationDrawerViewModel: NavigationDrawerViewModel
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -34,6 +38,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         drawer = findViewById(R.id.drawer_layout)
         toolbar = findViewById(R.id.toolbar)
+
+        viewModelFactory = ViewModelFactory(context = applicationContext)
+        navigationDrawerViewModel = ViewModelProvider(this, viewModelFactory).get(NavigationDrawerViewModel::class.java)
+
+        checkNightModeActivated()
+
 
         navigationView = findViewById(R.id.nav_view)
         navigationView.setNavigationItemSelectedListener(this)
@@ -48,7 +58,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         drawer.addDrawerListener(toggle)
         toggle.syncState()
 
-        openMoviesListFragment()
+        if (savedInstanceState == null) {
+            openMoviesListFragment()
+        }
     }
 
     private fun openMoviesListFragment() {
@@ -61,15 +73,16 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             .commit()
     }
 
+
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
-//        when (item.itemId) {
-////            R.id.nav_favorites -> openFavoriteMovies()
-////
-////            R.id.day_night_mode -> processThemeMode()
-////
-////            else -> Toast.makeText(this, R.string.share, Toast.LENGTH_SHORT).show()
-//        }
-//        drawer?.closeDrawer(GravityCompat.START)
+        when (item.itemId) {
+            R.id.nav_favorites -> onFavoritesClick()
+
+            R.id.day_night_mode -> onDayNightModeChanged()
+
+            else -> Toast.makeText(this, R.string.share, Toast.LENGTH_SHORT).show()
+        }
+        drawer.closeDrawer(GravityCompat.START)
         return true
     }
 
@@ -96,6 +109,28 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             .addToBackStack(null)
             .commit()
     }
+
+
+    private fun onDayNightModeChanged() {
+        navigationDrawerViewModel.onDayNightModeChanged()
+        recreate()
+    }
+
+    private fun checkNightModeActivated() {
+       navigationDrawerViewModel.checkNightModeActivated()
+    }
+
+    private fun onFavoritesClick() {
+        supportFragmentManager
+            .beginTransaction()
+            .replace(
+                R.id.fragmentContainer,
+                MoviesListFavoriteFragment(),
+                MoviesListFavoriteFragment.TAG
+            )
+            .addToBackStack(null)
+            .commit()
+    }
 }
 //class MainActivity : AppCompatActivity(), MovieListListener, MovieDetailsListener,
 //    NavigationView.OnNavigationItemSelectedListener {
@@ -108,15 +143,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 //        const val UPDATED_IS_LIKED_STATUS = "UPDATED_IS_LIKED_STATUS"
 //
 //
-//        const val NIGHT_MODE_PREFERENCES = "NIGHT_MODE_PREFS"
-//        const val KEY_IS_NIGHT_MODE = "IS_NIGHT_MODE"
+
 //    }
 //
-//    private lateinit var sharedPreferences: SharedPreferences
-//
-//    private var drawer: DrawerLayout? = null
-//    private var toolbar: Toolbar? = null
-//    var isNightMode = false
+
 //
 //    override fun onCreate(savedInstanceState: Bundle?) {
 //        super.onCreate(savedInstanceState)
@@ -197,31 +227,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 //        return true
 //    }
 //
-//    private fun checkNightModeIsActivated() {
-//        isNightMode = sharedPreferences.getBoolean(KEY_IS_NIGHT_MODE, false)
-//
-//        if (isNightMode) {
-//            AppCompatDelegate.setDefaultNightMode(
-//                AppCompatDelegate.MODE_NIGHT_NO
-//            )
-//            saveNightModeState(false)
-//        } else {
-//            AppCompatDelegate.setDefaultNightMode(
-//                AppCompatDelegate.MODE_NIGHT_YES
-//            )
-//            saveNightModeState(true)
-//        }
-//        recreate()
-//    }
-//
-//    private fun saveNightModeState(isCheckedNightMode: Boolean) {
-//        sharedPreferences.edit().apply {
-//            putBoolean(KEY_IS_NIGHT_MODE, isCheckedNightMode)
-//        }.apply()
-//    }
-//
-//    private fun processThemeMode() {
-//        checkNightModeIsActivated()
-//    }
+
 //}
 
