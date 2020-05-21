@@ -6,7 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
-import android.widget.Toast
+import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat.getDrawable
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.google.android.material.snackbar.Snackbar
 import ru.otus.cineman.R
 import ru.otus.cineman.data.entity.json.MovieModel
 import ru.otus.cineman.presentation.view.adapter.MovieItemAdapter
@@ -29,8 +30,9 @@ class MoviesListFragment : Fragment() {
     }
 
     private lateinit var viewModelFactory: ViewModelFactory
-    private lateinit var viewModel: MovieListViewModel
+    private lateinit var moviesListViewModel: MovieListViewModel
     private lateinit var recyclerView: RecyclerView
+    private lateinit var coordinatorLayout: View
     private lateinit var recyclerAdapter: MovieItemAdapter
     private lateinit var moviesListListener: MovieListListener
     private lateinit var progressBar: ProgressBar
@@ -54,22 +56,32 @@ class MoviesListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         initRecycler()
         progressBar = view.findViewById(R.id.progress_bar)
-
+        coordinatorLayout = requireActivity().findViewById(R.id.coordinatorMovies)
         viewModelFactory = ViewModelFactory(context = null)
-        viewModel = ViewModelProvider(requireActivity(), viewModelFactory).get(MovieListViewModel::class.java)
+        moviesListViewModel = ViewModelProvider(
+            requireActivity(),
+            viewModelFactory
+        ).get(MovieListViewModel::class.java)
 
-        viewModel.movies.observe(viewLifecycleOwner,
+        moviesListViewModel.movies.observe(viewLifecycleOwner,
             Observer { movies ->
                 recyclerAdapter.setItems(movies)
             })
 
-        viewModel.error.observe(
+        moviesListViewModel.error.observe(
             viewLifecycleOwner,
             Observer { error ->
-                Toast.makeText(context, error, Toast.LENGTH_SHORT).show()
+                Log.i(TAG, error)
+                val errorText = "$error\n\n${resources.getString(R.string.fault_loading_movies)}"
+                val snackbar = Snackbar.make(coordinatorLayout, errorText, Snackbar.LENGTH_INDEFINITE)
+                    .setAction(resources.getString(R.string.retry)) { moviesListViewModel.onGetMovies() }
+                val snackBarView = snackbar.view
+                val textView = snackBarView.findViewById<TextView>(R.id.snackbar_text)
+                textView.setLines(5)
+                snackbar.show()
             })
 
-        viewModel.isLoading.observe(
+        moviesListViewModel.isLoading.observe(
             viewLifecycleOwner,
             Observer { isLoading ->
                 if (isLoading) {
@@ -79,11 +91,11 @@ class MoviesListFragment : Fragment() {
                 }
             })
 
-        viewModel.isInitiallyViewed.observe(viewLifecycleOwner,
+        moviesListViewModel.isInitiallyViewed.observe(viewLifecycleOwner,
             Observer { isInitiallyViewed ->
                 if (!isInitiallyViewed) {
-                    viewModel.onGetMovies()
-                    viewModel.onInitialViewed()
+                    moviesListViewModel.onGetMovies()
+                    moviesListViewModel.onInitialViewed()
                 }
             })
 
@@ -96,12 +108,25 @@ class MoviesListFragment : Fragment() {
             MovieItemAdapter.OnMovieClickListener {
 
             override fun onDetailsClick(movie: MovieModel) {
-                viewModel.onMovieSelect(movie)
+                moviesListViewModel.onMovieSelect(movie)
                 moviesListListener.onDetailsClick()
             }
 
             override fun onChangeFavoriteStatus(movie: MovieModel) {
-                viewModel.onChangeFavoriteStatus(movie.id)
+                moviesListViewModel.onChangeFavoriteStatus(movie.id)
+                val text = if (movie.isFavorite) R.string.success_added_to_favorites
+                                else R.string.success_removed_from_favorites
+                val snackbar = Snackbar.make(coordinatorLayout, text, Snackbar.LENGTH_LONG)
+                    .setAction(resources.getString(R.string.undo_title)) {
+                        moviesListViewModel.onChangeFavoriteStatus(movie.id)
+                        val snackbarUndo = Snackbar.make(
+                            coordinatorLayout,
+                            resources.getString(R.string.undo_text),
+                            Snackbar.LENGTH_LONG
+                        )
+                        snackbarUndo.show()
+                    }
+                snackbar.show()
             }
         })
 
@@ -111,7 +136,7 @@ class MoviesListFragment : Fragment() {
         recyclerView = requireView().findViewById(R.id.recyclerView)
         recyclerView.apply {
             adapter = recyclerAdapter
-            itemAnimator =  CustomItemAnimator()
+            itemAnimator = CustomItemAnimator()
             addItemDecoration(itemDecoration)
         }
     }
@@ -144,7 +169,7 @@ class MoviesListFragment : Fragment() {
                 super.onScrolled(recyclerView, dx, dy)
                 if (isLastItemDisplaying(recyclerView)) {
                     Log.d(TAG, "LoadMore")
-                    viewModel.onLoadMoreMovies()
+                    moviesListViewModel.onLoadMoreMovies()
                 }
             }
         })
@@ -154,7 +179,7 @@ class MoviesListFragment : Fragment() {
         requireView().findViewById<SwipeRefreshLayout>(R.id.swipeRefresh)
             ?.let {
                 it.setOnRefreshListener {
-                    viewModel.onRefreshMovies()
+                    moviesListViewModel.onRefreshMovies()
                     it.isRefreshing = false
                 }
             }

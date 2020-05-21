@@ -111,4 +111,6 @@
     <string name="success_loading_movies">Movies loading was success</string>
     //Fault loading
     <string name="fault_loading_movies">Something was wrong while loading movies</string>
+    //Retry
+    <string name="retry">Retry</string>
 </resources>

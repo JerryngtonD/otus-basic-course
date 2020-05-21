@@ -20,31 +20,18 @@ class App : Application() {
         const val API_KEY = "b5cc0a88a97a9a1ff22147d617b8004f"
     }
 
-    var MOVIES_PAGE = 1
-
-    var IS_INIT_LOADING = true
-
-//    lateinit var movies: MutableList<MovieItem>
-//    lateinit var favoriteMovies: MutableList<MovieItem>
-
-    var movieRepository = MovieRepository()
-
+    lateinit var movieRepository: MovieRepository
     lateinit var movieService: MovieService
-        private set
-
     lateinit var movieInteractor: MovieInteractor
 
-
     private fun initMovieInteractor() {
+        movieRepository = MovieRepository()
         movieInteractor = MovieInteractor(movieService, movieRepository)
     }
 
     override fun onCreate() {
         super.onCreate()
         instance = this
-
-//        movies = mutableListOf()
-//        favoriteMovies = mutableListOf()
 
         initRetrofit()
         initMovieInteractor()

@@ -25,7 +25,7 @@ class MovieInteractor(
         movieService.getPopularMovies(page)
             .enqueue(object : Callback<MoviesResult?> {
                 override fun onFailure(call: Call<MoviesResult?>, t: Throwable) {
-                    callback.onError("Network error probably...")
+                    callback.onError( t.localizedMessage ?: "")
                 }
 
                 override fun onResponse(
@@ -38,6 +38,8 @@ class MovieInteractor(
                             movieRepository.addToCache(movies)
                         }
                         callback.onSuccess(movies)
+                    } else {
+                        callback.onError("""Code: ${response.code()}""")
                     }
                 }
             })

@@ -58,7 +58,6 @@ class MovieListViewModel : ViewModel() {
     fun onLoadMoreMovies() {
         setIsLoading(true)
         currentPage.plus(1)
-
         movieInteractor.getPopularMovies(currentPage, object : GetMoviesCallback {
             override fun onSuccess(movies: List<MovieModel>) {
                 moviesLiveData.value!!.addAll(movies)

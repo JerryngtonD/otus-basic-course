@@ -104,4 +104,6 @@
     <string name="success_loading_movies">Загрзука фильмов была успешной</string>
     //Fault loading
     <string name="fault_loading_movies">Что-то пошло не так при загрзке фильмов</string>
+    //Retry
+    <string name="retry">Повторить</string>
 </resources>

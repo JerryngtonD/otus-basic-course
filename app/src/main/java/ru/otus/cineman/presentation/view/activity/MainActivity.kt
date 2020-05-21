@@ -13,6 +13,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.navigation.NavigationView
 import ru.otus.cineman.R
 import ru.otus.cineman.presentation.view.fragment.*
+import ru.otus.cineman.presentation.viewmodel.MovieListViewModel
 import ru.otus.cineman.presentation.viewmodel.NavigationDrawerViewModel
 import ru.otus.cineman.presentation.viewmodel.ViewModelFactory
 
@@ -28,6 +29,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     private lateinit var viewModelFactory: ViewModelFactory
     private lateinit var navigationDrawerViewModel: NavigationDrawerViewModel
+    private lateinit var moviesListViewModel: MovieListViewModel
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,7 +42,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         toolbar = findViewById(R.id.toolbar)
 
         viewModelFactory = ViewModelFactory(context = applicationContext)
-        navigationDrawerViewModel = ViewModelProvider(this, viewModelFactory).get(NavigationDrawerViewModel::class.java)
+        navigationDrawerViewModel =
+            ViewModelProvider(this, viewModelFactory).get(NavigationDrawerViewModel::class.java)
+        moviesListViewModel =
+            ViewModelProvider(this, viewModelFactory).get(MovieListViewModel::class.java)
 
         checkNightModeActivated()
 
@@ -77,9 +82,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.nav_favorites -> onFavoritesClick()
-
             R.id.day_night_mode -> onDayNightModeChanged()
-
             else -> Toast.makeText(this, R.string.share, Toast.LENGTH_SHORT).show()
         }
         drawer.closeDrawer(GravityCompat.START)
@@ -110,123 +113,29 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             .commit()
     }
 
-
     private fun onDayNightModeChanged() {
         navigationDrawerViewModel.onDayNightModeChanged()
         recreate()
     }
 
     private fun checkNightModeActivated() {
-       navigationDrawerViewModel.checkNightModeActivated()
+        navigationDrawerViewModel.checkNightModeActivated()
     }
 
     private fun onFavoritesClick() {
-        supportFragmentManager
-            .beginTransaction()
-            .replace(
-                R.id.fragmentContainer,
-                MoviesListFavoriteFragment(),
-                MoviesListFavoriteFragment.TAG
-            )
-            .addToBackStack(null)
-            .commit()
+        if (!moviesListViewModel.favoriteMovies.value.isNullOrEmpty()) {
+            supportFragmentManager
+                .beginTransaction()
+                .replace(
+                    R.id.fragmentContainer,
+                    MoviesListFavoriteFragment(),
+                    MoviesListFavoriteFragment.TAG
+                )
+                .addToBackStack(null)
+                .commit()
+        } else {
+            Toast.makeText(this, R.string.favorites_empty, Toast.LENGTH_SHORT).show()
+        }
     }
 }
-//class MainActivity : AppCompatActivity(), MovieListListener, MovieDetailsListener,
-//    NavigationView.OnNavigationItemSelectedListener {
-//    companion object {
-//        const val TAG = "MovieListFragment"
-//
-//        // Just for check values from details fragment to pass into movies list fragment for update
-//        const val IS_PREVIEW_MOVIES_UPDATED_BY_DETAILS = "IS_PREVIEW_MOVIES_UPDATED_BY_DETAILS"
-//        const val UPDATED_COMMENT = "UPDATED_COMMENT"
-//        const val UPDATED_IS_LIKED_STATUS = "UPDATED_IS_LIKED_STATUS"
-//
-//
-
-//    }
-//
-
-//
-//    override fun onCreate(savedInstanceState: Bundle?) {
-//        super.onCreate(savedInstanceState)
-//        setContentView(R.layout.activity_main)
-//        setSupportActionBar(findViewById(R.id.toolbar))
-//        sharedPreferences = getSharedPreferences(NIGHT_MODE_PREFERENCES, Context.MODE_PRIVATE) ?: throw Exception("Can't proceed light mode")
-//
-//        if (savedInstanceState == null) {
-//            openMoviesListFragment()
-//        }
-//
-//        drawer = findViewById(R.id.drawer_layout)
-//        toolbar = findViewById(R.id.toolbar)
-//
-//        val navigationView = findViewById<NavigationView>(R.id.nav_view)
-//        navigationView.setNavigationItemSelectedListener(this)
-//
-//        val toggle = ActionBarDrawerToggle(
-//            this,
-//            drawer,
-//            toolbar,
-//            R.string.navigation_drawer_open,
-//            R.string.navigation_drawer_close
-//        )
-//        drawer?.addDrawerListener(toggle)
-//        toggle.syncState()
-//    }
-//
-
-//
-
-//
-//    override fun onMoreClick(movieItem: MovieItem) {
-//        openMovieDetailsFragment(movieItem)
-//    }
-//
-//    override fun onCloseMovieDetails(comment: String?, isLikedStatus: Boolean?) {
-//        supportFragmentManager.popBackStack()
-//
-//        val movieListFragment = supportFragmentManager.findFragmentByTag(TAG)
-//        if (movieListFragment != null) {
-//            movieListFragment.arguments = Bundle().apply {
-//                putBoolean(IS_PREVIEW_MOVIES_UPDATED_BY_DETAILS, true)
-//                putBoolean(UPDATED_IS_LIKED_STATUS, isLikedStatus ?: false)
-//                putString(UPDATED_COMMENT, comment)
-//            }
-//            supportFragmentManager.beginTransaction()
-//                .show(movieListFragment)
-//                .commit()
-//        }
-//    }
-//
-//    override fun openFavoriteMovies() {
-//        if (App.instance!!.favoriteMovies.size != 0) {
-//            supportFragmentManager
-//                .beginTransaction()
-//                .replace(
-//                    R.id.fragmentContainer, MoviesListFavoriteFragment(), null
-//                )
-//                .addToBackStack(null)
-//                .commit()
-//        } else {
-//            Toast.makeText(this, R.string.favorites_empty, Toast.LENGTH_SHORT).show()
-//        }
-//    }
-//
-
-//
-//    override fun onNavigationItemSelected(item: MenuItem): Boolean {
-//        when (item.itemId) {
-//            R.id.nav_favorites -> openFavoriteMovies()
-//
-//            R.id.day_night_mode -> processThemeMode()
-//
-//            else -> Toast.makeText(this, R.string.share, Toast.LENGTH_SHORT).show()
-//        }
-//        drawer?.closeDrawer(GravityCompat.START)
-//        return true
-//    }
-//
-
-//}
 

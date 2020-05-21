@@ -13,7 +13,6 @@ import com.bumptech.glide.Glide
 import com.google.android.material.appbar.MaterialToolbar
 import ru.otus.cineman.App.Companion.IMAGE_URL
 import ru.otus.cineman.R
-import ru.otus.cineman.data.entity.json.MovieModel
 import ru.otus.cineman.presentation.viewmodel.MovieListViewModel
 
 class MovieDetailsFragment : Fragment() {
@@ -52,7 +51,7 @@ class MovieDetailsFragment : Fragment() {
         movieUserComment = view.findViewById<EditText>(R.id.user_comment)
         isLikedStatusMovie = view.findViewById<CheckBox>(R.id.checked_like)
 
-        val viewModel = ViewModelProvider(activity!!).get(MovieListViewModel::class.java)
+        val viewModel = ViewModelProvider(requireActivity()).get(MovieListViewModel::class.java)
 
         viewModel.selectedMovie.observe(viewLifecycleOwner, Observer { selectedMovie ->
                 movieTitle.title = selectedMovie.title
@@ -90,7 +89,7 @@ class MovieDetailsFragment : Fragment() {
             }
         }
 
-        requireActivity().onBackPressedDispatcher.addCallback(this, callback)
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
     }
 }
 
