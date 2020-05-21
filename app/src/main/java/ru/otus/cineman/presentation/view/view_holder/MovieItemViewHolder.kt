@@ -1,7 +1,7 @@
 package ru.otus.cineman.presentation.view.view_holder
 
+import android.annotation.SuppressLint
 import android.graphics.Color
-import android.graphics.Movie
 import android.view.View
 import android.widget.Button
 import android.widget.ImageView
@@ -16,10 +16,12 @@ import ru.otus.cineman.data.entity.json.MovieModel
 class MovieItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     val movieTitle: TextView = itemView.findViewById(R.id.movie_title)
     val movieImage: ImageView = itemView.findViewById(R.id.movie_icon)
+    val movieRate: TextView = itemView.findViewById(R.id.movie_rate)
     val movieIsFavoriteIcon: Button = itemView.findViewById(R.id.isFavorite)
 
     fun bind(movieItem: MovieModel) {
         setTitle(movieItem)
+        setRate(movieItem)
         setImage(movieItem)
         setIsFavorite(movieItem)
     }
@@ -39,6 +41,11 @@ class MovieItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             .placeholder(R.drawable.ic_loading)
             .error(R.drawable.ic_error)
             .into(movieImage)
+    }
+
+    @SuppressLint("SetTextI18n")
+    fun setRate(movie: MovieModel) {
+        movieRate.text = itemView.resources.getString(R.string.rate) + movie.averageRate
     }
 
     fun setIsFavorite(movieItem: MovieModel) {

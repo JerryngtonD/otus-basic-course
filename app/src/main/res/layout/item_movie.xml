@@ -30,6 +30,18 @@
         app:layout_constraintVertical_chainStyle="packed"
         tools:text="@tools:sample/first_names" />
 
+    <TextView
+        android:id="@+id/movie_rate"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:textColor="@color/primaryTitleColor"
+        android:textStyle="bold"
+        android:textSize="15dp"
+        app:layout_constraintStart_toStartOf="@+id/movie_title"
+        app:layout_constraintBottom_toTopOf="@+id/show_more"
+        tools:text="@tools:sample/date/hhmm"/>
+
     <Button
         android:id="@+id/show_more"
         android:layout_width="wrap_content"

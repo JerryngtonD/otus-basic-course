@@ -101,6 +101,7 @@
     <string name="success_removed_from_favorites">Movie was successful removed from Favorites</string>
     <string name="undo_title">undo</string>
     <string name="undo_text">Undo was successful</string>
+    <string name="rate">Rate: </string>
 
 
     //Navigation drawer

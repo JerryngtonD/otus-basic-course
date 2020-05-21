@@ -95,6 +95,7 @@
     <string name="success_removed_from_favorites">Фильм был успешно удален из раздела Фавориты</string>
     <string name="undo_title">отменить</string>
     <string name="undo_text">Возврат к предыдущему состоянию был успешен</string>
+    <string name="rate">Rate: </string>
 
     //Navigation drawer
     <string name="navigation_drawer_open">Открыть панель навигации</string>

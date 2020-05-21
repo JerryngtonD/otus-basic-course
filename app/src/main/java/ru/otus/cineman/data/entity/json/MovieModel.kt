@@ -7,7 +7,8 @@ data class MovieModel (
     @SerializedName("id") var id: Int,
     @SerializedName("title") var title: String,
     @SerializedName("overview") var description: String,
-    @SerializedName("backdrop_path") val albumImage: String
+    @SerializedName("backdrop_path") var albumImage: String,
+    @SerializedName("vote_average") var averageRate: String
 ) {
     var isSelected: Boolean = false
     var isLiked: Boolean = false
