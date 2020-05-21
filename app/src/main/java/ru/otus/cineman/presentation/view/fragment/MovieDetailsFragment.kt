@@ -60,7 +60,7 @@ class MovieDetailsFragment : Fragment() {
                 isLikedStatusMovie.isChecked = selectedMovie.isLiked
 
                 Glide.with(movieImage.context)
-                    .load("$IMAGE_URL${selectedMovie.image}")
+                    .load("$IMAGE_URL${selectedMovie.albumImage}")
                     .placeholder(R.drawable.ic_loading)
                     .centerCrop()
                     .error(R.drawable.ic_error)
