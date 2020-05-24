@@ -6,40 +6,40 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import ru.otus.cineman.model.MovieItem
-import ru.otus.cineman.network.Api
+import ru.otus.cineman.data.MovieRepository
+import ru.otus.cineman.data.MovieService
+import ru.otus.cineman.domain.MovieInteractor
 
-class MovieStorage : Application() {
+class App : Application() {
     companion object {
-        private lateinit var movies: MutableList<MovieItem>
-        fun getMovieStorage() = movies
-
-        private lateinit var favoriteMovies: MutableList<MovieItem>
-        fun getFavoriteMovieStorage() = favoriteMovies
-
-        lateinit var api: Api
+        var instance: App? = null
             private set
 
         const val BASE_URL = "https://api.themoviedb.org/3/"
         const val IMAGE_URL = "https://image.tmdb.org/t/p/w500"
         const val API_KEY = "b5cc0a88a97a9a1ff22147d617b8004f"
+    }
 
-        var MOVIES_PAGE = 1
+    lateinit var movieRepository: MovieRepository
+    lateinit var movieService: MovieService
+    lateinit var movieInteractor: MovieInteractor
 
-        var IS_INIT_LOADING = true
+    private fun initMovieInteractor() {
+        movieRepository = MovieRepository()
+        movieInteractor = MovieInteractor(movieService, movieRepository)
     }
 
     override fun onCreate() {
         super.onCreate()
-        movies = mutableListOf()
-        favoriteMovies = mutableListOf()
+        instance = this
 
         initRetrofit()
+        initMovieInteractor()
     }
 
     private fun initRetrofit() {
-        val okHttpClient = OkHttpClient.Builder()
-            .addInterceptor(Interceptor {chain ->
+        OkHttpClient.Builder()
+            .addInterceptor(Interceptor { chain ->
                 val url = chain.request()
                     .url()
                     .newBuilder()
@@ -56,15 +56,15 @@ class MovieStorage : Application() {
                 level = HttpLoggingInterceptor.Level.BODY
             })
             .build()
-
-        Retrofit.Builder()
-            .client(okHttpClient)
-            .addConverterFactory(GsonConverterFactory.create())
-            .baseUrl(BASE_URL)
-            .build()
-            .let {
-                api = it.create(Api::class.java)
+            .let { okHttpClient ->
+                Retrofit.Builder()
+                    .client(okHttpClient)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .baseUrl(BASE_URL)
+                    .build()
+                    .let {
+                        movieService = it.create(MovieService::class.java)
+                    }
             }
-
     }
 }

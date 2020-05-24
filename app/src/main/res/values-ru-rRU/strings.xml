@@ -95,6 +95,7 @@
     <string name="success_removed_from_favorites">Фильм был успешно удален из раздела Фавориты</string>
     <string name="undo_title">отменить</string>
     <string name="undo_text">Возврат к предыдущему состоянию был успешен</string>
+    <string name="rate">Rate: </string>
 
     //Navigation drawer
     <string name="navigation_drawer_open">Открыть панель навигации</string>
@@ -104,4 +105,6 @@
     <string name="success_loading_movies">Загрзука фильмов была успешной</string>
     //Fault loading
     <string name="fault_loading_movies">Что-то пошло не так при загрзке фильмов</string>
+    //Retry
+    <string name="retry">Повторить</string>
 </resources>

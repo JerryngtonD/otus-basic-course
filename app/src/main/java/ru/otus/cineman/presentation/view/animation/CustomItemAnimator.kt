@@ -1,4 +1,4 @@
-package ru.otus.cineman.animation
+package ru.otus.cineman.presentation.view.animation
 
 import android.view.animation.AnimationUtils
 import androidx.recyclerview.widget.DefaultItemAnimator

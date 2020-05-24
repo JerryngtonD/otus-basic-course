@@ -1,16 +1,23 @@
-package ru.otus.cineman.adapter
+package ru.otus.cineman.presentation.view.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import ru.otus.cineman.R
-import ru.otus.cineman.model.MovieItem
-import ru.otus.cineman.view_holder.FavoriteMovieItemViewHolder
+import ru.otus.cineman.data.entity.json.MovieModel
+import ru.otus.cineman.presentation.view.view_holder.FavoriteMovieItemViewHolder
 
 class FavoriteMovieAdapter(
-    val inflater: LayoutInflater,
-    val items: List<MovieItem>
+    val inflater: LayoutInflater
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>(){
+    private var items = ArrayList<MovieModel>()
+
+    fun setItems(models: List<MovieModel>) {
+        items.clear()
+        items.addAll(models)
+
+        notifyDataSetChanged()
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return FavoriteMovieItemViewHolder(inflater.inflate(R.layout.item_favorite_movie, parent, false))
