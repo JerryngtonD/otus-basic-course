@@ -12,7 +12,7 @@ class ViewModelFactory(
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         return when {
             modelClass.isAssignableFrom(NavigationDrawerViewModel::class.java) -> NavigationDrawerViewModel(context!!) as T
-            modelClass.isAssignableFrom(MovieListViewModel::class.java) -> MovieListViewModel() as T
+            modelClass.isAssignableFrom(MovieListViewModel::class.java) -> MovieListViewModel(context!!) as T
             else -> {
                 throw Exception("Unknown class")
             }

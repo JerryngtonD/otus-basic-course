@@ -5,14 +5,14 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import ru.otus.cineman.R
-import ru.otus.cineman.data.entity.json.MovieModel
+import ru.otus.cineman.data.entity.MovieModel
 import ru.otus.cineman.presentation.view.view_holder.MovieItemViewHolder
 
 class MovieItemAdapter(
     val inflater: LayoutInflater,
     val listener: OnMovieClickListener
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-    private var items = ArrayList<MovieModel>()
+    var items = ArrayList<MovieModel>()
 
     fun setItems(models: List<MovieModel>) {
         items.clear()
@@ -37,7 +37,6 @@ class MovieItemAdapter(
                 .setOnClickListener {
                     listener.onDetailsClick(item)
                 }
-
             holder.itemView.findViewById<View>(R.id.movie_icon)
                 .setOnClickListener {
                     listener.onChangeFavoriteStatus(item)
@@ -51,12 +50,6 @@ class MovieItemAdapter(
             holder.bind(item)
         }
     }
-
-    fun add(position: Int, movie: MovieModel) {
-        items.add(position, movie)
-        notifyItemInserted(position)
-    }
-
 
     interface OnMovieClickListener {
         fun onDetailsClick(movie: MovieModel)
