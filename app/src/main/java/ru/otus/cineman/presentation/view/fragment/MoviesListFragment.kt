@@ -192,9 +192,10 @@ class MoviesListFragment : Fragment() {
         recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
-                if (isLastItemDisplaying(recyclerView)) {
+                if (isLastItemDisplaying(recyclerView) && dy > 0 && moviesListViewModel.needLoading) {
                     Log.d(TAG, "LoadMore")
                     moviesListViewModel.onLoadMoreMovies()
+                    moviesListViewModel.needLoading = false
                 }
             }
         })

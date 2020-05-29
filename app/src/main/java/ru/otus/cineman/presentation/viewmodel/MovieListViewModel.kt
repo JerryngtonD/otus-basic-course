@@ -25,11 +25,10 @@ class MovieListViewModel(
         const val CACHE_ELAPSE = 20 * 60 * 1000
     }
 
-
     private var preferenceProvider = PreferencesProvider(context, CACHE_LOADING)
     private val movieInteractor = App.instance!!.movieInteractor
 
-
+    var needLoading = true
     private var currentPage = preferenceProvider.getPreference().getInt(CACHED_PAGE, INIT_PAGE)
     private val isInitiallyViewedLiveData = MutableLiveData(false)
     private val moviesLiveData = movieInteractor.movieRepository.cachedMovies
@@ -90,16 +89,17 @@ class MovieListViewModel(
         setIsLoading(true)
         currentPage++
 
-
         movieInteractor.loadMore(currentPage, object: GetMoviesCallback {
             override fun onSuccess() {
                 saveCurrentPage()
                 setIsLoading(false)
+                needLoading = true
             }
 
             override fun onError(error: String) {
                 setErrorLoading(error)
                 setIsLoading(false)
+                needLoading = true
             }
         })
     }
