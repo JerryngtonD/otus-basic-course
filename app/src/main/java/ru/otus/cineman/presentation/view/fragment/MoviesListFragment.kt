@@ -124,8 +124,8 @@ class MoviesListFragment : Fragment() {
                     return@loop
                 }
             }
-            recyclerAdapter.setItems(movies)
         }
+        recyclerAdapter.setItems(movies)
     }
 
     private fun initRecycler() {
@@ -139,8 +139,8 @@ class MoviesListFragment : Fragment() {
 
             override fun onChangeFavoriteStatus(movie: MovieModel) {
                 moviesListViewModel.onChangeFavoriteStatus(movie.movieId)
-                val text = if (movie.isFavorite) R.string.success_added_to_favorites
-                else R.string.success_removed_from_favorites
+                val text = if (movie.isFavorite) R.string.success_removed_from_favorites
+                else R.string.success_added_to_favorites
                 val snackbar = Snackbar.make(coordinatorLayout, text, Snackbar.LENGTH_LONG)
                     .setAction(resources.getString(R.string.undo_title)) {
                         moviesListViewModel.onChangeFavoriteStatus(movie.movieId)
@@ -175,7 +175,7 @@ class MoviesListFragment : Fragment() {
     }
 
     private fun isLastItemDisplaying(recyclerView: RecyclerView): Boolean {
-        if (recyclerAdapter.itemCount != 0) {
+        if (recyclerView.adapter?.itemCount != 0) {
             val lastVisibleItemPosition = (recyclerView.layoutManager as LinearLayoutManager)
                 .findLastVisibleItemPosition()
 

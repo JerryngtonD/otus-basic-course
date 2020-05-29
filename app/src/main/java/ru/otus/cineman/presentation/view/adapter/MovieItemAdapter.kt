@@ -17,7 +17,6 @@ class MovieItemAdapter(
     fun setItems(models: List<MovieModel>) {
         items.clear()
         items.addAll(models)
-
         notifyDataSetChanged()
     }
 
