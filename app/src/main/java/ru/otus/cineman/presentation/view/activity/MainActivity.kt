@@ -18,7 +18,8 @@ import ru.otus.cineman.presentation.viewmodel.NavigationDrawerViewModel
 import ru.otus.cineman.presentation.viewmodel.ViewModelFactory
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener,
-    MovieDetailsListener, MovieListListener {
+    MovieDetailsListener, MovieListListener
+{
     companion object {
         const val TAG = "MOVIES_LIST"
     }

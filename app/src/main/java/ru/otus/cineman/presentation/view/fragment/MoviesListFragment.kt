@@ -17,7 +17,8 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.snackbar.Snackbar
 import ru.otus.cineman.R
-import ru.otus.cineman.data.entity.json.MovieModel
+import ru.otus.cineman.data.entity.FavoriteMovieModel
+import ru.otus.cineman.data.entity.MovieModel
 import ru.otus.cineman.presentation.view.adapter.MovieItemAdapter
 import ru.otus.cineman.presentation.view.animation.CustomItemAnimator
 import ru.otus.cineman.presentation.viewmodel.MovieListViewModel
@@ -63,23 +64,6 @@ class MoviesListFragment : Fragment() {
             viewModelFactory
         ).get(MovieListViewModel::class.java)
 
-        moviesListViewModel.movies.observe(viewLifecycleOwner,
-            Observer { movies ->
-                recyclerAdapter.setItems(movies)
-            })
-
-        moviesListViewModel.error.observe(
-            viewLifecycleOwner,
-            Observer { error ->
-                Log.i(TAG, error)
-                val errorText = "$error\n\n${resources.getString(R.string.fault_loading_movies)}"
-                val snackbar = Snackbar.make(coordinatorLayout, errorText, Snackbar.LENGTH_INDEFINITE)
-                    .setAction(resources.getString(R.string.retry)) { moviesListViewModel.onGetMovies() }
-                val snackBarView = snackbar.view
-                val textView = snackBarView.findViewById<TextView>(R.id.snackbar_text)
-                textView.setLines(5)
-                snackbar.show()
-            })
 
         moviesListViewModel.isLoading.observe(
             viewLifecycleOwner,
@@ -91,16 +75,57 @@ class MoviesListFragment : Fragment() {
                 }
             })
 
-        moviesListViewModel.isInitiallyViewed.observe(viewLifecycleOwner,
-            Observer { isInitiallyViewed ->
-                if (!isInitiallyViewed) {
-                    moviesListViewModel.onGetMovies()
-                    moviesListViewModel.onInitialViewed()
+        moviesListViewModel.movies.observe(viewLifecycleOwner,
+            Observer { movies ->
+                val favorites = moviesListViewModel.favoriteMovies.value ?: emptyList()
+                val currentMovies = movies.toMutableList()
+                checkOnFavoriteItems(favorites, currentMovies)
+            })
+
+        moviesListViewModel.error.observe(
+            viewLifecycleOwner,
+            Observer { error ->
+                if (error != null) {
+                    Log.i(TAG, error)
+                    moviesListViewModel.setErrorLoading(null)
+                    val errorText = "$error\n\n${resources.getString(R.string.fault_loading_movies)}"
+                    val snackbar =
+                        Snackbar.make(coordinatorLayout, errorText, Snackbar.LENGTH_LONG)
+                            .setAction(resources.getString(R.string.retry)) {
+                                moviesListViewModel.onGetMovies(
+                                    true
+                                )
+                            }
+                    val snackBarView = snackbar.view
+                    val textView = snackBarView.findViewById<TextView>(R.id.snackbar_text)
+                    textView.setLines(5)
+                    snackbar.show()
                 }
             })
 
+        moviesListViewModel.favoriteMovies.observe(
+            viewLifecycleOwner,
+            Observer { favorites ->
+                val currentMovies = recyclerAdapter.items.toMutableList()
+                checkOnFavoriteItems(favorites, currentMovies)
+            }
+        )
+
         setOnScrollListener()
         setSwipeRefreshListener()
+    }
+
+    private fun checkOnFavoriteItems(favorites: List<FavoriteMovieModel>, movies: MutableList<MovieModel>) {
+        movies.forEach loop@{ movie ->
+            movie.isFavorite = false
+            favorites.forEach { favorite ->
+                if (movie.id == favorite.id) {
+                    movie.isFavorite = true
+                    return@loop
+                }
+            }
+        }
+        recyclerAdapter.setItems(movies)
     }
 
     private fun initRecycler() {
@@ -113,12 +138,12 @@ class MoviesListFragment : Fragment() {
             }
 
             override fun onChangeFavoriteStatus(movie: MovieModel) {
-                moviesListViewModel.onChangeFavoriteStatus(movie.id)
-                val text = if (movie.isFavorite) R.string.success_added_to_favorites
-                                else R.string.success_removed_from_favorites
+                moviesListViewModel.onChangeFavoriteStatus(movie.movieId)
+                val text = if (movie.isFavorite) R.string.success_removed_from_favorites
+                else R.string.success_added_to_favorites
                 val snackbar = Snackbar.make(coordinatorLayout, text, Snackbar.LENGTH_LONG)
                     .setAction(resources.getString(R.string.undo_title)) {
-                        moviesListViewModel.onChangeFavoriteStatus(movie.id)
+                        moviesListViewModel.onChangeFavoriteStatus(movie.movieId)
                         val snackbarUndo = Snackbar.make(
                             coordinatorLayout,
                             resources.getString(R.string.undo_text),
@@ -150,7 +175,7 @@ class MoviesListFragment : Fragment() {
     }
 
     private fun isLastItemDisplaying(recyclerView: RecyclerView): Boolean {
-        if (recyclerAdapter.itemCount != 0) {
+        if (recyclerView.adapter?.itemCount != 0) {
             val lastVisibleItemPosition = (recyclerView.layoutManager as LinearLayoutManager)
                 .findLastVisibleItemPosition()
 
@@ -167,9 +192,10 @@ class MoviesListFragment : Fragment() {
         recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
-                if (isLastItemDisplaying(recyclerView)) {
+                if (isLastItemDisplaying(recyclerView) && dy > 0 && moviesListViewModel.needLoading) {
                     Log.d(TAG, "LoadMore")
                     moviesListViewModel.onLoadMoreMovies()
+                    moviesListViewModel.needLoading = false
                 }
             }
         })
@@ -179,7 +205,7 @@ class MoviesListFragment : Fragment() {
         requireView().findViewById<SwipeRefreshLayout>(R.id.swipeRefresh)
             ?.let {
                 it.setOnRefreshListener {
-                    moviesListViewModel.onRefreshMovies()
+                    moviesListViewModel.onGetMovies(true)
                     it.isRefreshing = false
                 }
             }

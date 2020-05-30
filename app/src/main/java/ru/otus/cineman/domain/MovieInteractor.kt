@@ -3,29 +3,20 @@ package ru.otus.cineman.domain
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import ru.otus.cineman.data.MovieRepository
-import ru.otus.cineman.data.MovieService
-import ru.otus.cineman.data.entity.json.MovieModel
-import ru.otus.cineman.data.entity.json.MoviesResult
+import ru.otus.cineman.data.api.MovieService
+import ru.otus.cineman.data.entity.MovieModel
+import ru.otus.cineman.data.entity.MoviesResult
+import ru.otus.cineman.presentation.viewmodel.MovieListViewModel.Companion.INIT_PAGE
 
 class MovieInteractor(
     private val movieService: MovieService,
-    private val movieRepository: MovieRepository
+    val movieRepository: MovieRepository
 ) {
-
-    companion object {
-        const val INIT_PAGE_NUMBER = 1
-    }
-
-    fun getPopularMovies(page: Int, callback: GetMoviesCallback) {
-        if (page == INIT_PAGE_NUMBER && movieRepository.getCachedMovies.isNotEmpty()) {
-            callback.onSuccess(movieRepository.getCachedMovies)
-        }
-
-        movieService.getPopularMovies(page)
+    fun loadInitOrRefresh(isNeedRefresh: Boolean, callback: GetMoviesCallback) {
+        movieService.getPopularMovies(INIT_PAGE)
             .enqueue(object : Callback<MoviesResult?> {
                 override fun onFailure(call: Call<MoviesResult?>, t: Throwable) {
-                    callback.onError( t.localizedMessage ?: "")
+                    callback.onError(t.localizedMessage ?: "")
                 }
 
                 override fun onResponse(
@@ -33,20 +24,63 @@ class MovieInteractor(
                     response: Response<MoviesResult?>
                 ) {
                     if (response.isSuccessful) {
-                        val movies = response.body()!!.results
-                        if (page == INIT_PAGE_NUMBER) {
-                            movieRepository.addToCache(movies)
-                        }
-                        callback.onSuccess(movies)
+                        saveOrUpdateCache(
+                            isNeedRefresh,
+                            response.body()?.results!!,
+                            callback::onSuccess
+                        )
                     } else {
-                        callback.onError("""Code: ${response.code()}""")
+                        callback.onError("Code: ${response.code()}")
                     }
                 }
             })
     }
+
+    fun loadMore(page: Int, callback: GetMoviesCallback) {
+        movieService.getPopularMovies(page)
+            .enqueue(object : Callback<MoviesResult?> {
+                override fun onFailure(call: Call<MoviesResult?>, t: Throwable) {
+                    callback.onError(t.localizedMessage ?: "")
+                }
+
+                override fun onResponse(
+                    call: Call<MoviesResult?>,
+                    response: Response<MoviesResult?>
+                ) {
+                    if (response.isSuccessful) {
+                        enrichCacheMovie(response.body()?.results!!, callback::onSuccess)
+                    } else {
+                        callback.onError("Code: ${response.code()}")
+
+                    }
+                }
+            })
+    }
+
+    private fun saveOrUpdateCache(
+        isNeedRefresh: Boolean,
+        movies: List<MovieModel>,
+        finishAction: () -> Unit
+    ) {
+        if (isNeedRefresh) {
+            movieRepository.storage.refreshAllMovies(movies) {
+                finishAction()
+            }
+        } else {
+            movieRepository.storage.addAllToMovies(movies) {
+                finishAction()
+            }
+        }
+    }
+
+    private fun enrichCacheMovie(movies: List<MovieModel>, finishAction: () -> Unit) {
+        movieRepository.storage.addAllToMovies(movies) {
+            finishAction()
+        }
+    }
 }
 
 interface GetMoviesCallback {
-    fun onSuccess(movies: List<MovieModel>)
+    fun onSuccess()
     fun onError(error: String)
 }

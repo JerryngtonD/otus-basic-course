@@ -4,15 +4,16 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import ru.otus.cineman.R
-import ru.otus.cineman.data.entity.json.MovieModel
+import ru.otus.cineman.data.entity.FavoriteMovieModel
+import ru.otus.cineman.data.entity.MovieModel
 import ru.otus.cineman.presentation.view.view_holder.FavoriteMovieItemViewHolder
 
 class FavoriteMovieAdapter(
     val inflater: LayoutInflater
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>(){
-    private var items = ArrayList<MovieModel>()
+    private var items = ArrayList<FavoriteMovieModel>()
 
-    fun setItems(models: List<MovieModel>) {
+    fun setItems(models: List<FavoriteMovieModel>) {
         items.clear()
         items.addAll(models)
 
