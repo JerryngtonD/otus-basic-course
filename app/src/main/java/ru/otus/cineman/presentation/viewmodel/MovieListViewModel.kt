@@ -125,6 +125,11 @@ class MovieListViewModel(
         }
     }
 
+    fun onDeleteFavoriteMovieById(id: Int) {
+        val storage = movieInteractor.movieRepository.storage
+        storage.removeFromFavoritesById(id)
+    }
+
     fun onUpdateSelectedMovieInDetails(movie: MovieModel) {
         selectedMovieLiveData.postValue(movie)
         val storage = movieInteractor.movieRepository.storage

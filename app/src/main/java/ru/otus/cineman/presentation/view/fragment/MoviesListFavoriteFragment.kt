@@ -9,12 +9,16 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.ItemTouchHelper.*
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import ru.otus.cineman.R
 import ru.otus.cineman.presentation.view.adapter.FavoriteMovieAdapter
 import ru.otus.cineman.presentation.view.animation.CustomItemAnimator
 import ru.otus.cineman.presentation.viewmodel.MovieListViewModel
 import ru.otus.cineman.presentation.viewmodel.ViewModelFactory
+
 
 class MoviesListFavoriteFragment : Fragment() {
     companion object {
@@ -37,6 +41,7 @@ class MoviesListFavoriteFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         initRecycler()
+        initSwipeDeleteListener()
 
         viewModelFactory = ViewModelFactory(context = null)
         viewModel = ViewModelProvider(
@@ -44,8 +49,8 @@ class MoviesListFavoriteFragment : Fragment() {
             viewModelFactory
         ).get(MovieListViewModel::class.java)
 
-        viewModel.favoriteMovies.observe(viewLifecycleOwner, Observer {
-            favoriteMovies -> recyclerAdapter.setItems(favoriteMovies)
+        viewModel.favoriteMovies.observe(viewLifecycleOwner, Observer { favoriteMovies ->
+            recyclerAdapter.setItems(favoriteMovies)
         })
     }
 
@@ -65,6 +70,35 @@ class MoviesListFavoriteFragment : Fragment() {
             adapter = recyclerAdapter
             itemAnimator = CustomItemAnimator()
             addItemDecoration(itemDecoration)
+        }
+    }
+
+    private fun initSwipeDeleteListener() {
+        ItemTouchHelper(
+            object : SimpleCallback(
+                UP or DOWN,
+                LEFT
+            ) {
+                override fun onMove(
+                    recyclerView: RecyclerView,
+                    viewHolder: ViewHolder, target: ViewHolder
+                ): Boolean {
+                    val fromPos = viewHolder.adapterPosition
+                    val toPos = target.adapterPosition
+                    // move item in `fromPos` to `toPos` in adapter.
+                    return true // true if moved, false otherwise
+                }
+
+                override fun onSwiped(
+                    viewHolder: ViewHolder,
+                    direction: Int
+                ) {
+                    val items = recyclerAdapter.getItems()
+                    val adapterItem = items[viewHolder.adapterPosition]
+                    viewModel.onDeleteFavoriteMovieById(adapterItem.id)
+                }
+            }).let {
+            it.attachToRecyclerView(recyclerView)
         }
     }
 }

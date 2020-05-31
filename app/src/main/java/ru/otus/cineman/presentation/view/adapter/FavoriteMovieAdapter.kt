@@ -20,6 +20,8 @@ class FavoriteMovieAdapter(
         notifyDataSetChanged()
     }
 
+    fun getItems(): List<FavoriteMovieModel> = items.toList()
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return FavoriteMovieItemViewHolder(inflater.inflate(R.layout.item_favorite_movie, parent, false))
     }

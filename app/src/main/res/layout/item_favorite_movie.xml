@@ -1,42 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="10dp">
+    android:clickable="true"
+    android:layout_margin="5dp"
+    app:contentPadding="10dp"
+    android:layout_marginTop="30dp"
+    android:layout_marginBottom="30dp"
+    app:cardCornerRadius="12dp"
+    app:cardBackgroundColor="#6268EE"
+    app:strokeColor="#03DAA8"
+    app:strokeWidth="10dp"
+    android:theme="@style/Theme.MaterialComponents.Light"
+    android:focusable="true">
 
-    <ImageView
-        android:id="@+id/movie_icon"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:ignore="ContentDescription"
-        tools:src="@tools:sample/avatars"/>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-    <TextView
-        android:id="@+id/movie_title"
-        android:tag="movie_preview"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toEndOf="@+id/movie_icon"
-        app:layout_constraintTop_toTopOf="@+id/movie_icon"
-        app:layout_constraintBottom_toBottomOf="@+id/movie_icon"
-        app:layout_constraintVertical_chainStyle="packed"
-        tools:text="@tools:sample/first_names" />
+        <ImageView
+            android:id="@+id/movie_icon"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="ContentDescription"
+            tools:src="@tools:sample/avatars"/>
+
+        <TextView
+            android:id="@+id/movie_title"
+            android:tag="movie_preview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toEndOf="@+id/movie_icon"
+            app:layout_constraintTop_toTopOf="@+id/movie_icon"
+            app:layout_constraintBottom_toBottomOf="@+id/movie_icon"
+            app:layout_constraintVertical_chainStyle="packed"
+            tools:text="@tools:sample/first_names" />
 
 
-    <Button
-        android:id="@+id/isFavorite"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:background="@drawable/favorite_off"
-        android:visibility="invisible"/>
+        <Button
+            android:id="@+id/isFavorite"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:background="@drawable/favorite_off"
+            android:visibility="invisible"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</com.google.android.material.card.MaterialCardView>
