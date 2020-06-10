@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.view.View
 import android.widget.Button
 import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
@@ -16,8 +17,9 @@ import ru.otus.cineman.data.entity.MovieModel
 class MovieItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     val movieTitle: TextView = itemView.findViewById(R.id.movie_title)
     val movieImage: ImageView = itemView.findViewById(R.id.movie_icon)
-    val movieRate: TextView = itemView.findViewById(R.id.movie_rate)
     val movieIsFavoriteIcon: Button = itemView.findViewById(R.id.isFavorite)
+    val movieRateNew: TextView = itemView.findViewById(R.id.rating_text)
+    val ratingProgressBar: ProgressBar = itemView.findViewById(R.id.rating_progress_bar)
 
     fun bind(movieItem: MovieModel) {
         setTitle(movieItem)
@@ -43,9 +45,9 @@ class MovieItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             .into(movieImage)
     }
 
-    @SuppressLint("SetTextI18n")
     fun setRate(movie: MovieModel) {
-        movieRate.text = itemView.resources.getString(R.string.rate) + movie.averageRate
+        movieRateNew.text = movie.averageRate
+        ratingProgressBar.progress = movie.averageRate.toFloat().times(10).toInt()
     }
 
     fun setIsFavorite(movieItem: MovieModel) {

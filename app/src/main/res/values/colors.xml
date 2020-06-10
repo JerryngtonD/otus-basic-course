@@ -10,4 +10,12 @@
 
     <color name="primaryTitleColor">#212121</color>
     <color name="primaryTitleColorNight">#FFFFFF</color>
+
+    <color name="colorYellow">#FFD600</color>
+
+    <color name="colorWhiteTransparent">#90FFFFFF</color>
+
+    <color name="colorBlackTintButton">#A1131313</color>
+
+
 </resources>
