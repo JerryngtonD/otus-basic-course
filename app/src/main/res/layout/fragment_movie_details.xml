@@ -12,7 +12,7 @@
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:layout_width="match_parent"
-            android:layout_height="350dp"
+            android:layout_height="300dp"
             app:contentScrim="?attr/colorPrimary"
             app:expandedTitleTextAppearance="@android:color/transparent"
             android:fitsSystemWindows="true"
@@ -52,7 +52,7 @@
             app:cardElevation="5dp"
             app:cardUseCompatPadding="true">
 
-            <LinearLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical">
@@ -64,24 +64,33 @@
                     android:layout_height="wrap_content"
                     android:textAlignment="center"
                     android:justificationMode="inter_word"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
                     style="@style/DetailsFilmDescription"
                     />
 
-                <EditText
-                    android:id="@+id/user_comment"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="text"
-                    android:hint="@string/leave_comment">
-
-                </EditText>
 
                 <CheckBox
                     android:id="@+id/checked_like"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/like" />
-            </LinearLayout>
+                    android:text="@string/like"
+                    app:layout_constraintTop_toBottomOf="@id/film_details_description"
+                    app:layout_constraintStart_toStartOf="parent"/>
+
+                <EditText
+                    android:id="@+id/user_comment"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textMultiLine"
+                    android:ems="10"
+                    android:hint="@string/leave_comment"
+                    app:layout_constraintTop_toBottomOf="@id/checked_like"
+                    app:layout_constraintBottom_toBottomOf="parent">
+                </EditText>
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
         </com.google.android.material.card.MaterialCardView>
 
     </androidx.core.widget.NestedScrollView>
