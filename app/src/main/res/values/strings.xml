@@ -97,6 +97,7 @@
     <string name="no_answer">No</string>
     <string name="ok">OK</string>
     <string name="favorites_empty">Favorites are empty!</string>
+    <string name="watch_later_empty">Watch later movies list is empty</string>
     <string name="success_added_to_favorites">Movie was successful added to Favorites</string>
     <string name="success_removed_from_favorites">Movie was successful removed from Favorites</string>
     <string name="undo_title">undo</string>

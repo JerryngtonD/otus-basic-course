@@ -20,6 +20,10 @@ import ru.otus.cineman.presentation.view.adapter.WatchLaterMovieAdapter
 import ru.otus.cineman.presentation.viewmodel.MovieListViewModel
 
 class WatchLaterFragment: Fragment() {
+    companion object {
+      const val TAG = "WATCH_LATER_MOVIES_TAG"
+    }
+
     private lateinit var listener: WatchLaterListener
     private lateinit var watchLaterFragmentAdapter: WatchLaterMovieAdapter
     private val viewModel: MovieListViewModel by lazy {

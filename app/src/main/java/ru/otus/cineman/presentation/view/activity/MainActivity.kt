@@ -88,24 +88,18 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun openWatchLaterFragment() {
-        supportFragmentManager
-            .beginTransaction()
-            .replace(
-                R.id.fragmentContainer, WatchLaterFragment(),
-                "WatchLater"
-            )
-            .addToBackStack(null)
-            .commit()
-    }
-
-    private fun openMoviesListFragment() {
-        supportFragmentManager
-            .beginTransaction()
-            .replace(
-                R.id.fragmentContainer, MoviesListFragment(),
-                TAG
-            )
-            .commit()
+        if (!moviesListViewModel.watchLaterMovies.value.isNullOrEmpty()) {
+            supportFragmentManager
+                .beginTransaction()
+                .replace(
+                    R.id.fragmentContainer, WatchLaterFragment(),
+                    WatchLaterFragment.TAG
+                )
+                .addToBackStack(null)
+                .commit()
+        } else {
+            Toast.makeText(this, R.string.watch_later_empty, Toast.LENGTH_SHORT).show()
+        }
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {

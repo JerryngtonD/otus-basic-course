@@ -91,6 +91,7 @@
     <string name="leave_comment">Оставь свой комментарий</string>
     <string name="ok">OK</string>
     <string name="favorites_empty">Список избранного пуст!</string>
+    <string name="watch_later_empty">Список "Посмотреть позже" пуст!</string>
     <string name="success_added_to_favorites">Фильм был успшно добавлен в раздел Фавориты</string>
     <string name="success_removed_from_favorites">Фильм был успешно удален из раздела Фавориты</string>
     <string name="undo_title">отменить</string>
