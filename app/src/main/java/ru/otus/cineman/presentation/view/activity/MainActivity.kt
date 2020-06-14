@@ -12,13 +12,14 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.navigation.NavigationView
 import ru.otus.cineman.R
+import ru.otus.cineman.data.entity.MovieModel
 import ru.otus.cineman.presentation.view.fragment.*
 import ru.otus.cineman.presentation.viewmodel.MovieListViewModel
 import ru.otus.cineman.presentation.viewmodel.NavigationDrawerViewModel
 import ru.otus.cineman.presentation.viewmodel.ViewModelFactory
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener,
-    MovieDetailsListener, MovieListListener
+    MovieDetailsListener, MovieListListener, WatchLaterListener
 {
     companion object {
         const val TAG = "MOVIES_LIST"
@@ -64,9 +65,37 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         drawer.addDrawerListener(toggle)
         toggle.syncState()
 
+        launchFirstFragment(savedInstanceState)
+    }
+
+    private fun launchFirstFragment(savedInstanceState: Bundle?) {
         if (savedInstanceState == null) {
-            openMoviesListFragment()
+            supportFragmentManager
+                .beginTransaction()
+                .replace(
+                    R.id.fragmentContainer, MoviesListFragment(),
+                    TAG
+                )
+                .addToBackStack("home")
+                .commit()
+
+            val movie = intent.getParcelableExtra<MovieModel>("movie")
+            if(movie != null) {
+                moviesListViewModel.onMovieSelect(movie)
+                onDetailsClick()
+            }
         }
+    }
+
+    private fun openWatchLaterFragment() {
+        supportFragmentManager
+            .beginTransaction()
+            .replace(
+                R.id.fragmentContainer, WatchLaterFragment(),
+                "WatchLater"
+            )
+            .addToBackStack(null)
+            .commit()
     }
 
     private fun openMoviesListFragment() {
@@ -79,11 +108,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             .commit()
     }
 
-
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.nav_favorites -> onFavoritesClick()
             R.id.day_night_mode -> onDayNightModeChanged()
+            R.id.nav_watch_later -> openWatchLaterFragment()
             else -> Toast.makeText(this, R.string.share, Toast.LENGTH_SHORT).show()
         }
         drawer.closeDrawer(GravityCompat.START)
@@ -99,6 +128,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     override fun onCloseMovieDetails() {
+        supportFragmentManager.popBackStack()
+    }
+
+    override fun onCloseWatchLater() {
         supportFragmentManager.popBackStack()
     }
 

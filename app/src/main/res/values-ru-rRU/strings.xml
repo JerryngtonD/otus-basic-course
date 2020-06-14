@@ -107,4 +107,11 @@
     <string name="fault_loading_movies">Что-то пошло не так при загрзке фильмов</string>
     //Retry
     <string name="retry">Повторить</string>
+    //Watch later notification text
+    <string name="watch_later_notification">Напоминаю посмотреть выбранный фильм!</string>
+
+
+    <string name="cancel">Cancel</string>
+    <string name="watch_on">"Посмотреть в:"</string>
+    <string name="dismiss_text">Скрыть</string>
 </resources>

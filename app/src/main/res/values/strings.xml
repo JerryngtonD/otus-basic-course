@@ -114,4 +114,11 @@
     <string name="fault_loading_movies">Something was wrong while loading movies</string>
     //Retry
     <string name="retry">Retry</string>
+
+    //Watch later notification text
+    <string name="watch_later_notification">See now this movie!</string>
+
+    <string name="cancel">Cancel</string>
+    <string name="watch_on">"Watch on:"</string>
+    <string name="dismiss_text">Dismiss</string>
 </resources>

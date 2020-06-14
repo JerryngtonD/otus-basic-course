@@ -1,7 +1,10 @@
 package ru.otus.cineman
 
 import android.app.Application
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.Context
+import android.os.Build
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -9,30 +12,29 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import ru.otus.cineman.data.MovieStorage
 import ru.otus.cineman.data.api.MovieService
-import ru.otus.cineman.data.db.Db
-import ru.otus.cineman.data.db.FavoriteMovieDao
-import ru.otus.cineman.data.db.MovieDao
-import ru.otus.cineman.data.db.MovieDb
+import ru.otus.cineman.data.db.*
 import ru.otus.cineman.domain.MovieInteractor
 import ru.otus.cineman.domain.MovieRepository
+import ru.otus.cineman.presentation.ApplicationParams.API_KEY
+import ru.otus.cineman.presentation.ApplicationParams.BASE_URL
+import ru.otus.cineman.presentation.ApplicationParams.CHANNEL
 import java.util.concurrent.Executors
 
 class App : Application() {
     companion object {
         var instance: App? = null
             private set
-
-        const val BASE_URL = "https://api.themoviedb.org/3/"
-        const val IMAGE_URL = "https://image.tmdb.org/t/p/w500"
-        const val API_KEY = "b5cc0a88a97a9a1ff22147d617b8004f"
     }
 
     private var ioExecutor = Executors.newSingleThreadExecutor()
 
     lateinit var context: Context
+
     lateinit var db: MovieDb
     lateinit var movieDao: MovieDao
     lateinit var favoriteMovieDao: FavoriteMovieDao
+    lateinit var watchLaterMovieDao: WatchLaterMovieDao
+
     lateinit var movieCache: MovieStorage
     lateinit var movieService: MovieService
     lateinit var movieRepository: MovieRepository
@@ -49,15 +51,20 @@ class App : Application() {
         context = applicationContext
 
         initRetrofit()
+
         initDb()
+
         initMovieInteractor()
+
+        initChannel()
     }
 
     private fun initDb() {
         db = Db.getInstance(context)!!
         movieDao = db.getMovieDao()
         favoriteMovieDao = db.getFavoriteMovieDao()
-        movieCache = MovieStorage(ioExecutor, movieDao, favoriteMovieDao)
+        watchLaterMovieDao = db.getWatchLaterMovieDao()
+        movieCache = MovieStorage(ioExecutor, movieDao, favoriteMovieDao, watchLaterMovieDao)
         movieRepository = MovieRepository(movieCache)
     }
 
@@ -90,5 +97,18 @@ class App : Application() {
                         movieService = it.create(MovieService::class.java)
                     }
             }
+    }
+
+    private fun initChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val name = "FilmsSearchApp"
+            val description = "Description"
+            val importance = NotificationManager.IMPORTANCE_DEFAULT
+            val channel = NotificationChannel(CHANNEL, name, importance)
+            channel.description = description
+
+            val notificationManager = this.getSystemService(NotificationManager::class.java)
+            notificationManager?.createNotificationChannel(channel)
+        }
     }
 }

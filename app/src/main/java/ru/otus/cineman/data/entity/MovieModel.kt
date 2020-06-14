@@ -1,11 +1,14 @@
 package ru.otus.cineman.data.entity
 
+import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
+import kotlinx.android.parcel.Parcelize
 
 @Entity(tableName = "movie_table", indices = [Index("id", unique = true)])
+@Parcelize
 data class MovieModel (
     @PrimaryKey(autoGenerate = true)
     var movieId: Int,
@@ -15,8 +18,9 @@ data class MovieModel (
     @SerializedName("overview") var description: String,
     @SerializedName("backdrop_path") var albumImage: String?,
     @SerializedName("vote_average") var averageRate: String,
-    var isSelected: Boolean = false,
     var isLiked: Boolean = false,
     var comment: String? = "",
-    var isFavorite: Boolean = false
-)
+    var isFavorite: Boolean = false,
+    var isWatchLater: Boolean = false,
+    var watchTime: Long = 0
+) : Parcelable
