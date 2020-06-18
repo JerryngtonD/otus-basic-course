@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModel
 import ru.otus.cineman.App
 import ru.otus.cineman.data.entity.FavoriteMovieModel
 import ru.otus.cineman.data.entity.MovieModel
-import ru.otus.cineman.data.mapper.MoviesMapper
+import ru.otus.cineman.data.entity.WatchLaterMovieModel
 import ru.otus.cineman.domain.GetMoviesCallback
 import ru.otus.cineman.presentation.preferences.PreferencesProvider
 import ru.otus.cineman.presentation.preferences.PreferencesProvider.Companion.CACHE_LOADING
@@ -28,22 +28,31 @@ class MovieListViewModel(
     private var preferenceProvider = PreferencesProvider(context, CACHE_LOADING)
     private val movieInteractor = App.instance!!.movieInteractor
 
+
+
+
+
     var needLoading = true
+    var getFromCache = false
     private var currentPage = preferenceProvider.getPreference().getInt(CACHED_PAGE, INIT_PAGE)
-    private val isInitiallyViewedLiveData = MutableLiveData(false)
+
     private val moviesLiveData = movieInteractor.movieRepository.cachedMovies
     private val favoriteMoviesLiveData = movieInteractor.movieRepository.favoriteMovies
+    private val watchLaterLiveData = movieInteractor.movieRepository.watchLaterMovies
+
     private val errorLiveData = MutableLiveData<String?>()
     private val isLoadingLiveData = MutableLiveData(false)
+
+    private val selectedMovieLiveData = MutableLiveData<MovieModel>()
 
     init {
         val isNeedToRefresh = checkCacheElapsed()
         if (isNeedToRefresh) {
             onGetMovies(isNeedToRefresh)
+        } else {
+            getFromCache = true
         }
     }
-
-    private val selectedMovieLiveData = MutableLiveData<MovieModel>()
 
     val movies: LiveData<List<MovieModel>>
         get() = moviesLiveData
@@ -51,20 +60,21 @@ class MovieListViewModel(
     val favoriteMovies: LiveData<List<FavoriteMovieModel>>
         get() = favoriteMoviesLiveData
 
+    val watchLaterMovies: LiveData<List<WatchLaterMovieModel>>
+        get() = watchLaterLiveData
+
     val error: LiveData<String?>
         get() = errorLiveData
 
     val selectedMovie: LiveData<MovieModel>
         get() = selectedMovieLiveData
 
-    val isInitiallyViewed: LiveData<Boolean>
-        get() = isInitiallyViewedLiveData
-
     val isLoading: LiveData<Boolean>
         get() = isLoadingLiveData
 
 
     fun onGetMovies(isNeedToRefresh: Boolean) {
+        currentPage = INIT_PAGE
         setIsLoading(true)
         movieInteractor.loadInitOrRefresh(isNeedToRefresh, object : GetMoviesCallback {
             override fun onSuccess() {
@@ -106,19 +116,13 @@ class MovieListViewModel(
 
 
     fun onMovieSelect(movie: MovieModel) {
-        val storage = movieInteractor.movieRepository.storage
-        if (selectedMovieLiveData.value?.isSelected != null) {
-            val prevSelectedMovieInLiveData = moviesLiveData.value!!.first { it.isSelected }
-            storage.setMovieIsSelected(prevSelectedMovieInLiveData.id, false)
-        }
-        storage.setMovieIsSelected(movie.id, true)
         selectedMovieLiveData.postValue(movie)
     }
 
-    fun onChangeFavoriteStatus(id: Int) {
-        val processedMovie = moviesLiveData.value!!.first { it.movieId == id }
+    fun onChangeFavoriteStatus(id: Int, currentIsFavorite: Boolean) {
+        val processedMovie = moviesLiveData.value!!.first { it.id == id }
         val storage = movieInteractor.movieRepository.storage
-        if (processedMovie.isFavorite) {
+        if (currentIsFavorite) {
             storage.removeFromFavoritesById(processedMovie.id)
         } else {
             storage.addToFavorites(processedMovie)
@@ -156,5 +160,13 @@ class MovieListViewModel(
 
     fun setErrorLoading(error: String?) {
         errorLiveData.postValue(error)
+    }
+
+    fun removeFromWatchLater(id: Int) {
+        movieInteractor.movieRepository.storage.removeFromWatchLater(id)
+    }
+
+    fun addToWatchLater(movie: MovieModel) {
+        movieInteractor.movieRepository.storage.addToWatchLater(movie)
     }
 }

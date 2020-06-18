@@ -12,7 +12,7 @@
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:layout_width="match_parent"
-            android:layout_height="350dp"
+            android:layout_height="300dp"
             app:contentScrim="?attr/colorPrimary"
             app:expandedTitleTextAppearance="@android:color/transparent"
             android:fitsSystemWindows="true"
@@ -42,20 +42,15 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipToPadding="false"
+        android:background="@color/colorAccent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:theme="@style/Theme.MaterialComponents.Light"
-            app:cardElevation="5dp"
-            app:cardUseCompatPadding="true">
 
-            <LinearLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:background="@color/colorAccent">
 
 
                 <TextView
@@ -64,25 +59,52 @@
                     android:layout_height="wrap_content"
                     android:textAlignment="center"
                     android:justificationMode="inter_word"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
                     style="@style/DetailsFilmDescription"
                     />
+
+
+                <CheckBox
+                    android:id="@+id/checked_like"
+                    android:layout_width="200dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/like"
+                    android:textColor="@color/colorPrimaryDark"
+                    app:layout_constraintTop_toBottomOf="@id/film_details_description"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:backgroundTint="@color/colorAccentNight"
+                    android:buttonTint="@color/colorPrimary"/>
+
+                <ImageView
+                    android:id="@+id/watch_later"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:background="@drawable/watch_later_off"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/checked_like"
+                    android:padding="5dp"
+                    android:layout_marginEnd="10dp"
+
+                    >
+
+                </ImageView>
 
                 <EditText
                     android:id="@+id/user_comment"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="text"
-                    android:hint="@string/leave_comment">
-
+                    android:inputType="textMultiLine"
+                    android:ems="10"
+                    android:hint="@string/leave_comment"
+                    android:layout_marginTop="30dp"
+                    app:layout_constraintTop_toBottomOf="@id/checked_like"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:backgroundTint="@color/colorPrimary">
                 </EditText>
 
-                <CheckBox
-                    android:id="@+id/checked_like"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/like" />
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.core.widget.NestedScrollView>
 

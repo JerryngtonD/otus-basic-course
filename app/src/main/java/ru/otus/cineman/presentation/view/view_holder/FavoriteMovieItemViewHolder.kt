@@ -6,10 +6,9 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import ru.otus.cineman.App.Companion.IMAGE_URL
 import ru.otus.cineman.R
 import ru.otus.cineman.data.entity.FavoriteMovieModel
-import ru.otus.cineman.data.entity.MovieModel
+import ru.otus.cineman.presentation.ApplicationParams.IMAGE_URL
 
 class FavoriteMovieItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     val movieTitle: TextView = itemView.findViewById(R.id.movie_title)

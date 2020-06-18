@@ -20,6 +20,11 @@ class MovieItemAdapter(
         notifyDataSetChanged()
     }
 
+    fun setItemsWithoutDiff(films: List<MovieModel>) {
+        items.addAll(films)
+        notifyDataSetChanged()
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return MovieItemViewHolder(inflater.inflate(R.layout.item_movie, parent, false))
     }
@@ -38,12 +43,12 @@ class MovieItemAdapter(
                 }
             holder.itemView.findViewById<View>(R.id.movie_icon)
                 .setOnClickListener {
-                    listener.onChangeFavoriteStatus(item)
+                    listener.onChangeFavoriteStatus(position)
             }
 
             holder.itemView.findViewById<View>(R.id.isFavorite)
                 .setOnClickListener {
-                    listener.onChangeFavoriteStatus(item)
+                    listener.onChangeFavoriteStatus(position)
                 }
 
             holder.bind(item)
@@ -52,6 +57,6 @@ class MovieItemAdapter(
 
     interface OnMovieClickListener {
         fun onDetailsClick(movie: MovieModel)
-        fun onChangeFavoriteStatus(movie: MovieModel)
+        fun onChangeFavoriteStatus(position: Int)
     }
 }

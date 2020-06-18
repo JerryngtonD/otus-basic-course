@@ -97,6 +97,7 @@
     <string name="no_answer">No</string>
     <string name="ok">OK</string>
     <string name="favorites_empty">Favorites are empty!</string>
+    <string name="watch_later_empty">Watch later movies list is empty</string>
     <string name="success_added_to_favorites">Movie was successful added to Favorites</string>
     <string name="success_removed_from_favorites">Movie was successful removed from Favorites</string>
     <string name="undo_title">undo</string>
@@ -114,4 +115,11 @@
     <string name="fault_loading_movies">Something was wrong while loading movies</string>
     //Retry
     <string name="retry">Retry</string>
+
+    //Watch later notification text
+    <string name="watch_later_notification">See now this movie!</string>
+
+    <string name="cancel">Cancel</string>
+    <string name="watch_on">"Watch on:"</string>
+    <string name="dismiss_text">Dismiss</string>
 </resources>
