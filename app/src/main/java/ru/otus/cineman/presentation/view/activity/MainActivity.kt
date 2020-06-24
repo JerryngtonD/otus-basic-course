@@ -11,6 +11,7 @@ import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.navigation.NavigationView
+import ru.otus.cineman.ApplicationParams.MOVIE_KEY
 import ru.otus.cineman.R
 import ru.otus.cineman.data.entity.MovieModel
 import ru.otus.cineman.presentation.view.fragment.*
@@ -78,6 +79,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 )
                 .addToBackStack("home")
                 .commit()
+
+            val movieId = intent.extras?.getString(MOVIE_KEY)
+            if (!movieId.isNullOrBlank()) {
+                moviesListViewModel.getDataFromPush(movieId)
+                onDetailsClick()
+            }
 
             val movie = intent.getParcelableExtra<MovieModel>("movie")
             if(movie != null) {

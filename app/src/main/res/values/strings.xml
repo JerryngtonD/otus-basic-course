@@ -122,4 +122,8 @@
     <string name="cancel">Cancel</string>
     <string name="watch_on">"Watch on:"</string>
     <string name="dismiss_text">Dismiss</string>
+
+
+    //Service
+    <string name="default_notification_channel_id">channel</string>
 </resources>

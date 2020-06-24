@@ -9,7 +9,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import ru.otus.cineman.R
 import ru.otus.cineman.data.entity.WatchLaterMovieModel
-import ru.otus.cineman.presentation.ApplicationParams.IMAGE_URL
+import ru.otus.cineman.ApplicationParams.IMAGE_URL
 import java.text.SimpleDateFormat
 import java.util.*
 

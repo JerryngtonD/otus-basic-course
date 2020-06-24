@@ -3,6 +3,7 @@ package ru.otus.cineman.domain
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import ru.otus.cineman.App.Companion.moviesCategory
 import ru.otus.cineman.data.api.MovieService
 import ru.otus.cineman.data.entity.MovieModel
 import ru.otus.cineman.data.entity.MoviesResult
@@ -13,7 +14,7 @@ class MovieInteractor(
     val movieRepository: MovieRepository
 ) {
     fun loadInitOrRefresh(isNeedRefresh: Boolean, callback: GetMoviesCallback) {
-        movieService.getPopularMovies(INIT_PAGE)
+        movieService.getPopularMovies(moviesCategory, INIT_PAGE)
             .enqueue(object : Callback<MoviesResult?> {
                 override fun onFailure(call: Call<MoviesResult?>, t: Throwable) {
                     callback.onError(t.localizedMessage ?: "")
@@ -37,7 +38,7 @@ class MovieInteractor(
     }
 
     fun loadMore(page: Int, callback: GetMoviesCallback) {
-        movieService.getPopularMovies(page)
+        movieService.getPopularMovies(moviesCategory, page)
             .enqueue(object : Callback<MoviesResult?> {
                 override fun onFailure(call: Call<MoviesResult?>, t: Throwable) {
                     callback.onError(t.localizedMessage ?: "")
@@ -53,6 +54,26 @@ class MovieInteractor(
                         callback.onError("Code: ${response.code()}")
 
                     }
+                }
+            })
+    }
+
+    fun loadMovie(
+        movieId: String,
+        callback: GetMovieFromPushCallback
+    ) {
+        movieService.getMovie(movieId)
+            .enqueue(object : Callback<MovieModel> {
+                override fun onResponse(call: Call<MovieModel>, response: Response<MovieModel>) {
+                    if (response.isSuccessful) {
+                        callback.onSuccess(response.body()!!)
+                    } else {
+                        callback.onError(response.code().toString() + "")
+                    }
+                }
+
+                override fun onFailure(call: Call<MovieModel>, t: Throwable) {
+                    callback.onError(t.toString())
                 }
             })
     }
@@ -82,5 +103,10 @@ class MovieInteractor(
 
 interface GetMoviesCallback {
     fun onSuccess()
+    fun onError(error: String)
+}
+
+interface GetMovieFromPushCallback {
+    fun onSuccess(movie: MovieModel)
     fun onError(error: String)
 }

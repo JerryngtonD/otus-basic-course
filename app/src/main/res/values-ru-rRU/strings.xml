@@ -115,4 +115,8 @@
     <string name="cancel">Cancel</string>
     <string name="watch_on">"Посмотреть в:"</string>
     <string name="dismiss_text">Скрыть</string>
+
+    //Service
+    //Service
+    <string name="default_notification_channel_id">channel</string>
 </resources>

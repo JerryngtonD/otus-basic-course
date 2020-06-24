@@ -5,6 +5,11 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.os.Build
+import android.util.Log
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.iid.FirebaseInstanceId
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -15,15 +20,20 @@ import ru.otus.cineman.data.api.MovieService
 import ru.otus.cineman.data.db.*
 import ru.otus.cineman.domain.MovieInteractor
 import ru.otus.cineman.domain.MovieRepository
-import ru.otus.cineman.presentation.ApplicationParams.API_KEY
-import ru.otus.cineman.presentation.ApplicationParams.BASE_URL
-import ru.otus.cineman.presentation.ApplicationParams.CHANNEL
+import ru.otus.cineman.ApplicationParams.API_KEY
+import ru.otus.cineman.ApplicationParams.BASE_URL
+import ru.otus.cineman.ApplicationParams.CATEGORY_KEY
+import ru.otus.cineman.ApplicationParams.CHANNEL
 import java.util.concurrent.Executors
 
 class App : Application() {
     companion object {
         var instance: App? = null
             private set
+
+        var TAG = "APP"
+
+        var moviesCategory: String = "popular"
     }
 
     private var ioExecutor = Executors.newSingleThreadExecutor()
@@ -39,6 +49,12 @@ class App : Application() {
     lateinit var movieService: MovieService
     lateinit var movieRepository: MovieRepository
     lateinit var movieInteractor: MovieInteractor
+
+    lateinit var firebaseAnalytics: FirebaseAnalytics
+        private set
+
+    lateinit var firebaseRemoteConfig: FirebaseRemoteConfig
+        private set
 
 
     private fun initMovieInteractor() {
@@ -57,6 +73,8 @@ class App : Application() {
         initMovieInteractor()
 
         initChannel()
+
+        initFirebase()
     }
 
     private fun initDb() {
@@ -110,5 +128,36 @@ class App : Application() {
             val notificationManager = this.getSystemService(NotificationManager::class.java)
             notificationManager?.createNotificationChannel(channel)
         }
+    }
+
+    private fun initFirebase() {
+        firebaseAnalytics = FirebaseAnalytics.getInstance(this)
+
+        firebaseRemoteConfig = FirebaseRemoteConfig.getInstance().apply {
+            setDefaultsAsync(R.xml.remote_config)
+            fetch(10)
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        firebaseRemoteConfig.activate()
+                    }
+                    moviesCategory = firebaseRemoteConfig.getString(CATEGORY_KEY)
+                }
+        }
+
+        moviesCategory = firebaseRemoteConfig.getString(CATEGORY_KEY)
+
+        FirebaseInstanceId.getInstance().instanceId
+            .addOnCompleteListener(OnCompleteListener { task ->
+                if (!task.isSuccessful) {
+                    Log.w(TAG, "getInstanceId failed", task.exception)
+                    return@OnCompleteListener
+                }
+
+                val token = task.result?.token
+
+                // Log and toast
+                Log.d(TAG, token!!)
+
+            })
     }
 }

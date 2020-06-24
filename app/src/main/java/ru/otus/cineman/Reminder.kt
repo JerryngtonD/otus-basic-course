@@ -12,8 +12,8 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import ru.otus.cineman.data.entity.MovieModel
-import ru.otus.cineman.presentation.ApplicationParams.CHANNEL
-import ru.otus.cineman.presentation.ApplicationParams.IMAGE_URL
+import ru.otus.cineman.ApplicationParams.CHANNEL
+import ru.otus.cineman.ApplicationParams.IMAGE_URL
 import ru.otus.cineman.presentation.view.activity.MainActivity
 
 class Reminder: BroadcastReceiver() {
