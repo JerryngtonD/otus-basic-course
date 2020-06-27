@@ -1,85 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Cineman</string>
-    //Movies
-    <string name="spider_man_title">Человек-Паук</string>
-    <string name="spider_man_description">" Человек-паук - крутой супергерой, который спасет мир от суперзлодеев."</string>
-
-    <string name="hulk_title">Хулк</string>
-    <string name="hulk_description">Хулк - просто радиационно здоровый человек, который хочет спасти мир от злых дядей.</string>
-
-    <string name="batman_title">Ватман</string>
-    <string name="batman_description">Летучая мышь не просто животное. Ватман - герой, который не спит ночью. Бесстрашный темный рыцарь прогуливается по улицам Нью-Йорка, чтобы найти кого-нибудь и победить.</string>
-
-    <string name="antman_title">Человек-муравей</string>
-    <string name="antman_description">Человек-муравей спасает героев марвел прямиком из микро-вселенной, он умен и разборчив в оружии,
-        может уменьшаться до невероятно крохотных размеров, хоть масса и муравья может производить сильные удары, несвойственные человеку.
-    </string>
-
-    <string name="artas_title">Артес</string>
-    <string name="artas_description">Артас Менетил, наследный принц Лордерона и Рыцарь Серебряной Руки,
-        был сыном короля Теренаса Менетила II и наследником престола королевства.
-        Утер Светоносный обучил его в качестве паладина и стал рыцарем Серебряной Руки.
-    </string>
-
-    <string name="asterix_title">Астерикс</string>
-    <string name="asterix_description">Астерикс - маленький, но бесстрашный и хитрый воин, всегда жаждущий новых приключений.
-        Он жил около 50 г. до н.э. в вымышленной деревне на северо-западе Арморики (область древней Галлии, в основном эквивалентная современной Бретани).
-    </string>
-
-    <string name="bart_title">Барт Симпсон</string>
-    <string name="bart_description">Барт - озорной, непослушный, неправильно понятый, подрывной и «потенциально опасный» старший ребенок.
-        Он единственный сын Гомера и Мардж Симпсон, а также старший брат Лизы и Мэгги.
-    </string>
-
-    <string name="cat_woman_title">Cat Woman</string>
-    <string name="cat_woman_description">
-       Женщина-кошка, мультипликационный персонаж, хитрый и ловкий профессиональный вор и иногда любит интерес супергероя Бэтмена.
-        Селина Кайл, также известная как Женщина-кошка, одетая в облегающий боди и стилизованную маску с кнутом в руках,
-        часто пересек и пересек грань между злодеем и антигероиней.
-    </string>
-
-    <string name="cool_man_title">Чак Норис</string>
-    <string name="cool_man_description">
-        Я просто крутой мужик.
-    </string>
-
-    <string name="doctor_strange_title">Доктор Стрэндж</string>
-    <string name="doctor_strange_description">
-        Доктор Стрэндж - практикующий маг, который черпает свои силы из мистических существ, таких как Агамотто, Цитторак,
-        Иконн, Оштур, Раггадорр и Ватомб, которые предоставляют свои энергии для заклинаний.
-    </string>
-
-    <string name="gomer_title">Гомер Симпсон</string>
-    <string name="gomer_description">
-      Гомер - алкоголик, у которого есть жена, Мардж и трое детей - Мэгги, Лиза и Барт. Гомер - что-то из гурмана и любит поесть.
-        Его начальник мистер Бернс - тысячелетний владелец электростанции с верным помощником Уэйлоном Смитерсом, который сделает все для мистера.
-    </string>
-
-    <string name="mummy_title">Мумия</string>
-    <string name="mummy_description">
-     «Мумия» - американский фильм ужасов 1999 года, написанный и режиссер Стивен Соммерс. …
-        Фильм рассказывает о авантюристе Рике О\'Коннелле, который путешествует в Хамунаптру,
-        город мертвых, с библиотекарем и ее братом, где они случайно пробуждают Имхотепа, проклятого первосвященника из правления фараона Сети I.
-    </string>
-
-    <string name="tanos_title">Танос</string>
-    <string name="tanos_description">
-    Thanos is a mutant member of the race of superhumans known as the Titanian Eternals. The character possesses abilities common to the Eternals,
-        but amplified to a higher degree through a combination of his mutant–Eternal heritage, bionic amplification, mysticism, and power bestowed by the
-        abstract entity, Death.
-    </string>
-
-    <string name="venom_title">Веном</string>
-    <string name="venom_description">
-   Веном - вымышленный персонаж, фигурирующий в американских комиксах, издаваемых Marvel Comics, обычно совместно с Spider-Man. Персонаж - разумный Чужой Симбиот
-        с аморфной жидкоподобной формой, который выживает, общаясь с хозяином, обычно человеком.
-    </string>
-
-    <string name="incognito_title">Что-то</string>
-    <string name="incognito_description">
-        Что-то в описании.
-    </string>
 
     //Buttons and other elements
     <string name="more_button_title">Подробнее</string>
@@ -117,6 +38,8 @@
     <string name="dismiss_text">Скрыть</string>
 
     //Service
-    //Service
     <string name="default_notification_channel_id">channel</string>
+
+    //Title
+    <string name="default_title">Default title</string>
 </resources>
