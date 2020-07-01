@@ -69,11 +69,23 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version"
     //Room
     implementation "androidx.room:room-runtime:$room_version"
+    kapt "android.arch.persistence.room:compiler:$room_version"
+
+    //Firebase
     implementation 'com.google.firebase:firebase-crashlytics:17.1.0'
     implementation 'com.google.firebase:firebase-analytics:17.4.3'
     implementation 'com.google.firebase:firebase-messaging:20.2.1'
     implementation 'com.google.firebase:firebase-config:19.1.4'
-    kapt "android.arch.persistence.room:compiler:$room_version"
+
+
+    //RxJava
+    implementation "io.reactivex.rxjava3:rxjava:3.0.0"
+    //RxKotlin
+    implementation("io.reactivex.rxjava3:rxkotlin:3.0.0")
+    //RxJava3 Retrofit adapter
+    implementation "com.github.akarnokd:rxjava3-retrofit-adapter:3.0.0"
+    //RxAndroid
+    implementation 'io.reactivex.rxjava3:rxandroid:3.0.0'
 
 
     testImplementation 'junit:junit:4.12'
