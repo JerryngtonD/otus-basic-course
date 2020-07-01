@@ -39,8 +39,8 @@ class MoviesListFragment : Fragment() {
     private lateinit var moviesListListener: MovieListListener
     private lateinit var progressBar: ProgressBar
 
-    private var favoritesFilmsList = mutableListOf<FavoriteMovieModel>()
-    private var watchLaterFilmsList = mutableListOf<WatchLaterMovieModel>()
+    private var favoritesMoviesList = mutableListOf<FavoriteMovieModel>()
+    private var watchLaterMoviesList = mutableListOf<WatchLaterMovieModel>()
     private var cachedMoviesList = mutableListOf<MovieModel>()
 
 
@@ -112,16 +112,16 @@ class MoviesListFragment : Fragment() {
         moviesListViewModel.favoriteMovies.observe(
             viewLifecycleOwner,
             Observer { favorites ->
-                favoritesFilmsList.clear()
-                favoritesFilmsList.addAll(favorites)
+                favoritesMoviesList.clear()
+                favoritesMoviesList.addAll(favorites)
             }
         )
 
         moviesListViewModel.watchLaterMovies.observe(viewLifecycleOwner,
             Observer { watchLaterMovies ->
 
-                watchLaterFilmsList.clear()
-                watchLaterFilmsList.addAll(watchLaterMovies)
+                watchLaterMoviesList.clear()
+                watchLaterMoviesList.addAll(watchLaterMovies)
 
 //            val currentMovies = moviesListViewModel.movies.value ?: emptyList()
 //
@@ -153,14 +153,14 @@ class MoviesListFragment : Fragment() {
 
             list.forEach { cachedFilm ->
                 cachedFilm.isFavorite = false
-                favoritesFilmsList.forEach { favoriteFilm ->
+                favoritesMoviesList.forEach { favoriteFilm ->
                     if (cachedFilm.title == favoriteFilm.title) {
                         cachedFilm.isFavorite = true
                     }
                 }
 
 
-                watchLaterFilmsList.forEach { watchLaterFilm ->
+                watchLaterMoviesList.forEach { watchLaterFilm ->
                     if (cachedFilm.title == watchLaterFilm.title) {
                         cachedFilm.isWatchLater = true
                         cachedFilm.watchTime = watchLaterFilm.timeOfNotification

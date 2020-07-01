@@ -15,7 +15,7 @@ import ru.otus.cineman.NotificationCallback
 import ru.otus.cineman.NotificationWorker
 import ru.otus.cineman.R
 import ru.otus.cineman.data.entity.MovieModel
-import ru.otus.cineman.presentation.ApplicationParams.IMAGE_URL
+import ru.otus.cineman.ApplicationParams.IMAGE_URL
 import ru.otus.cineman.presentation.viewmodel.MovieListViewModel
 
 class MovieDetailsFragment : Fragment() {

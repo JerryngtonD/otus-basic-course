@@ -8,6 +8,7 @@ import ru.otus.cineman.App
 import ru.otus.cineman.data.entity.FavoriteMovieModel
 import ru.otus.cineman.data.entity.MovieModel
 import ru.otus.cineman.data.entity.WatchLaterMovieModel
+import ru.otus.cineman.domain.GetMovieFromPushCallback
 import ru.otus.cineman.domain.GetMoviesCallback
 import ru.otus.cineman.presentation.preferences.PreferencesProvider
 import ru.otus.cineman.presentation.preferences.PreferencesProvider.Companion.CACHE_LOADING
@@ -85,6 +86,17 @@ class MovieListViewModel(
             override fun onError(error: String) {
                 setErrorLoading(error)
                 setIsLoading(false)
+            }
+        })
+    }
+
+    fun getDataFromPush(movieId: String) {
+        movieInteractor.loadMovie(movieId, object: GetMovieFromPushCallback {
+            override fun onSuccess(movie: MovieModel) {
+                onMovieSelect(movie)
+            }
+            override fun onError(error: String) {
+                errorLiveData.postValue(error)
             }
         })
     }

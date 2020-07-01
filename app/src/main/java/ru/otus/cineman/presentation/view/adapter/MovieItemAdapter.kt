@@ -20,8 +20,8 @@ class MovieItemAdapter(
         notifyDataSetChanged()
     }
 
-    fun setItemsWithoutDiff(films: List<MovieModel>) {
-        items.addAll(films)
+    fun setItemsWithoutDiff(movies: List<MovieModel>) {
+        items.addAll(movies)
         notifyDataSetChanged()
     }
 
