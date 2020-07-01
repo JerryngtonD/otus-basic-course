@@ -1,6 +1,6 @@
 package ru.otus.cineman.data.api
 
-import retrofit2.Call
+import io.reactivex.Single
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -12,10 +12,10 @@ interface MovieService {
     fun getPopularMovies(
         @Path("category") category: String,
         @Query("page") page: Int
-    ): Call<MoviesResult>
+    ): Single<MoviesResult>
 
     @GET("movie/{movieId}")
     fun getMovie(
         @Path("movieId") movieId: String
-    ): Call<MovieModel>
+    ): Single<MovieModel>
 }

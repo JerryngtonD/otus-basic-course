@@ -122,19 +122,6 @@ class MoviesListFragment : Fragment() {
 
                 watchLaterMoviesList.clear()
                 watchLaterMoviesList.addAll(watchLaterMovies)
-
-//            val currentMovies = moviesListViewModel.movies.value ?: emptyList()
-//
-//            currentMovies.forEach loop@{movie ->
-//                watchLaterMovies.forEach {watchLater ->
-//                    if (movie.id == watchLater.id) {
-//                        movie.isWatchLater = true
-//                        return@loop
-//                    }
-//
-//                }
-//            }
-//            recyclerAdapter.setItems(currentMovies)
             })
 
         moviesListViewModel.movies.observe(viewLifecycleOwner, Observer { cachedFilms ->

@@ -6,6 +6,11 @@ apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.google.firebase.crashlytics'
 
 android {
+    compileOptions {
+        targetCompatibility = "8"
+        sourceCompatibility = "8"
+    }
+
     compileSdkVersion 29
     buildToolsVersion "29.0.2"
 
@@ -79,13 +84,16 @@ dependencies {
 
 
     //RxJava
-    implementation "io.reactivex.rxjava3:rxjava:3.0.0"
+    implementation "io.reactivex.rxjava2:rxjava:2.2.19"
     //RxKotlin
-    implementation("io.reactivex.rxjava3:rxkotlin:3.0.0")
-    //RxJava3 Retrofit adapter
-    implementation "com.github.akarnokd:rxjava3-retrofit-adapter:3.0.0"
-    //RxAndroid
-    implementation 'io.reactivex.rxjava3:rxandroid:3.0.0'
+    implementation("io.reactivex.rxjava2:rxkotlin:2.4.0")
+    //RxCallAdapterFactory
+    implementation "com.squareup.retrofit2:adapter-rxjava2:2.4.0"
+    //Reactive Streams (converts observable to live data)
+    implementation "androidx.lifecycle:lifecycle-reactivestreams:2.2.0"
+    //RoomRxJava2 artifact
+    implementation "androidx.room:room-rxjava2:$room_version"
+
 
 
     testImplementation 'junit:junit:4.12'

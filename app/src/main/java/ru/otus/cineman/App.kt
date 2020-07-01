@@ -10,11 +10,11 @@ import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.iid.FirebaseInstanceId
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
-import hu.akarnokd.rxjava3.retrofit.RxJava3CallAdapterFactory
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import ru.otus.cineman.data.MovieStorage
 import ru.otus.cineman.data.api.MovieService
@@ -36,8 +36,6 @@ class App : Application() {
 
         var moviesCategory: String = "popular"
     }
-
-    private var ioExecutor = Executors.newSingleThreadExecutor()
 
     lateinit var context: Context
 
@@ -83,7 +81,7 @@ class App : Application() {
         movieDao = db.getMovieDao()
         favoriteMovieDao = db.getFavoriteMovieDao()
         watchLaterMovieDao = db.getWatchLaterMovieDao()
-        movieCache = MovieStorage(ioExecutor, movieDao, favoriteMovieDao, watchLaterMovieDao)
+        movieCache = MovieStorage(movieDao, favoriteMovieDao, watchLaterMovieDao)
         movieRepository = MovieRepository(movieCache)
     }
 
@@ -110,7 +108,7 @@ class App : Application() {
                 Retrofit.Builder()
                     .client(okHttpClient)
                     .addConverterFactory(GsonConverterFactory.create())
-                    .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
+                    .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                     .baseUrl(BASE_URL)
                     .build()
                     .let {
