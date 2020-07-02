@@ -10,6 +10,7 @@ import ru.otus.cineman.data.entity.MovieModel
 import ru.otus.cineman.data.entity.WatchLaterMovieModel
 import ru.otus.cineman.domain.GetMovieFromPushCallback
 import ru.otus.cineman.domain.GetMoviesCallback
+import ru.otus.cineman.domain.GetSearchedMovies
 import ru.otus.cineman.presentation.preferences.PreferencesProvider
 import ru.otus.cineman.presentation.preferences.PreferencesProvider.Companion.CACHE_LOADING
 import java.util.*
@@ -41,6 +42,8 @@ class MovieListViewModel(
     private val favoriteMoviesLiveData = movieInteractor.movieRepository.favoriteMovies
     private val watchLaterLiveData = movieInteractor.movieRepository.watchLaterMovies
 
+    private val searchedMoviesLiveData = MutableLiveData<List<MovieModel>>()
+
     private val errorLiveData = MutableLiveData<String?>()
     private val isLoadingLiveData = MutableLiveData(false)
 
@@ -67,12 +70,14 @@ class MovieListViewModel(
     val error: LiveData<String?>
         get() = errorLiveData
 
+    val searchedMovies: LiveData<List<MovieModel>>
+        get() = searchedMoviesLiveData
+
     val selectedMovie: LiveData<MovieModel>
         get() = selectedMovieLiveData
 
     val isLoading: LiveData<Boolean>
         get() = isLoadingLiveData
-
 
     fun onGetMovies(isNeedToRefresh: Boolean) {
         currentPage = INIT_PAGE
@@ -180,5 +185,17 @@ class MovieListViewModel(
 
     fun addToWatchLater(movie: MovieModel) {
         movieInteractor.movieRepository.storage.addToWatchLater(movie)
+    }
+
+    fun searchMoviesByText(query: String) {
+        movieInteractor.searchMoviesByText(query, object: GetSearchedMovies {
+            override fun onSuccess(movies: List<MovieModel>) {
+               searchedMoviesLiveData.postValue(movies)
+            }
+
+            override fun onError(error: String) {
+                errorLiveData.postValue(error)
+            }
+        })
     }
 }

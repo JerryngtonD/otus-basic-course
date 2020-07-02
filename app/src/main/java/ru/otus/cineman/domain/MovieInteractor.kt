@@ -14,7 +14,7 @@ class MovieInteractor(
 ) {
     fun loadInitOrRefresh(isNeedRefresh: Boolean, callback: GetMoviesCallback) {
         movieService.run {
-            getPopularMovies(moviesCategory, INIT_PAGE)
+            getPopularMovies(getDefaultMovieCategory(moviesCategory), INIT_PAGE)
                 .subscribeOn(Schedulers.computation())
                 .subscribeBy(
                     onSuccess = {
@@ -27,7 +27,7 @@ class MovieInteractor(
 
     fun loadMore(page: Int, callback: GetMoviesCallback) {
         movieService.run {
-            getPopularMovies(moviesCategory, page)
+            getPopularMovies(getDefaultMovieCategory(moviesCategory), page)
                 .subscribeOn(Schedulers.computation())
                 .subscribeBy(
                     onSuccess = {
@@ -73,13 +73,31 @@ class MovieInteractor(
         }
     }
 
+    fun searchMoviesByText(
+        query: String,
+        callback: GetSearchedMovies
+    ) {
+        movieService.run {
+            searchMoviesByText(query, page = 1)
+                .subscribeOn(Schedulers.computation())
+                .subscribeBy(
+                    onSuccess = { callback.onSuccess(it.results) },
+                    onError = { callback.onError("Error while getting searched movies with query: $query") }
+                )
+        }
+    }
+
     private fun enrichCacheMovie(movies: List<MovieModel>, finishAction: () -> Unit) {
         Completable.fromRunnable {
             movieRepository.storage.addAllToMovies(movies, finishAction)
         }.subscribeOn(Schedulers.computation())
             .subscribe()
     }
+
+    private fun getDefaultMovieCategory(category: String) =
+        if (category.isEmpty()) "popular" else category
 }
+
 
 interface GetMoviesCallback {
     fun onSuccess()
@@ -88,5 +106,10 @@ interface GetMoviesCallback {
 
 interface GetMovieFromPushCallback {
     fun onSuccess(movie: MovieModel)
+    fun onError(error: String)
+}
+
+interface GetSearchedMovies {
+    fun onSuccess(movies: List<MovieModel>)
     fun onError(error: String)
 }

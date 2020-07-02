@@ -18,4 +18,10 @@ interface MovieService {
     fun getMovie(
         @Path("movieId") movieId: String
     ): Single<MovieModel>
+
+    @GET("search/movie")
+    fun searchMoviesByText(
+        @Query("query") query: String,
+        @Query("page") page: Int
+    ): Single<MoviesResult>
 }

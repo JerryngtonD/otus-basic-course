@@ -6,8 +6,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
+import android.widget.SearchView
 import android.widget.TextView
+import androidx.activity.OnBackPressedCallback
 import androidx.core.content.res.ResourcesCompat.getDrawable
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -16,14 +19,22 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.snackbar.Snackbar
+import io.reactivex.Observable
+import io.reactivex.ObservableOnSubscribe
+import io.reactivex.rxkotlin.subscribeBy
+import io.reactivex.schedulers.Schedulers
 import ru.otus.cineman.R
 import ru.otus.cineman.data.entity.FavoriteMovieModel
 import ru.otus.cineman.data.entity.MovieModel
 import ru.otus.cineman.data.entity.WatchLaterMovieModel
 import ru.otus.cineman.presentation.view.adapter.MovieItemAdapter
+import ru.otus.cineman.presentation.view.adapter.OnSearchMovieClickListener
+import ru.otus.cineman.presentation.view.adapter.SearchMovieAdapter
 import ru.otus.cineman.presentation.view.animation.CustomItemAnimator
 import ru.otus.cineman.presentation.viewmodel.MovieListViewModel
 import ru.otus.cineman.presentation.viewmodel.ViewModelFactory
+import java.util.*
+import java.util.concurrent.TimeUnit
 
 
 class MoviesListFragment : Fragment() {
@@ -33,11 +44,15 @@ class MoviesListFragment : Fragment() {
 
     private lateinit var viewModelFactory: ViewModelFactory
     private lateinit var moviesListViewModel: MovieListViewModel
-    private lateinit var recyclerView: RecyclerView
+    private lateinit var moviesRecyclerView: RecyclerView
     private lateinit var coordinatorLayout: View
     private lateinit var recyclerAdapter: MovieItemAdapter
     private lateinit var moviesListListener: MovieListListener
     private lateinit var progressBar: ProgressBar
+
+    private lateinit var searchRecyclerView: RecyclerView
+    private lateinit var searchAdapter: SearchMovieAdapter
+    private lateinit var searchMoviesText: SearchView
 
     private var favoritesMoviesList = mutableListOf<FavoriteMovieModel>()
     private var watchLaterMoviesList = mutableListOf<WatchLaterMovieModel>()
@@ -65,10 +80,15 @@ class MoviesListFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        initRecycler()
+        initMoviesRecycler()
         progressBar = view.findViewById(R.id.progress_bar)
         coordinatorLayout = requireActivity().findViewById(R.id.coordinatorMovies)
         viewModelFactory = ViewModelFactory(context = null)
+
+        initSearchRecycler()
+        searchMoviesText = view.findViewById(R.id.searchMoviesText)
+
+
         moviesListViewModel = ViewModelProvider(
             requireActivity(),
             viewModelFactory
@@ -117,6 +137,13 @@ class MoviesListFragment : Fragment() {
             }
         )
 
+        moviesListViewModel.searchedMovies.observe(
+            viewLifecycleOwner,
+            Observer { searchedMovies ->
+                searchAdapter.setItems(searchedMovies)
+            }
+        )
+
         moviesListViewModel.watchLaterMovies.observe(viewLifecycleOwner,
             Observer { watchLaterMovies ->
 
@@ -159,12 +186,33 @@ class MoviesListFragment : Fragment() {
         })
 
 
-
+        setBackPressedListener()
         setOnScrollListener()
         setSwipeRefreshListener()
+        setSearchTypingMoviesListener()
     }
 
-    private fun initRecycler() {
+    private fun initSearchRecycler() {
+        searchAdapter =
+            SearchMovieAdapter(LayoutInflater.from(context), object : OnSearchMovieClickListener {
+                override fun onSearchDetailsClick(movie: MovieModel) {
+                    moviesListViewModel.onMovieSelect(movie)
+                    moviesListListener.onDetailsClick()
+                }
+            })
+
+        val itemDecoration = DividerItemDecoration(activity, DividerItemDecoration.VERTICAL)
+        itemDecoration.setDrawable(getDrawable(resources, R.drawable.divider, null)!!)
+
+        searchRecyclerView = requireView().findViewById(R.id.searchMoviesRecycler)
+        searchRecyclerView.apply {
+            adapter = searchAdapter
+            itemAnimator = CustomItemAnimator()
+            addItemDecoration(itemDecoration)
+        }
+    }
+
+    private fun initMoviesRecycler() {
         recyclerAdapter = MovieItemAdapter(LayoutInflater.from(context), object :
             MovieItemAdapter.OnMovieClickListener {
 
@@ -176,7 +224,7 @@ class MoviesListFragment : Fragment() {
             override fun onChangeFavoriteStatus(position: Int) {
                 val movie = recyclerAdapter.items[position]
                 val text = if (movie.isFavorite) R.string.success_removed_from_favorites
-                                else R.string.success_added_to_favorites
+                else R.string.success_added_to_favorites
 
                 val currentIsFavorite = movie.isFavorite
 
@@ -203,13 +251,14 @@ class MoviesListFragment : Fragment() {
         val itemDecoration = DividerItemDecoration(activity, DividerItemDecoration.VERTICAL)
         itemDecoration.setDrawable(getDrawable(resources, R.drawable.divider, null)!!)
 
-        recyclerView = requireView().findViewById(R.id.recyclerView)
-        recyclerView.apply {
+        moviesRecyclerView = requireView().findViewById(R.id.moviesRecycler)
+        moviesRecyclerView.apply {
             adapter = recyclerAdapter
             itemAnimator = CustomItemAnimator()
             addItemDecoration(itemDecoration)
         }
     }
+
 
     private fun showProgressBar() {
         progressBar.visibility = View.VISIBLE
@@ -217,6 +266,50 @@ class MoviesListFragment : Fragment() {
 
     private fun dismissProgressBar() {
         progressBar.visibility = View.GONE
+    }
+
+    private fun setSearchTypingMoviesListener() {
+        searchMoviesText.setOnClickListener {
+            searchMoviesText.isIconified = false
+        }
+
+        val subscribeBy = Observable.create(ObservableOnSubscribe<String> { subscriber ->
+            searchMoviesText.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+                override fun onQueryTextSubmit(query: String): Boolean {
+                    subscriber.onNext(query)
+                    return false
+                }
+
+                override fun onQueryTextChange(newText: String): Boolean {
+                    searchAdapter.clearItems()
+
+                    if (newText.isEmpty()) {
+                        searchRecyclerView.isVisible = false
+                        moviesRecyclerView.isVisible = true
+                    } else {
+                        searchRecyclerView.isVisible = true
+                        moviesRecyclerView.isVisible = false
+                    }
+                    subscriber.onNext(newText)
+                    return false
+                }
+            })
+        }).subscribeOn(Schedulers.computation())
+            .map {
+                it.toLowerCase(Locale.getDefault()).trim()
+            }
+            .debounce(500, TimeUnit.MILLISECONDS)
+            .distinctUntilChanged()
+            .filter { it.isNotBlank() }
+            .retry(3)
+            .subscribeBy(
+                onNext = {
+                    moviesListViewModel.searchMoviesByText(it)
+                },
+                onError = {
+                    Log.e(TAG, it.localizedMessage)
+                }
+            )
     }
 
     private fun isLastItemDisplaying(recyclerView: RecyclerView): Boolean {
@@ -234,7 +327,7 @@ class MoviesListFragment : Fragment() {
     }
 
     private fun setOnScrollListener() {
-        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+        moviesRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
                 if (isLastItemDisplaying(recyclerView) && dy > 0 && moviesListViewModel.needLoading) {
@@ -256,8 +349,28 @@ class MoviesListFragment : Fragment() {
                 }
             }
     }
+
+    private fun setBackPressedListener() {
+        val callback = object : OnBackPressedCallback(
+            true
+        ) {
+            override fun handleOnBackPressed() {
+                if (searchMoviesText.query.isNotEmpty()) {
+                    searchAdapter.clearItems()
+                    searchMoviesText.setQuery("", false)
+                    searchMoviesText.clearFocus()
+                    searchRecyclerView.isVisible = false
+                    moviesRecyclerView.isVisible = true
+                } else {
+                    moviesListListener.onBackPressedByMoviesList()
+                }
+            }
+        }
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
+    }
 }
 
 interface MovieListListener {
     fun onDetailsClick()
+    fun onBackPressedByMoviesList()
 }

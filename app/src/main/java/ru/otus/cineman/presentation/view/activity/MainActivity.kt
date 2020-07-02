@@ -4,6 +4,7 @@ package ru.otus.cineman.presentation.view.activity
 import android.os.Bundle
 import android.view.MenuItem
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -146,6 +147,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             )
             .addToBackStack(null)
             .commit()
+    }
+
+    override fun onBackPressedByMoviesList() {
+        finish()
     }
 
     private fun onDayNightModeChanged() {
