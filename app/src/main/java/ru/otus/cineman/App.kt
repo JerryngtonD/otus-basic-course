@@ -25,7 +25,6 @@ import ru.otus.cineman.ApplicationParams.API_KEY
 import ru.otus.cineman.ApplicationParams.BASE_URL
 import ru.otus.cineman.ApplicationParams.CATEGORY_KEY
 import ru.otus.cineman.ApplicationParams.CHANNEL
-import java.util.concurrent.Executors
 
 class App : Application() {
     companion object {
