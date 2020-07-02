@@ -1,10 +1,13 @@
 package ru.otus.cineman.presentation.view.fragment
 
+import android.annotation.SuppressLint
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.ProgressBar
 import android.widget.SearchView
 import android.widget.TextView
@@ -190,6 +193,8 @@ class MoviesListFragment : Fragment() {
         setOnScrollListener()
         setSwipeRefreshListener()
         setSearchTypingMoviesListener()
+        hideSoftKeyboardOnScroll(searchRecyclerView)
+        hideSoftKeyboardOnScroll(moviesRecyclerView)
     }
 
     private fun initSearchRecycler() {
@@ -310,6 +315,16 @@ class MoviesListFragment : Fragment() {
                     Log.e(TAG, it.localizedMessage)
                 }
             )
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    private fun hideSoftKeyboardOnScroll(recyclerView: RecyclerView) {
+        recyclerView.setOnTouchListener { v, event ->
+            val imm: InputMethodManager =
+                requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.hideSoftInputFromWindow(recyclerView.windowToken, 0)
+            false
+        }
     }
 
     private fun isLastItemDisplaying(recyclerView: RecyclerView): Boolean {
