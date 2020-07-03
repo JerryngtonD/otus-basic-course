@@ -6,6 +6,15 @@ apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.google.firebase.crashlytics'
 
 android {
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_1_8.toString()
+    }
+
     compileSdkVersion 29
     buildToolsVersion "29.0.2"
 
@@ -69,11 +78,26 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version"
     //Room
     implementation "androidx.room:room-runtime:$room_version"
+    kapt "android.arch.persistence.room:compiler:$room_version"
+
+    //Firebase
     implementation 'com.google.firebase:firebase-crashlytics:17.1.0'
     implementation 'com.google.firebase:firebase-analytics:17.4.3'
     implementation 'com.google.firebase:firebase-messaging:20.2.1'
     implementation 'com.google.firebase:firebase-config:19.1.4'
-    kapt "android.arch.persistence.room:compiler:$room_version"
+
+
+    //RxJava
+    implementation "io.reactivex.rxjava2:rxjava:2.2.19"
+    //RxKotlin
+    implementation("io.reactivex.rxjava2:rxkotlin:2.4.0")
+    //RxCallAdapterFactory
+    implementation "com.squareup.retrofit2:adapter-rxjava2:2.4.0"
+    //Reactive Streams (converts observable to live data)
+    implementation "androidx.lifecycle:lifecycle-reactivestreams:2.2.0"
+    //RoomRxJava2 artifact
+    implementation "androidx.room:room-rxjava2:$room_version"
+
 
 
     testImplementation 'junit:junit:4.12'
