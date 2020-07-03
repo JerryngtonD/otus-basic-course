@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "946773041942",
+    "firebase_url": "https://cineman-9e55b.firebaseio.com",
+    "project_id": "cineman-9e55b",
+    "storage_bucket": "cineman-9e55b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:946773041942:android:8e9fe294ff772e9a586637",
+        "android_client_info": {
+          "package_name": "ru.otus.cineman"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "946773041942-r1jnsq4mt4s1gj6s0frnmmvn4tvlr650.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDtVZEMQhcbETB0hsMYV--5wwG4LC9LG3I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "946773041942-r1jnsq4mt4s1gj6s0frnmmvn4tvlr650.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

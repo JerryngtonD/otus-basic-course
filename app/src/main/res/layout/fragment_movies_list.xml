@@ -18,8 +18,7 @@
             <SearchView
                 android:id="@+id/searchMoviesText"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="i am best movie" />
+                android:layout_height="wrap_content" />
 
         </androidx.appcompat.widget.Toolbar>
 
