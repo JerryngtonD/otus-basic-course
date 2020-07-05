@@ -4,7 +4,6 @@ import android.app.IntentService
 import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
-import android.os.AsyncTask
 import android.os.Environment
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
@@ -46,11 +45,12 @@ class ImageLoader : IntentService(IMAGE_LOADER_SERVICE_NAME) {
 
 
             val notificationId = Random().nextInt(10000)
-            notificationBuilder = NotificationCompat.Builder(this, ApplicationParams.MOVIES_PUSH_CHANNEL)
-                .setSmallIcon(R.drawable.image_loader)
-                .setContentTitle("Download")
-                .setContentText("Downloading Image")
-                .setAutoCancel(true)
+            notificationBuilder =
+                NotificationCompat.Builder(this, ApplicationParams.MOVIES_PUSH_CHANNEL)
+                    .setSmallIcon(R.drawable.image_loader)
+                    .setContentTitle("Download")
+                    .setContentText("Downloading Image")
+                    .setAutoCancel(true)
             notificationManager.notify(notificationId, notificationBuilder.build())
 
             downloadImage(url, movieName, notificationId)
@@ -58,7 +58,7 @@ class ImageLoader : IntentService(IMAGE_LOADER_SERVICE_NAME) {
     }
 
 
-    fun downloadImage(movieUrl: String, movieName: String, notificationId: Int) {
+    private fun downloadImage(movieUrl: String, movieName: String, notificationId: Int) {
         val retrofit = OkHttpClient.Builder()
             .addInterceptor(Interceptor { chain ->
                 val url = chain.request()
@@ -89,10 +89,24 @@ class ImageLoader : IntentService(IMAGE_LOADER_SERVICE_NAME) {
 
         val subscribe = downloadService.downloadImage("original/$movieUrl")
             .subscribeOn(Schedulers.newThread())
+            .doOnSuccess { response ->
+                writeResponseBodyToDisk(
+                    response.body()!!,
+                    movieName,
+                    notificationId
+                )
+            }
+            .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy(
-                onNext = {writeResponseBodyToDisk(it.body()!!, movieName, notificationId)},
-                onError = { print(it.message)}
+                onError = {
+                    Toast.makeText(
+                        this,
+                        "Some error while loading image on url: $movieUrl",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
             )
+
     }
 
     fun writeResponseBodyToDisk(body: ResponseBody, movieName: String, notificationId: Int) {
