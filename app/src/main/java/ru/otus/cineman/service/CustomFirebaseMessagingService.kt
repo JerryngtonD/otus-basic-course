@@ -11,7 +11,7 @@ import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
-import ru.otus.cineman.ApplicationParams.CHANNEL
+import ru.otus.cineman.ApplicationParams.MOVIES_PUSH_CHANNEL
 import ru.otus.cineman.ApplicationParams.IMAGE_URL
 import ru.otus.cineman.ApplicationParams.MOVIE_KEY
 import ru.otus.cineman.R
@@ -43,7 +43,7 @@ class CustomFirebaseMessagingService: FirebaseMessagingService() {
             PendingIntent.FLAG_ONE_SHOT
         )
 
-        val builder = NotificationCompat.Builder(this, CHANNEL).apply {
+        val builder = NotificationCompat.Builder(this, MOVIES_PUSH_CHANNEL).apply {
             setSmallIcon(R.drawable.firebase_icon)
             setContentTitle(remoteMessage.data["title"])
             setContentText(remoteMessage.data["text"])

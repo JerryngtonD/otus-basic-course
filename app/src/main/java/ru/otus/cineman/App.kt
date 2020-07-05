@@ -24,7 +24,7 @@ import ru.otus.cineman.domain.MovieRepository
 import ru.otus.cineman.ApplicationParams.API_KEY
 import ru.otus.cineman.ApplicationParams.BASE_URL
 import ru.otus.cineman.ApplicationParams.CATEGORY_KEY
-import ru.otus.cineman.ApplicationParams.CHANNEL
+import ru.otus.cineman.ApplicationParams.MOVIES_PUSH_CHANNEL
 
 class App : Application() {
     companion object {
@@ -72,7 +72,7 @@ class App : Application() {
 
         initChannel()
 
-        initFirebase()
+//        initFirebase()
     }
 
     private fun initDb() {
@@ -121,10 +121,10 @@ class App : Application() {
             val name = "FilmsSearchApp"
             val description = "Description"
             val importance = NotificationManager.IMPORTANCE_DEFAULT
-            val channel = NotificationChannel(CHANNEL, name, importance)
+            val channel = NotificationChannel(MOVIES_PUSH_CHANNEL, name, importance)
             channel.description = description
 
-            val notificationManager = this.getSystemService(NotificationManager::class.java)
+            val notificationManager = getSystemService(NotificationManager::class.java)
             notificationManager?.createNotificationChannel(channel)
         }
     }

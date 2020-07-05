@@ -1,6 +1,7 @@
 package ru.otus.cineman.presentation.view.activity
 
 
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.MenuItem
 import android.widget.Toast
@@ -12,6 +13,7 @@ import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.navigation.NavigationView
+import com.google.android.material.snackbar.Snackbar
 import ru.otus.cineman.ApplicationParams.MOVIE_KEY
 import ru.otus.cineman.R
 import ru.otus.cineman.data.entity.MovieModel
@@ -25,6 +27,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 {
     companion object {
         const val TAG = "MOVIES_LIST"
+        const val PERMISSION_REQUEST_CODE = 1
     }
 
     private lateinit var drawer: DrawerLayout
@@ -69,6 +72,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         launchFirstFragment(savedInstanceState)
     }
+
 
     private fun launchFirstFragment(savedInstanceState: Bundle?) {
         if (savedInstanceState == null) {

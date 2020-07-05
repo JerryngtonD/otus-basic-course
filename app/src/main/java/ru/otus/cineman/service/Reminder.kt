@@ -1,4 +1,4 @@
-package ru.otus.cineman
+package ru.otus.cineman.service
 
 import android.app.PendingIntent
 import android.content.BroadcastReceiver
@@ -12,8 +12,9 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import ru.otus.cineman.data.entity.MovieModel
-import ru.otus.cineman.ApplicationParams.CHANNEL
+import ru.otus.cineman.ApplicationParams.MOVIES_PUSH_CHANNEL
 import ru.otus.cineman.ApplicationParams.IMAGE_URL
+import ru.otus.cineman.R
 import ru.otus.cineman.presentation.view.activity.MainActivity
 
 class Reminder: BroadcastReceiver() {
@@ -29,7 +30,7 @@ class Reminder: BroadcastReceiver() {
         mIntent.putExtra("movie", movie)
 
         val pendingIntent = PendingIntent.getActivity(context, 0, mIntent, PendingIntent.FLAG_UPDATE_CURRENT)
-        val builder = NotificationCompat.Builder(context!!, CHANNEL).apply {
+        val builder = NotificationCompat.Builder(context!!, MOVIES_PUSH_CHANNEL).apply {
             setSmallIcon(R.drawable.light_mode)
             setContentTitle(context.getString(R.string.app_name))
             setContentText("${context.getString(R.string.watch_later_notification)} $movieTitle")

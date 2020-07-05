@@ -10,8 +10,8 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.fragment_watch_later.*
-import ru.otus.cineman.NotificationCallback
-import ru.otus.cineman.NotificationWorker
+import ru.otus.cineman.service.NotificationCallback
+import ru.otus.cineman.service.NotificationWorker
 import ru.otus.cineman.R
 import ru.otus.cineman.data.entity.WatchLaterMovieModel
 import ru.otus.cineman.data.mapper.MoviesMapper
@@ -88,7 +88,8 @@ class WatchLaterFragment: Fragment() {
             NotificationWorker(
                 requireContext(),
                 movie
-            ).notificationSet(object: NotificationCallback {
+            ).notificationSet(object:
+                NotificationCallback {
                 override fun onSuccess(timeOfNotification: Long) {
                     movie.isWatchLater = true
                     movie.watchTime = timeOfNotification

@@ -84,11 +84,17 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/checked_like"
                     android:padding="5dp"
-                    android:layout_marginEnd="10dp"
+                    android:layout_marginEnd="10dp" />
 
-                    >
-
-                </ImageView>
+                <ImageView
+                    android:id="@+id/load_image"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:background="@drawable/image_loader"
+                    app:layout_constraintEnd_toStartOf="@id/watch_later"
+                    app:layout_constraintTop_toTopOf="@+id/checked_like"
+                    android:padding="5dp"
+                    android:layout_marginEnd="10dp"/>
 
                 <EditText
                     android:id="@+id/user_comment"

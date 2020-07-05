@@ -1,22 +1,33 @@
 package ru.otus.cineman.presentation.view.fragment
 
+import android.Manifest
+import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.CheckBox
+import android.widget.EditText
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.google.android.material.appbar.MaterialToolbar
-import ru.otus.cineman.NotificationCallback
-import ru.otus.cineman.NotificationWorker
+import ru.otus.cineman.ApplicationParams.IMAGE_URL
 import ru.otus.cineman.R
 import ru.otus.cineman.data.entity.MovieModel
-import ru.otus.cineman.ApplicationParams.IMAGE_URL
+import ru.otus.cineman.presentation.view.activity.MainActivity.Companion.PERMISSION_REQUEST_CODE
 import ru.otus.cineman.presentation.viewmodel.MovieListViewModel
+import ru.otus.cineman.service.ImageLoader
+import ru.otus.cineman.service.NotificationCallback
+import ru.otus.cineman.service.NotificationWorker
+
 
 class MovieDetailsFragment : Fragment() {
     companion object {
@@ -32,6 +43,7 @@ class MovieDetailsFragment : Fragment() {
     lateinit var movieUserComment: EditText
     lateinit var isLikedStatusMovie: CheckBox
     lateinit var watchLater: ImageView
+    lateinit var loadImage: ImageView
 
     private val viewModel: MovieListViewModel by lazy {
         ViewModelProvider(requireActivity()).get(MovieListViewModel::class.java)
@@ -61,6 +73,7 @@ class MovieDetailsFragment : Fragment() {
         movieUserComment = view.findViewById(R.id.user_comment)
         isLikedStatusMovie = view.findViewById(R.id.checked_like)
         watchLater = view.findViewById(R.id.watch_later)
+        loadImage = view.findViewById(R.id.load_image)
 
 
         viewModel.selectedMovie.observe(viewLifecycleOwner, Observer { selectedMovie ->
@@ -112,7 +125,37 @@ class MovieDetailsFragment : Fragment() {
 
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
 
+        initLoadImageListener()
         initWatchLaterListener()
+    }
+
+    private fun initLoadImageListener() {
+        loadImage.setOnClickListener {
+            if (checkPermission()) {
+                val intent = Intent(context, ImageLoader::class.java)
+                intent.putExtra("image_url", movie.image!!)
+                intent.putExtra("movie_name", movie.title)
+                requireActivity().startService(intent)
+            } else {
+                requestPermission()
+            }
+        }
+    }
+
+    private fun requestPermission() {
+        ActivityCompat.requestPermissions(
+            requireActivity(),
+            arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+            PERMISSION_REQUEST_CODE
+        )
+    }
+
+    private fun checkPermission(): Boolean {
+        val result = ContextCompat.checkSelfPermission(
+            requireContext(),
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+        )
+        return result == PackageManager.PERMISSION_GRANTED
     }
 
     private fun initWatchLaterListener() {
@@ -134,7 +177,8 @@ class MovieDetailsFragment : Fragment() {
                 NotificationWorker(
                     requireContext(),
                     movie
-                ).notificationSet(object: NotificationCallback {
+                ).notificationSet(object:
+                    NotificationCallback {
                     override fun onSuccess(timeOfNotification: Long) {
                         movie.isWatchLater = true
                         movie.watchTime = timeOfNotification
