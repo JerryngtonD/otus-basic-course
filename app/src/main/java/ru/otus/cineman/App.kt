@@ -72,7 +72,7 @@ class App : Application() {
 
         initChannel()
 
-//        initFirebase()
+        initFirebase()
     }
 
     private fun initDb() {

@@ -1,7 +1,9 @@
 package ru.otus.cineman.service
 
+import android.app.DownloadManager
 import android.app.IntentService
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Environment
@@ -168,6 +170,12 @@ class ImageLoader : IntentService(IMAGE_LOADER_SERVICE_NAME) {
         notificationManager.cancel(0)
         notificationBuilder.setProgress(0, 0, false)
         notificationBuilder.setContentText("File Downloaded")
+
+        val openDownloadIntent = Intent(DownloadManager.ACTION_VIEW_DOWNLOADS).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        }
+        val pendingIntent = PendingIntent.getActivity(this, 0, openDownloadIntent, 0)
+        notificationBuilder.addAction(R.drawable.downloaded, getString(R.string.downloads), pendingIntent)
         notificationManager.notify(notificationId, notificationBuilder.build())
     }
 }
