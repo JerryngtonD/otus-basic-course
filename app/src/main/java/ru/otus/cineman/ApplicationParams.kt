@@ -8,7 +8,6 @@ object ApplicationParams {
     const val MESSAGE_LOADER_INTENT = "MESSAGE_PROGRESS"
 
     const val MOVIES_PUSH_CHANNEL = "channel"
-    const val IMAGE_LOADER_CHANNEL = "image_channel"
 
     const val MOVIE_KEY = "movie"
     const val CATEGORY_KEY = "movies_category"
