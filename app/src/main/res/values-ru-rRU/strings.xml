@@ -42,4 +42,6 @@
 
     //Title
     <string name="default_title">Default title</string>
+    //Downloads
+    <string name="downloads">Загрузки</string>
 </resources>

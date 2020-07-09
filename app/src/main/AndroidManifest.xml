@@ -3,6 +3,7 @@
     package="ru.otus.cineman">
 
     <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
     <application
         android:name=".App"
@@ -22,11 +23,18 @@
         </activity>
 
 
-        <receiver android:name=".Reminder"/>
+        <receiver android:name=".service.Reminder"/>
         <service android:name=".service.CustomFirebaseMessagingService"
             android:exported="false">
         <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
+        <service android:name=".service.ImageLoader"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="MESSAGE_PROGRESS" />
             </intent-filter>
         </service>
 

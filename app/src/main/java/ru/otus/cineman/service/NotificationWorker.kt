@@ -1,4 +1,4 @@
-package ru.otus.cineman
+package ru.otus.cineman.service
 
 import android.app.AlarmManager
 import android.app.DatePickerDialog
