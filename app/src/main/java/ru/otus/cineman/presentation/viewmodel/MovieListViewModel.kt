@@ -1,22 +1,24 @@
 package ru.otus.cineman.presentation.viewmodel
 
-import android.content.Context
+import android.app.Application
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import ru.otus.cineman.App
 import ru.otus.cineman.data.entity.FavoriteMovieModel
 import ru.otus.cineman.data.entity.MovieModel
 import ru.otus.cineman.data.entity.WatchLaterMovieModel
 import ru.otus.cineman.domain.GetMovieFromPushCallback
 import ru.otus.cineman.domain.GetMoviesCallback
 import ru.otus.cineman.domain.GetSearchedMovies
+import ru.otus.cineman.domain.MovieInteractor
 import ru.otus.cineman.presentation.preferences.PreferencesProvider
 import ru.otus.cineman.presentation.preferences.PreferencesProvider.Companion.CACHE_LOADING
 import java.util.*
+import javax.inject.Inject
 
-class MovieListViewModel(
-    val context: Context
+class MovieListViewModel @Inject constructor(
+    val application: Application,
+    val movieInteractor: MovieInteractor
 ) : ViewModel() {
     companion object {
         const val INIT_PAGE = 1
@@ -27,12 +29,7 @@ class MovieListViewModel(
         const val CACHE_ELAPSE = 20 * 60 * 1000
     }
 
-    private var preferenceProvider = PreferencesProvider(context, CACHE_LOADING)
-    private val movieInteractor = App.instance!!.movieInteractor
-
-
-
-
+    private var preferenceProvider = PreferencesProvider(application, CACHE_LOADING)
 
     var needLoading = true
     var getFromCache = false

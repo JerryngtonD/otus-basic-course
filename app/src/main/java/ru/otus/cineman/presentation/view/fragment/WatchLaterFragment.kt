@@ -5,10 +5,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.fragment_watch_later.*
 import ru.otus.cineman.service.NotificationCallback
 import ru.otus.cineman.service.NotificationWorker
@@ -19,7 +19,7 @@ import ru.otus.cineman.presentation.view.adapter.OnItemClickListener
 import ru.otus.cineman.presentation.view.adapter.WatchLaterMovieAdapter
 import ru.otus.cineman.presentation.viewmodel.MovieListViewModel
 
-class WatchLaterFragment: Fragment() {
+class WatchLaterFragment: DaggerFragment() {
     companion object {
       const val TAG = "WATCH_LATER_MOVIES_TAG"
     }

@@ -22,6 +22,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.snackbar.Snackbar
+import dagger.android.support.DaggerFragment
 import io.reactivex.Observable
 import io.reactivex.ObservableOnSubscribe
 import io.reactivex.rxkotlin.subscribeBy
@@ -30,23 +31,32 @@ import ru.otus.cineman.R
 import ru.otus.cineman.data.entity.FavoriteMovieModel
 import ru.otus.cineman.data.entity.MovieModel
 import ru.otus.cineman.data.entity.WatchLaterMovieModel
+import ru.otus.cineman.di.modules.ViewModelFactory
 import ru.otus.cineman.presentation.view.adapter.MovieItemAdapter
 import ru.otus.cineman.presentation.view.adapter.OnSearchMovieClickListener
 import ru.otus.cineman.presentation.view.adapter.SearchMovieAdapter
 import ru.otus.cineman.presentation.view.animation.CustomItemAnimator
 import ru.otus.cineman.presentation.viewmodel.MovieListViewModel
-import ru.otus.cineman.presentation.viewmodel.ViewModelFactory
 import java.util.*
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 
 
-class MoviesListFragment : Fragment() {
+class MoviesListFragment :  DaggerFragment() {
     companion object {
         const val TAG = "MOVIES_LIST_FRAGMENT"
     }
 
-    private lateinit var viewModelFactory: ViewModelFactory
-    private lateinit var moviesListViewModel: MovieListViewModel
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
+
+    private val moviesListViewModel: MovieListViewModel by lazy {
+        ViewModelProvider(
+            requireActivity(),
+            viewModelFactory
+        ).get(MovieListViewModel::class.java)
+    }
+
     private lateinit var moviesRecyclerView: RecyclerView
     private lateinit var coordinatorLayout: View
     private lateinit var recyclerAdapter: MovieItemAdapter
@@ -86,16 +96,10 @@ class MoviesListFragment : Fragment() {
         initMoviesRecycler()
         progressBar = view.findViewById(R.id.progress_bar)
         coordinatorLayout = requireActivity().findViewById(R.id.coordinatorMovies)
-        viewModelFactory = ViewModelFactory(context = null)
 
         initSearchRecycler()
         searchMoviesText = view.findViewById(R.id.searchMoviesText)
 
-
-        moviesListViewModel = ViewModelProvider(
-            requireActivity(),
-            viewModelFactory
-        ).get(MovieListViewModel::class.java)
 
 
         moviesListViewModel.isLoading.observe(

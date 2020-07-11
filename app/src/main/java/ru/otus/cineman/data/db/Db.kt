@@ -5,28 +5,17 @@ import androidx.room.Room
 
 object Db {
 
-    private var INSTANCE: MovieDb? = null
+    private lateinit var INSTANCE: MovieDb
 
-    fun getInstance(context: Context): MovieDb? {
-        if (INSTANCE == null) {
-            synchronized(MovieDb::class) {
-
-                INSTANCE = Room.databaseBuilder(
-                    context,
-                    MovieDb::class.java, "movieDb.db"
-                )
-                    /*.allowMainThreadQueries()*/
-                    .fallbackToDestructiveMigration()
-//                    .addMigrations(MIGRATION_1_2)
-//                    .addCallback(DbCallback(context))
-                    .build()
-            }
+    fun getInstance(context: Context): MovieDb {
+        if (!this::INSTANCE.isInitialized) {
+            INSTANCE = Room.databaseBuilder(
+                context,
+                MovieDb::class.java, "movieDb.db"
+            )
+                .fallbackToDestructiveMigration()
+                .build()
         }
         return INSTANCE
-    }
-
-    fun destroyInstance() {
-        INSTANCE?.close()
-        INSTANCE = null
     }
 }
