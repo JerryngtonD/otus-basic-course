@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.res.ResourcesCompat
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -13,22 +12,27 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.ItemTouchHelper.*
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
+import dagger.android.support.DaggerFragment
 import ru.otus.cineman.R
+import ru.otus.cineman.di.modules.ViewModelFactory
 import ru.otus.cineman.presentation.view.adapter.FavoriteMovieAdapter
 import ru.otus.cineman.presentation.view.animation.CustomItemAnimator
 import ru.otus.cineman.presentation.viewmodel.MovieListViewModel
-import ru.otus.cineman.presentation.viewmodel.ViewModelFactory
+import javax.inject.Inject
 
 
-class MoviesListFavoriteFragment : Fragment() {
+class MoviesListFavoriteFragment : DaggerFragment() {
     companion object {
         const val TAG = "MOVIES_LIST_FAVORITE"
     }
 
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
+
+
     private lateinit var recyclerView: RecyclerView
     private lateinit var recyclerAdapter: FavoriteMovieAdapter
     private lateinit var viewModel: MovieListViewModel
-    private lateinit var viewModelFactory: ViewModelFactory
 
 
     override fun onCreateView(
@@ -43,7 +47,6 @@ class MoviesListFavoriteFragment : Fragment() {
         initRecycler()
         initSwipeDeleteListener()
 
-        viewModelFactory = ViewModelFactory(context = null)
         viewModel = ViewModelProvider(
             requireActivity(),
             viewModelFactory

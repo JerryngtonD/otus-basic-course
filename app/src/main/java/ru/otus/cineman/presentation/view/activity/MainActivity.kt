@@ -1,30 +1,32 @@
 package ru.otus.cineman.presentation.view.activity
 
 
-import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.MenuItem
 import android.widget.Toast
-import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.ActionBarDrawerToggle
-import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.navigation.NavigationView
-import com.google.android.material.snackbar.Snackbar
+import dagger.android.support.DaggerAppCompatActivity
 import ru.otus.cineman.ApplicationParams.MOVIE_KEY
 import ru.otus.cineman.R
 import ru.otus.cineman.data.entity.MovieModel
+import ru.otus.cineman.di.modules.ViewModelFactory
 import ru.otus.cineman.presentation.view.fragment.*
 import ru.otus.cineman.presentation.viewmodel.MovieListViewModel
 import ru.otus.cineman.presentation.viewmodel.NavigationDrawerViewModel
-import ru.otus.cineman.presentation.viewmodel.ViewModelFactory
+import javax.inject.Inject
 
-class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener,
+class MainActivity : DaggerAppCompatActivity(), NavigationView.OnNavigationItemSelectedListener,
     MovieDetailsListener, MovieListListener, WatchLaterListener
 {
+
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
+
     companion object {
         const val TAG = "MOVIES_LIST"
         const val PERMISSION_REQUEST_CODE = 1
@@ -34,9 +36,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private lateinit var toolbar: Toolbar
     private lateinit var navigationView: NavigationView
 
-    private lateinit var viewModelFactory: ViewModelFactory
-    private lateinit var navigationDrawerViewModel: NavigationDrawerViewModel
-    private lateinit var moviesListViewModel: MovieListViewModel
+    private val navigationDrawerViewModel: NavigationDrawerViewModel by lazy {
+        ViewModelProvider(this, viewModelFactory).get(NavigationDrawerViewModel::class.java)
+    }
+    private val moviesListViewModel: MovieListViewModel by lazy {
+        ViewModelProvider(this, viewModelFactory).get(MovieListViewModel::class.java)
+    }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -47,12 +52,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         drawer = findViewById(R.id.drawer_layout)
         toolbar = findViewById(R.id.toolbar)
-
-        viewModelFactory = ViewModelFactory(context = applicationContext)
-        navigationDrawerViewModel =
-            ViewModelProvider(this, viewModelFactory).get(NavigationDrawerViewModel::class.java)
-        moviesListViewModel =
-            ViewModelProvider(this, viewModelFactory).get(MovieListViewModel::class.java)
 
         checkNightModeActivated()
 

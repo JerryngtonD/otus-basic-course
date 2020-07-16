@@ -10,28 +10,27 @@ import android.os.Environment
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import dagger.android.DaggerIntentService
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
-import okhttp3.Interceptor
-import okhttp3.OkHttpClient
 import okhttp3.ResponseBody
-import okhttp3.logging.HttpLoggingInterceptor
-import retrofit2.Retrofit
-import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import ru.otus.cineman.ApplicationParams
-import ru.otus.cineman.ApplicationParams.IMAGE_URL
 import ru.otus.cineman.ApplicationParams.MESSAGE_LOADER_INTENT
 import ru.otus.cineman.R
 import ru.otus.cineman.data.api.ImageService
 import ru.otus.cineman.extension.roundByDigitCount
 import java.io.*
 import java.util.*
+import javax.inject.Inject
 
 
 private const val IMAGE_LOADER_SERVICE_NAME = "IMAGE_LOADER"
 
-class ImageLoader : IntentService(IMAGE_LOADER_SERVICE_NAME) {
+class ImageLoader: DaggerIntentService(IMAGE_LOADER_SERVICE_NAME) {
+    @Inject
+    lateinit var imageService: ImageService
+
     private lateinit var notificationBuilder: NotificationCompat.Builder
     private lateinit var notificationManager: NotificationManager
     private var totalFileSize: Double = 0.0
@@ -61,35 +60,7 @@ class ImageLoader : IntentService(IMAGE_LOADER_SERVICE_NAME) {
 
 
     private fun downloadImage(movieUrl: String, movieName: String, notificationId: Int) {
-        val retrofit = OkHttpClient.Builder()
-            .addInterceptor(Interceptor { chain ->
-                val url = chain.request()
-                    .url()
-                    .newBuilder()
-                    .addQueryParameter("api_key", ApplicationParams.API_KEY)
-                    .build()
-
-                val request = chain.request()
-                    .newBuilder()
-                    .url(url)
-                    .build()
-                return@Interceptor chain.proceed(request)
-            })
-            .addInterceptor(HttpLoggingInterceptor().apply {
-                level = HttpLoggingInterceptor.Level.BODY
-            })
-            .build()
-            .let { okHttpClient ->
-                Retrofit.Builder()
-                    .client(okHttpClient)
-                    .baseUrl(IMAGE_URL)
-                    .client(OkHttpClient.Builder().build())
-                    .addCallAdapterFactory(RxJava2CallAdapterFactory.create()).build()
-            }
-
-        val downloadService = retrofit.create(ImageService::class.java)
-
-        val subscribe = downloadService.downloadImage("original/$movieUrl")
+        val subscribe = imageService.downloadImage("original/$movieUrl")
             .subscribeOn(Schedulers.newThread())
             .doOnSuccess { response ->
                 writeResponseBodyToDisk(
