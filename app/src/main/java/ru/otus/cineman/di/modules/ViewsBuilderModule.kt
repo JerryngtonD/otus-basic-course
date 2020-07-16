@@ -10,33 +10,16 @@ import ru.otus.cineman.service.ImageLoader
 
 @Module
 abstract class ViewsBuildersModule {
-
-    @ContributesAndroidInjector(
-        modules = [
-            ViewModelModule::class
-        ]
-    )
+    @ContributesAndroidInjector
     abstract fun contributeMainActivity(): MainActivity
 
-    @ContributesAndroidInjector(
-        modules = [
-            ViewModelModule::class
-        ]
-    )
+    @ContributesAndroidInjector
     abstract fun contributeMoviesListFragment(): MoviesListFragment
 
-    @ContributesAndroidInjector(
-        modules = [
-            ViewModelModule::class
-        ]
-    )
+    @ContributesAndroidInjector
     abstract fun contributeMoviesListFavoriteFragment(): MoviesListFavoriteFragment
 
-    @ContributesAndroidInjector(
-        modules = [
-            ViewModelModule::class
-        ]
-    )
+    @ContributesAndroidInjector
     abstract fun contributeWatchLaterListFragment(): WatchLaterFragment
 
     @ContributesAndroidInjector
