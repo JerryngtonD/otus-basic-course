@@ -19,7 +19,6 @@ import ru.otus.cineman.presentation.view.activity.MainActivity
 
 class CustomFirebaseMessagingService: FirebaseMessagingService() {
     override fun onNewToken(p0: String) {
-        print(21)
     }
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
