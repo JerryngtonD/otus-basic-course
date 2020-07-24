@@ -154,7 +154,7 @@ class MovieListViewModel @Inject constructor(
         storage.updateDetailsMovie(movie.id, movie.comment ?: "", movie.isLiked)
     }
 
-    private fun checkCacheElapsed(): Boolean {
+    fun checkCacheElapsed(): Boolean {
         val currentDate = Calendar.getInstance().timeInMillis
         val cachedDate = preferenceProvider.getPreference().getLong(CACHED_DATE, 0L)
         val diff = currentDate - cachedDate

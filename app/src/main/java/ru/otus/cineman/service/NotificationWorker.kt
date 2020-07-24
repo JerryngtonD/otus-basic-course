@@ -12,16 +12,11 @@ import java.util.*
 
 class NotificationWorker(private val context: Context, val movieModel: MovieModel) {
     private var dateTimeInMillis = 0L
-    val id = movieModel.id.toString()
 
     private fun makeIntent() {
         val alarmManager =
             context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val intent = Intent(id, null, context, Reminder::class.java)
-
-        val bundle = Bundle()
-        bundle.putParcelable("movie", movieModel)
-        intent.putExtra("bundle", bundle)
+        val intent = buildNotificationIntent(movieModel, context)
 
         val pendingIntent = PendingIntent.getBroadcast(
             context,
@@ -40,7 +35,7 @@ class NotificationWorker(private val context: Context, val movieModel: MovieMode
     fun cancelNotification() {
         val alarmManager =
             context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val intent = Intent(id, null, context, Reminder::class.java)
+        val intent = Intent(movieModel.id.toString(), null, context, Reminder::class.java)
 
         val pendingIntent = PendingIntent.getBroadcast(
             context,
@@ -52,6 +47,16 @@ class NotificationWorker(private val context: Context, val movieModel: MovieMode
             pendingIntent
         )
     }
+
+    fun buildNotificationIntent(movieModel: MovieModel, context: Context): Intent {
+        val intent = Intent(movieModel.id.toString(), null, context, Reminder::class.java)
+
+        val bundle = Bundle()
+        bundle.putParcelable("movie", movieModel)
+        intent.putExtra("bundle", bundle)
+        return intent
+    }
+
 
     fun notificationSet(callback: NotificationCallback) {
         val calendar = Calendar.getInstance()
