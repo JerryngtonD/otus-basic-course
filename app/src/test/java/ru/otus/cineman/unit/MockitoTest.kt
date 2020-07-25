@@ -1,4 +1,4 @@
-package ru.otus.cineman
+package ru.otus.cineman.unit
 
 import android.content.Context
 import android.content.SharedPreferences
