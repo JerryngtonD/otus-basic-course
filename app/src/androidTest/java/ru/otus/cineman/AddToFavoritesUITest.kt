@@ -23,6 +23,6 @@ class AddToFavoritesUITest {
             RecyclerViewActions.actionOnItemAtPosition<MovieItemViewHolder>(
                 0, onViewHolderAction(R.id.isFavorite)
             )
-        );
+        )
     }
 }
