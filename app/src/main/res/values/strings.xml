@@ -44,4 +44,5 @@
     <string name="default_title">Default title</string>
     //Downloads
     <string name="downloads">Downloads</string>
+    <string name="error_while_loading">Error while getting movies...</string>
 </resources>

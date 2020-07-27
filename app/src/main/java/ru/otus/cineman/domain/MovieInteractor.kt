@@ -21,7 +21,9 @@ class MovieInteractor(
                         saveOrUpdateCache(isNeedRefresh, it.results, callback::onSuccess)
                     },
                     onError = {
-                        callback.onError("Error while getting movies: ${it.localizedMessage}") }
+                        callback.onError("Error while getting movies...")
+//                        callback.onError("Error while getting movies: ${it.localizedMessage}")
+                    }
                 )
         }
     }

@@ -43,4 +43,5 @@
     <string name="default_title">Default title</string>
     //Downloads
     <string name="downloads">Загрузки</string>
+    <string name="error_while_loading">Непреднамеренная ошибка при загрузке фильмов, повторите запроc...</string>
 </resources>

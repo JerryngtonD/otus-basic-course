@@ -120,8 +120,9 @@ class MoviesListFragment :  DaggerFragment() {
                 if (error != null) {
                     Log.i(TAG, error)
                     moviesListViewModel.setErrorLoading(null)
-                    val errorText =
-                        "$error\n\n${resources.getString(R.string.fault_loading_movies)}"
+                    val errorText = "$error"
+//                    val errorText =
+//                        "$error\n\n${resources.getString(R.string.fault_loading_movies)}"
                     val snackbar =
                         Snackbar.make(coordinatorLayout, errorText, Snackbar.LENGTH_LONG)
                             .setAction(resources.getString(R.string.retry)) {
