@@ -77,7 +77,7 @@ class MovieInteractorIntegrationTest {
             }
 
         movieService = retrofit.create(MovieService::class.java)
-        movieDb = Db.getInstance(InstrumentationRegistry.getInstrumentation().targetContext)
+        movieDb = Db.getInMemoryDbInstance(InstrumentationRegistry.getInstrumentation().targetContext)
         movieDao = movieDb.getMovieDao()
         favoriteMovieDao = movieDb.getFavoriteMovieDao()
         watchLaterMovieDao = movieDb.getWatchLaterMovieDao()
