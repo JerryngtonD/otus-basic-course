@@ -10,7 +10,7 @@ data class Download(
     var currentFileSize: Double = 0.0,
     var totalFileSize: Double = 0.0
 ): Parcelable {
-    private fun setDownload(inObject: Parcel) {
+    fun setDownload(inObject: Parcel) {
         progress = inObject.readInt()
         currentFileSize = inObject.readDouble()
         totalFileSize = inObject.readDouble()

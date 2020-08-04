@@ -1,6 +1,7 @@
 package ru.otus.cineman.presentation.viewmodel
 
 import android.app.Application
+import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -13,6 +14,7 @@ import ru.otus.cineman.domain.GetSearchedMovies
 import ru.otus.cineman.domain.MovieInteractor
 import ru.otus.cineman.presentation.preferences.PreferencesProvider
 import ru.otus.cineman.presentation.preferences.PreferencesProvider.Companion.CACHE_LOADING
+import ru.otus.cineman.util.SimpleIdlingResource
 import java.util.*
 import javax.inject.Inject
 
@@ -20,6 +22,10 @@ class MovieListViewModel @Inject constructor(
     val application: Application,
     val movieInteractor: MovieInteractor
 ) : ViewModel() {
+
+    @VisibleForTesting
+    public val idlingResource = SimpleIdlingResource()
+
     companion object {
         const val INIT_PAGE = 1
 
@@ -79,15 +85,19 @@ class MovieListViewModel @Inject constructor(
     fun onGetMovies(isNeedToRefresh: Boolean) {
         currentPage = INIT_PAGE
         setIsLoading(true)
+        idlingResource.setIdleState(false)
+
         movieInteractor.loadInitOrRefresh(isNeedToRefresh, object : GetMoviesCallback {
             override fun onSuccess() {
                 saveCacheDate()
                 setIsLoading(false)
+                idlingResource.setIdleState(true)
             }
 
             override fun onError(error: String) {
                 setErrorLoading(error)
                 setIsLoading(false)
+                idlingResource.setIdleState(true)
             }
         })
     }
@@ -154,7 +164,7 @@ class MovieListViewModel @Inject constructor(
         storage.updateDetailsMovie(movie.id, movie.comment ?: "", movie.isLiked)
     }
 
-    private fun checkCacheElapsed(): Boolean {
+    fun checkCacheElapsed(): Boolean {
         val currentDate = Calendar.getInstance().timeInMillis
         val cachedDate = preferenceProvider.getPreference().getLong(CACHED_DATE, 0L)
         val diff = currentDate - cachedDate

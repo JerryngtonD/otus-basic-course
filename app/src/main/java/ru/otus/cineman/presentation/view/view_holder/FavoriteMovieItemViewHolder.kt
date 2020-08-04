@@ -29,7 +29,7 @@ class FavoriteMovieItemViewHolder(itemView: View) : RecyclerView.ViewHolder(item
 
     fun setImage(movie: FavoriteMovieModel) {
         Glide.with(movieImage.context)
-            .load("${IMAGE_URL}${movie.image}")
+            .load("${IMAGE_URL}w500${movie.image}")
             .placeholder(R.drawable.ic_loading)
             .error(R.drawable.ic_error)
             .into(movieImage)

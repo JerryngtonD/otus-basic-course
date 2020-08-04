@@ -18,7 +18,7 @@ class PreferencesProvider (
         return preference
     }
 
-    private fun getPreferencesByType(preferencesType: String): SharedPreferences? {
+    fun getPreferencesByType(preferencesType: String): SharedPreferences? {
         return when(preferencesType) {
             NIGHT_MODE_PREFERENCES -> context.getSharedPreferences(NIGHT_MODE_PREFERENCES, Context.MODE_PRIVATE)
             CACHE_LOADING -> context.getSharedPreferences(CACHE_LOADING, Context.MODE_PRIVATE)

@@ -18,4 +18,16 @@ object Db {
         }
         return INSTANCE
     }
+
+    fun getInMemoryDbInstance(context: Context): MovieDb {
+        if (!this::INSTANCE.isInitialized) {
+            INSTANCE = Room.inMemoryDatabaseBuilder(
+                context,
+                MovieDb::class.java
+            )
+                .fallbackToDestructiveMigration()
+                .build()
+        }
+        return INSTANCE
+    }
 }

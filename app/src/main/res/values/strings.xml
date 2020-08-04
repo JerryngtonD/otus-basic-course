@@ -6,7 +6,6 @@
     <string name="like">Like if you want</string>
     <string name="leave_comment">Leave your comment…</string>
     <string name="share">Share with friend</string>
-    <string name="need_exit">Are you really want to exit from app ?</string>
     <string name="yes_answer">Yes</string>
     <string name="no_answer">No</string>
     <string name="ok">OK</string>
@@ -45,4 +44,5 @@
     <string name="default_title">Default title</string>
     //Downloads
     <string name="downloads">Downloads</string>
+    <string name="error_while_loading">Error while getting movies...</string>
 </resources>
