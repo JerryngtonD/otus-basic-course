@@ -59,6 +59,10 @@ class WatchLaterFragment: DaggerFragment() {
             watchLaterFragmentAdapter.setItems(
                 watchLaterMovies
             )
+
+            if (watchLaterMovies.isEmpty()) {
+                listener.onCloseFragment()
+            }
         })
 
         val callback = object : OnBackPressedCallback(
@@ -110,7 +114,6 @@ class WatchLaterFragment: DaggerFragment() {
                 MoviesMapper.mapWatchLaterToMovie(watchLaterMovie)
             ).cancelNotification()
             viewModel.removeFromWatchLater(watchLaterMovie.id)
-
         }
     }
 }
