@@ -23,6 +23,7 @@ import ru.otus.cineman.ApplicationParams.IMAGE_URL
 import ru.otus.cineman.R
 import ru.otus.cineman.data.entity.MovieModel
 import ru.otus.cineman.presentation.view.activity.MainActivity.Companion.PERMISSION_REQUEST_CODE
+import ru.otus.cineman.presentation.view.activity.OnCloseFragmentListener
 import ru.otus.cineman.presentation.viewmodel.MovieListViewModel
 import ru.otus.cineman.service.ImageLoader
 import ru.otus.cineman.service.NotificationCallback
@@ -36,7 +37,7 @@ class MovieDetailsFragment : Fragment() {
 
     private lateinit var movie: MovieModel
 
-    lateinit var listener: MovieDetailsListener
+    lateinit var listener: OnCloseFragmentListener
     lateinit var movieImage: ImageView
     lateinit var movieTitle: MaterialToolbar
     lateinit var movieDescription: TextView
@@ -50,8 +51,8 @@ class MovieDetailsFragment : Fragment() {
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
-        if (activity is MovieDetailsListener) {
-            listener = activity as MovieDetailsListener
+        if (activity is OnCloseFragmentListener) {
+            listener = activity as OnCloseFragmentListener
         }
         super.onActivityCreated(savedInstanceState)
     }
@@ -119,7 +120,7 @@ class MovieDetailsFragment : Fragment() {
                         viewModel.onUpdateSelectedMovieInDetails(it)
                     }
                 }
-                listener.onCloseMovieDetails()
+                listener.onCloseFragment()
             }
         }
 
@@ -194,8 +195,4 @@ class MovieDetailsFragment : Fragment() {
             }
         }
     }
-}
-
-interface MovieDetailsListener {
-    fun onCloseMovieDetails()
 }

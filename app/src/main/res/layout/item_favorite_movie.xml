@@ -11,9 +11,9 @@
     android:layout_marginTop="30dp"
     android:layout_marginBottom="30dp"
     app:cardCornerRadius="12dp"
-    app:cardBackgroundColor="#6268EE"
-    app:strokeColor="#03DAA8"
-    app:strokeWidth="10dp"
+    app:cardBackgroundColor="#b2ebf2"
+    app:strokeColor="#00bcd4"
+    app:strokeWidth="3dp"
     android:theme="@style/Theme.MaterialComponents.Light"
     android:focusable="true">
 

@@ -8,6 +8,8 @@ import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.CenterCrop
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import ru.otus.cineman.R
 import ru.otus.cineman.data.entity.MovieModel
 import ru.otus.cineman.ApplicationParams.IMAGE_URL
@@ -33,6 +35,7 @@ class MovieItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     fun setImage(movie: MovieModel) {
         Glide.with(movieImage.context)
             .load("${IMAGE_URL}w500${movie.image}")
+            .transform(CenterCrop(), RoundedCorners(25))
             .placeholder(R.drawable.ic_loading)
             .error(R.drawable.ic_error)
             .into(movieImage)

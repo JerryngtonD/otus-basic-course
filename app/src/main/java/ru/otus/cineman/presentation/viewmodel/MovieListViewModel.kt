@@ -153,7 +153,7 @@ class MovieListViewModel @Inject constructor(
         }
     }
 
-    fun onDeleteFavoriteMovieById(id: Int) {
+    fun deleteFavoriteMovieById(id: Int) {
         val storage = movieInteractor.movieRepository.storage
         storage.removeFromFavoritesById(id)
     }

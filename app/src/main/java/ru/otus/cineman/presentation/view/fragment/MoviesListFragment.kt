@@ -69,7 +69,6 @@ class MoviesListFragment :  DaggerFragment() {
 
     private var favoritesMoviesList = mutableListOf<FavoriteMovieModel>()
     private var watchLaterMoviesList = mutableListOf<WatchLaterMovieModel>()
-    private var cachedMoviesList = mutableListOf<MovieModel>()
 
 
     override fun onPause() {

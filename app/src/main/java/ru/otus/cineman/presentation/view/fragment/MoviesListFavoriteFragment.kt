@@ -4,10 +4,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.ItemTouchHelper.*
 import androidx.recyclerview.widget.RecyclerView
@@ -15,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import dagger.android.support.DaggerFragment
 import ru.otus.cineman.R
 import ru.otus.cineman.di.modules.ViewModelFactory
+import ru.otus.cineman.presentation.view.activity.OnCloseFragmentListener
 import ru.otus.cineman.presentation.view.adapter.FavoriteMovieAdapter
 import ru.otus.cineman.presentation.view.animation.CustomItemAnimator
 import ru.otus.cineman.presentation.viewmodel.MovieListViewModel
@@ -30,10 +29,17 @@ class MoviesListFavoriteFragment : DaggerFragment() {
     lateinit var viewModelFactory: ViewModelFactory
 
 
+    lateinit var listener: OnCloseFragmentListener
     private lateinit var recyclerView: RecyclerView
     private lateinit var recyclerAdapter: FavoriteMovieAdapter
     private lateinit var viewModel: MovieListViewModel
 
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        if (activity is OnCloseFragmentListener) {
+            listener = activity as OnCloseFragmentListener
+        }
+        super.onActivityCreated(savedInstanceState)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -54,25 +60,20 @@ class MoviesListFavoriteFragment : DaggerFragment() {
 
         viewModel.favoriteMovies.observe(viewLifecycleOwner, Observer { favoriteMovies ->
             recyclerAdapter.setItems(favoriteMovies)
+
+            if (favoriteMovies.isEmpty()) {
+                listener.onCloseFragment()
+            }
         })
     }
 
     private fun initRecycler() {
         recyclerAdapter = FavoriteMovieAdapter(LayoutInflater.from(context))
 
-        val itemDecoration = DividerItemDecoration(activity, DividerItemDecoration.VERTICAL)
-        itemDecoration.setDrawable(
-            ResourcesCompat.getDrawable(
-                resources,
-                R.drawable.divider,
-                null
-            )!!
-        )
         recyclerView = requireView().findViewById(R.id.favoriteRecyclerView)
         recyclerView.apply {
             adapter = recyclerAdapter
             itemAnimator = CustomItemAnimator()
-            addItemDecoration(itemDecoration)
         }
     }
 
@@ -98,7 +99,7 @@ class MoviesListFavoriteFragment : DaggerFragment() {
             ) {
                 val items = recyclerAdapter.getItems()
                 val adapterItem = items[viewHolder.adapterPosition]
-                viewModel.onDeleteFavoriteMovieById(adapterItem.id)
+                viewModel.deleteFavoriteMovieById(adapterItem.id)
             }
         }).attachToRecyclerView(recyclerView)
     }

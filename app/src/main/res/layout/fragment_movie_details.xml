@@ -31,7 +31,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-                app:title="@string/default_title"
                 app:layout_collapseMode="pin"/>
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>
@@ -42,7 +41,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipToPadding="false"
-        android:background="@color/colorAccent"
+        android:background="@color/movieColor"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
 
@@ -50,7 +49,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
-                android:background="@color/colorAccent">
+                android:background="@color/movieColor">
 
 
                 <TextView
@@ -58,6 +57,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textAlignment="center"
+                    android:textColor="@color/detailsText"
                     android:justificationMode="inter_word"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
@@ -70,11 +70,11 @@
                     android:layout_width="200dp"
                     android:layout_height="wrap_content"
                     android:text="@string/like"
-                    android:textColor="@color/colorPrimaryDark"
+                    android:textColor="@color/detailsText"
                     app:layout_constraintTop_toBottomOf="@id/film_details_description"
                     app:layout_constraintStart_toStartOf="parent"
-                    android:backgroundTint="@color/colorAccentNight"
-                    android:buttonTint="@color/colorPrimary"/>
+                    android:backgroundTint="@color/colorYellow"
+                    android:buttonTint="@color/colorYellow"/>
 
                 <ImageView
                     android:id="@+id/watch_later"

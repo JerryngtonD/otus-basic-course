@@ -15,6 +15,7 @@ import ru.otus.cineman.service.NotificationWorker
 import ru.otus.cineman.R
 import ru.otus.cineman.data.entity.WatchLaterMovieModel
 import ru.otus.cineman.data.mapper.MoviesMapper
+import ru.otus.cineman.presentation.view.activity.OnCloseFragmentListener
 import ru.otus.cineman.presentation.view.adapter.OnItemClickListener
 import ru.otus.cineman.presentation.view.adapter.WatchLaterMovieAdapter
 import ru.otus.cineman.presentation.viewmodel.MovieListViewModel
@@ -24,7 +25,7 @@ class WatchLaterFragment: DaggerFragment() {
       const val TAG = "WATCH_LATER_MOVIES_TAG"
     }
 
-    private lateinit var listener: WatchLaterListener
+    private lateinit var listener: OnCloseFragmentListener
     private lateinit var watchLaterFragmentAdapter: WatchLaterMovieAdapter
     private val viewModel: MovieListViewModel by lazy {
         ViewModelProvider(requireActivity()).get(MovieListViewModel::class.java)
@@ -32,8 +33,8 @@ class WatchLaterFragment: DaggerFragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        if (activity is WatchLaterListener) {
-            listener = activity as WatchLaterListener
+        if (activity is OnCloseFragmentListener) {
+            listener = activity as OnCloseFragmentListener
         }
     }
 
@@ -65,7 +66,7 @@ class WatchLaterFragment: DaggerFragment() {
             /** true means that the callback is enabled */
         ) {
             override fun handleOnBackPressed() {
-                listener.onCloseWatchLater()
+                listener.onCloseFragment()
             }
         }
 
@@ -112,8 +113,4 @@ class WatchLaterFragment: DaggerFragment() {
 
         }
     }
-}
-
-interface WatchLaterListener {
-    fun onCloseWatchLater()
 }

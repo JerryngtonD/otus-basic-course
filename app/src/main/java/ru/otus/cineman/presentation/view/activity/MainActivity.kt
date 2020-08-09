@@ -21,7 +21,7 @@ import ru.otus.cineman.presentation.viewmodel.NavigationDrawerViewModel
 import javax.inject.Inject
 
 class MainActivity : DaggerAppCompatActivity(), NavigationView.OnNavigationItemSelectedListener,
-    MovieDetailsListener, MovieListListener, WatchLaterListener
+     MovieListListener, OnCloseFragmentListener
 {
 
     @Inject
@@ -132,11 +132,7 @@ class MainActivity : DaggerAppCompatActivity(), NavigationView.OnNavigationItemS
         }
     }
 
-    override fun onCloseMovieDetails() {
-        supportFragmentManager.popBackStack()
-    }
-
-    override fun onCloseWatchLater() {
+    override fun onCloseFragment() {
         supportFragmentManager.popBackStack()
     }
 
@@ -180,5 +176,9 @@ class MainActivity : DaggerAppCompatActivity(), NavigationView.OnNavigationItemS
             Toast.makeText(this, R.string.favorites_empty, Toast.LENGTH_SHORT).show()
         }
     }
+}
+
+interface OnCloseFragmentListener {
+    fun onCloseFragment()
 }
 
