@@ -44,4 +44,9 @@
     //Downloads
     <string name="downloads">Загрузки</string>
     <string name="error_while_loading">Непреднамеренная ошибка при загрузке фильмов, повторите запроc...</string>
+    <string name="watch_later">Посмотреть позже</string>
+    <string name="share_title">Поделись с другом</string>
+    <string name="switch_light_mode">Поменять тему</string>
+    <string name="about">О приложении</string>
+    <string name="tmdb_powered">Это приложение использует TMDb Api</string>
 </resources>

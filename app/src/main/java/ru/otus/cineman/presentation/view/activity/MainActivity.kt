@@ -113,16 +113,30 @@ class MainActivity : DaggerAppCompatActivity(), NavigationView.OnNavigationItemS
         }
     }
 
+    private fun openAboutFragment() {
+        supportFragmentManager
+            .beginTransaction()
+            .replace(
+                R.id.fragmentContainer, AboutFragment(),
+                WatchLaterFragment.TAG
+            )
+            .addToBackStack(null)
+            .commit()
+    }
+
+
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.nav_favorites -> onFavoritesClick()
             R.id.day_night_mode -> onDayNightModeChanged()
             R.id.nav_watch_later -> openWatchLaterFragment()
+            R.id.about -> openAboutFragment()
             else -> Toast.makeText(this, R.string.share, Toast.LENGTH_SHORT).show()
         }
         drawer.closeDrawer(GravityCompat.START)
         return true
     }
+
 
     override fun onBackPressed() {
         if (drawer.isDrawerOpen(GravityCompat.START)) {

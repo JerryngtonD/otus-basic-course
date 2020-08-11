@@ -15,7 +15,7 @@
         <item
             android:id="@+id/nav_watch_later"
             android:icon="@drawable/watch_later_elapsed"
-            android:title="Watch Later" />
+            android:title="@string/watch_later" />
     </group>
 
 
@@ -24,7 +24,7 @@
             <item
                 android:id="@+id/nav_share"
                 android:icon="@drawable/share"
-                android:title="Share" />
+                android:title="@string/share_title" />
         </menu>
     </item>
 
@@ -33,7 +33,17 @@
             <item
                 android:id="@+id/day_night_mode"
                 android:icon="@drawable/light_mode"
-                android:title="Switch light mode" />
+                android:title="@string/switch_light_mode" />
+        </menu>
+    </item>
+
+
+    <item android:title="About">
+        <menu>
+            <item
+                android:id="@+id/about"
+                android:icon="@drawable/about"
+                android:title="@string/about" />
         </menu>
     </item>
 </menu>
