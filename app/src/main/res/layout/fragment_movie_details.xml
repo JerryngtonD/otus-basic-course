@@ -4,34 +4,34 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-        android:fitsSystemWindows="true">
+        android:fitsSystemWindows="true"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:layout_width="match_parent"
             android:layout_height="300dp"
+            android:fitsSystemWindows="true"
             app:contentScrim="?attr/colorPrimary"
             app:expandedTitleTextAppearance="@android:color/transparent"
-            android:fitsSystemWindows="true"
             app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
             <ImageView
-                app:layout_collapseMode="parallax"
                 android:id="@+id/film_poster"
                 android:layout_width="match_parent"
                 android:layout_height="350dp"
                 android:contentDescription="@string/app_name"
-                />
+                app:layout_collapseMode="parallax" />
 
             <com.google.android.material.appbar.MaterialToolbar
                 android:id="@+id/toolbar_movie_title"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-                app:layout_collapseMode="pin"/>
+                app:layout_collapseMode="pin"
+                app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>
 
@@ -40,77 +40,91 @@
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:clipToPadding="false"
         android:background="@color/movieColor"
+        android:clipToPadding="false"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
 
-            <androidx.constraintlayout.widget.ConstraintLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/movieColor"
+            android:orientation="vertical">
+
+
+            <TextView
+                android:id="@+id/film_details_description"
+                style="@style/DetailsFilmDescription"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:background="@color/movieColor">
+                android:layout_height="wrap_content"
+                android:justificationMode="inter_word"
+                android:textAlignment="center"
+                android:textColor="@color/detailsText"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
 
-                <TextView
-                    android:id="@+id/film_details_description"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textAlignment="center"
-                    android:textColor="@color/detailsText"
-                    android:justificationMode="inter_word"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    style="@style/DetailsFilmDescription"
-                    />
+            <CheckBox
+                android:id="@+id/checked_like"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/colorYellow"
+                android:buttonTint="@color/colorYellow"
+                android:text="@string/like"
+                android:textColor="@color/detailsText"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/film_details_description" />
 
+            <ImageView
+                android:id="@+id/watch_later"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginEnd="10dp"
+                android:background="@drawable/watch_later_off"
+                android:padding="5dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/checked_like" />
 
-                <CheckBox
-                    android:id="@+id/checked_like"
-                    android:layout_width="200dp"
-                    android:layout_height="wrap_content"
-                    android:text="@string/like"
-                    android:textColor="@color/detailsText"
-                    app:layout_constraintTop_toBottomOf="@id/film_details_description"
-                    app:layout_constraintStart_toStartOf="parent"
-                    android:backgroundTint="@color/colorYellow"
-                    android:buttonTint="@color/colorYellow"/>
+            <FrameLayout
+                android:id="@+id/image_block"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                app:layout_constraintEnd_toStartOf="@id/watch_later"
+                app:layout_constraintTop_toTopOf="@+id/checked_like">
 
-                <ImageView
-                    android:id="@+id/watch_later"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:background="@drawable/watch_later_off"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/checked_like"
-                    android:padding="5dp"
-                    android:layout_marginEnd="10dp" />
+                <ProgressBar
+                    android:id="@+id/progress_bar_image_loader"
+                    style="@android:style/Widget.Material.ProgressBar.Large"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:elevation="10dp"
+                    android:indeterminateDrawable="@drawable/movie_rotation"
+                    android:visibility="gone" />
 
                 <ImageView
                     android:id="@+id/load_image"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
+                    android:layout_marginEnd="10dp"
+
                     android:background="@drawable/image_loader"
-                    app:layout_constraintEnd_toStartOf="@id/watch_later"
-                    app:layout_constraintTop_toTopOf="@+id/checked_like"
-                    android:padding="5dp"
-                    android:layout_marginEnd="10dp"/>
+                    android:padding="5dp" />
+            </FrameLayout>
 
-                <EditText
-                    android:id="@+id/user_comment"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="textMultiLine"
-                    android:ems="10"
-                    android:hint="@string/leave_comment"
-                    android:layout_marginTop="30dp"
-                    app:layout_constraintTop_toBottomOf="@id/checked_like"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    android:backgroundTint="@color/colorPrimary">
-                </EditText>
+            <EditText
+                android:id="@+id/user_comment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:backgroundTint="@color/colorPrimary"
+                android:ems="10"
+                android:hint="@string/leave_comment"
+                android:inputType="textMultiLine"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/checked_like"></EditText>
 
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.core.widget.NestedScrollView>
 
