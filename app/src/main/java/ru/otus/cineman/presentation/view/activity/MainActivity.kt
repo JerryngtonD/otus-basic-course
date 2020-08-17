@@ -8,12 +8,15 @@ import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.navigation.NavigationView
 import dagger.android.support.DaggerAppCompatActivity
 import ru.otus.cineman.ApplicationParams.MOVIE_KEY
 import ru.otus.cineman.R
+import ru.otus.cineman.data.entity.FavoriteMovieModel
 import ru.otus.cineman.data.entity.MovieModel
+import ru.otus.cineman.data.entity.WatchLaterMovieModel
 import ru.otus.cineman.di.modules.ViewModelFactory
 import ru.otus.cineman.presentation.view.fragment.*
 import ru.otus.cineman.presentation.viewmodel.MovieListViewModel
@@ -23,7 +26,6 @@ import javax.inject.Inject
 class MainActivity : DaggerAppCompatActivity(), NavigationView.OnNavigationItemSelectedListener,
      MovieListListener, OnCloseFragmentListener
 {
-
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
 
@@ -43,6 +45,8 @@ class MainActivity : DaggerAppCompatActivity(), NavigationView.OnNavigationItemS
         ViewModelProvider(this, viewModelFactory).get(MovieListViewModel::class.java)
     }
 
+    private var watchLaterMoviesList = mutableListOf<WatchLaterMovieModel>()
+    private var favoritesMoviesList = mutableListOf<FavoriteMovieModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,6 +58,20 @@ class MainActivity : DaggerAppCompatActivity(), NavigationView.OnNavigationItemS
         toolbar = findViewById(R.id.toolbar)
 
         checkNightModeActivated()
+
+        moviesListViewModel.watchLaterMovies.observe(this, Observer {
+            watchLaterMovies ->
+
+            watchLaterMoviesList.clear()
+            watchLaterMoviesList.addAll(watchLaterMovies)
+        })
+
+        moviesListViewModel.favoriteMovies.observe(this, Observer {
+            favorites ->
+
+            favoritesMoviesList.clear()
+            favoritesMoviesList.addAll(favorites)
+        })
 
 
         navigationView = findViewById(R.id.nav_view)
@@ -99,7 +117,7 @@ class MainActivity : DaggerAppCompatActivity(), NavigationView.OnNavigationItemS
     }
 
     private fun openWatchLaterFragment() {
-        if (!moviesListViewModel.watchLaterMovies.value.isNullOrEmpty()) {
+        if (!watchLaterMoviesList.isNullOrEmpty()) {
             supportFragmentManager
                 .beginTransaction()
                 .replace(
@@ -176,7 +194,7 @@ class MainActivity : DaggerAppCompatActivity(), NavigationView.OnNavigationItemS
     }
 
     private fun onFavoritesClick() {
-        if (!moviesListViewModel.favoriteMovies.value.isNullOrEmpty()) {
+        if (!favoritesMoviesList.isNullOrEmpty()) {
             supportFragmentManager
                 .beginTransaction()
                 .replace(

@@ -49,5 +49,5 @@
     <string name="share_title">Share</string>
     <string name="switch_light_mode">Switch light mode</string>
     <string name="about">About</string>
-    <string name="tmdb_powered">This app is powered by TMDb Api</string>
+    <string name="tmdb_powered">This product uses the TMDb API but is not endorsed or certified by TMDb.</string>
 </resources>

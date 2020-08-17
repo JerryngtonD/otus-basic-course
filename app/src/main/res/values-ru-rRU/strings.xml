@@ -48,5 +48,5 @@
     <string name="share_title">Поделись с другом</string>
     <string name="switch_light_mode">Поменять тему</string>
     <string name="about">О приложении</string>
-    <string name="tmdb_powered">Это приложение использует TMDb Api</string>
+    <string name="tmdb_powered">Этот продукт использует TMDb API, но он не получал одобрения и не сертифицирован TMDb.</string>
 </resources>
