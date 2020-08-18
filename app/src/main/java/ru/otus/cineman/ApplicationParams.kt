@@ -11,4 +11,6 @@ object ApplicationParams {
 
     const val MOVIE_KEY = "movie"
     const val CATEGORY_KEY = "movies_category"
+
+    const val DEFAULT_CATEGORY = "popular"
 }

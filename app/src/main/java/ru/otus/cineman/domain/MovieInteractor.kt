@@ -4,6 +4,7 @@ import io.reactivex.Completable
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
 import ru.otus.cineman.App.Companion.moviesCategory
+import ru.otus.cineman.ApplicationParams.DEFAULT_CATEGORY
 import ru.otus.cineman.data.api.MovieService
 import ru.otus.cineman.data.entity.MovieModel
 import ru.otus.cineman.presentation.viewmodel.MovieListViewModel.Companion.INIT_PAGE
@@ -97,7 +98,7 @@ class MovieInteractor(
     }
 
     private fun getDefaultMovieCategory(category: String) =
-        if (category.isEmpty()) "popular" else category
+        if (category.isEmpty()) DEFAULT_CATEGORY else category
 }
 
 
