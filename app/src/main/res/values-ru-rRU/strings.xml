@@ -24,6 +24,7 @@
 
     //Success loading
     <string name="success_loading_movies">Загрзука фильмов была успешной</string>
+    <string name="success_loaded_image">Постер к фильму был успешно загружен</string>
     //Fault loading
     <string name="fault_loading_movies">Что-то пошло не так при загрзке фильмов</string>
     //Retry
@@ -35,6 +36,7 @@
     <string name="cancel">Cancel</string>
     <string name="watch_on">"Посмотреть в:"</string>
     <string name="dismiss_text">Скрыть</string>
+    <string name="downloaded_image">Перейти в галерею</string>
 
     //Service
     <string name="default_notification_channel_id">channel</string>
@@ -44,9 +46,10 @@
     //Downloads
     <string name="downloads">Загрузки</string>
     <string name="error_while_loading">Непреднамеренная ошибка при загрузке фильмов, повторите запроc...</string>
+    <string name="error_while_downloading_image">Непреднамеренная ошибка при загрузке постер к фильму...</string>
     <string name="watch_later">Посмотреть позже</string>
     <string name="share_title">Поделись с другом</string>
     <string name="switch_light_mode">Поменять тему</string>
     <string name="about">О приложении</string>
-    <string name="tmdb_powered">Это приложение использует TMDb Api</string>
+    <string name="tmdb_powered">Этот продукт использует TMDb API, но он не получал одобрения и не сертифицирован TMDb.</string>
 </resources>

@@ -1,31 +1,36 @@
 package ru.otus.cineman.presentation.view.fragment
 
 import android.Manifest
+import android.content.ContentValues
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.drawable.Drawable
+import android.os.Build
 import android.os.Bundle
+import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.CheckBox
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.TextView
+import android.widget.*
 import androidx.activity.OnBackPressedCallback
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.view.isGone
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.CustomTarget
+import com.bumptech.glide.request.transition.Transition
 import com.google.android.material.appbar.MaterialToolbar
+import com.google.android.material.snackbar.Snackbar
 import ru.otus.cineman.ApplicationParams.IMAGE_URL
 import ru.otus.cineman.R
 import ru.otus.cineman.data.entity.MovieModel
 import ru.otus.cineman.presentation.view.activity.MainActivity.Companion.PERMISSION_REQUEST_CODE
 import ru.otus.cineman.presentation.view.activity.OnCloseFragmentListener
 import ru.otus.cineman.presentation.viewmodel.MovieListViewModel
-import ru.otus.cineman.service.ImageLoader
 import ru.otus.cineman.service.NotificationCallback
 import ru.otus.cineman.service.NotificationWorker
 
@@ -45,6 +50,8 @@ class MovieDetailsFragment : Fragment() {
     lateinit var isLikedStatusMovie: CheckBox
     lateinit var watchLater: ImageView
     lateinit var loadImage: ImageView
+    lateinit var loadImageProgressBar: ProgressBar
+    private lateinit var coordinatorLayout: View
 
     private val viewModel: MovieListViewModel by lazy {
         ViewModelProvider(requireActivity()).get(MovieListViewModel::class.java)
@@ -75,6 +82,8 @@ class MovieDetailsFragment : Fragment() {
         isLikedStatusMovie = view.findViewById(R.id.checked_like)
         watchLater = view.findViewById(R.id.watch_later)
         loadImage = view.findViewById(R.id.load_image)
+        loadImageProgressBar = view.findViewById(R.id.progress_bar_image_loader)
+        coordinatorLayout = requireActivity().findViewById(R.id.coordinatorMovies)
 
 
         viewModel.selectedMovie.observe(viewLifecycleOwner, Observer { selectedMovie ->
@@ -132,11 +141,12 @@ class MovieDetailsFragment : Fragment() {
 
     private fun initLoadImageListener() {
         loadImage.setOnClickListener {
+            requireActivity().runOnUiThread {
+                loadImageProgressBar.isGone = false
+            }
+
             if (checkPermission()) {
-                val intent = Intent(context, ImageLoader::class.java)
-                intent.putExtra("image_url", movie.image!!)
-                intent.putExtra("movie_name", movie.title)
-                requireActivity().startService(intent)
+                downloadImage()
             } else {
                 requestPermission()
             }
@@ -178,7 +188,7 @@ class MovieDetailsFragment : Fragment() {
                 NotificationWorker(
                     requireContext(),
                     movie
-                ).notificationSet(object:
+                ).notificationSet(object :
                     NotificationCallback {
                     override fun onSuccess(timeOfNotification: Long) {
                         movie.isWatchLater = true
@@ -194,5 +204,82 @@ class MovieDetailsFragment : Fragment() {
                 })
             }
         }
+    }
+
+    private fun downloadImage() {
+        Glide.with(requireContext())
+            .asBitmap()
+            .load(IMAGE_URL + "original" + movie.albumImage)
+            .into(object : CustomTarget<Bitmap>() {
+                override fun onLoadFailed(errorDrawable: Drawable?) {
+                    requireActivity().runOnUiThread {
+                        Snackbar.make(
+                            coordinatorLayout,
+                            R.string.retry,
+                            Snackbar.LENGTH_LONG
+                        ).setAction(R.string.retry) {
+                            downloadImage()
+                        }.show()
+                        loadImageProgressBar.isGone = true
+                    }
+
+                }
+
+                override fun onLoadCleared(placeholder: Drawable?) {
+                }
+
+                override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                        val contentValues = ContentValues().apply {
+                            put(MediaStore.Images.Media.TITLE, movie.title)
+                            put(
+                                MediaStore.Images.Media.DISPLAY_NAME,
+                                movie.title
+                            )
+                            put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
+                            put(
+                                MediaStore.Images.Media.DATE_ADDED,
+                                System.currentTimeMillis() / 1000
+                            )
+                            put(MediaStore.Images.Media.DATE_TAKEN, System.currentTimeMillis())
+                            put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/Cineman")
+                        }
+
+                        val contentResolver = requireActivity().contentResolver
+                        val uri = contentResolver.insert(
+                            MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                            contentValues
+                        )
+                        val outputStream = contentResolver.openOutputStream(uri!!)
+
+                        resource.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
+                        outputStream?.close()
+                    } else {
+                        MediaStore.Images.Media.insertImage(
+                            requireActivity().contentResolver,
+                            resource,
+                            movie.title,
+                            movie.description
+                        )
+                    }
+
+                    requireActivity().runOnUiThread {
+                        Snackbar.make(
+                            coordinatorLayout,
+                            R.string.success_loaded_image,
+                            Snackbar.LENGTH_LONG
+                        )
+                            .setAction(R.string.downloaded_image) {
+                                val intent = Intent()
+                                intent.action = Intent.ACTION_VIEW
+                                intent.type = "image/*"
+                                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                                startActivity(intent)
+                            }.show()
+
+                        loadImageProgressBar.isGone = true
+                    }
+                }
+            })
     }
 }
