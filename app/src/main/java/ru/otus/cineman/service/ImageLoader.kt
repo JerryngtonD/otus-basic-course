@@ -25,6 +25,7 @@ import java.util.*
 import javax.inject.Inject
 
 
+@Deprecated("SDK>=30 VERSION")
 private const val IMAGE_LOADER_SERVICE_NAME = "IMAGE_LOADER"
 
 class ImageLoader: DaggerIntentService(IMAGE_LOADER_SERVICE_NAME) {
@@ -60,7 +61,7 @@ class ImageLoader: DaggerIntentService(IMAGE_LOADER_SERVICE_NAME) {
 
 
     private fun downloadImage(movieUrl: String, movieName: String, notificationId: Int) {
-        val subscribe = imageService.downloadImage("original/$movieUrl")
+        val subscribe = imageService.downloadImage("original$movieUrl")
             .subscribeOn(Schedulers.newThread())
             .doOnSuccess { response ->
                 writeResponseBodyToDisk(
@@ -74,7 +75,7 @@ class ImageLoader: DaggerIntentService(IMAGE_LOADER_SERVICE_NAME) {
                 onError = {
                     Toast.makeText(
                         this,
-                        "Some error while loading image on url: $movieUrl",
+                        it.localizedMessage,
                         Toast.LENGTH_LONG
                     ).show()
                 }

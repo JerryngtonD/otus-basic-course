@@ -23,6 +23,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         android:layout_marginTop="50dp"
+        android:padding="40dp"
         android:text="@string/tmdb_powered"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
