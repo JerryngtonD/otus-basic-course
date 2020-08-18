@@ -22,7 +22,6 @@ class MovieInteractor(
                     },
                     onError = {
                         callback.onError("Error while getting movies...")
-//                        callback.onError("Error while getting movies: ${it.localizedMessage}")
                     }
                 )
         }
